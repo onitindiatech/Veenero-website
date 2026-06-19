@@ -2,15 +2,15 @@ import { Droplets, Linkedin, Twitter, Youtube, Mail } from "lucide-react";
 
 const footerLinks = {
   solutions: [
-    { label: "Leak Detection", href: "#solutions" },
-    { label: "Water Analytics", href: "#solutions" },
-    { label: "Flow Optimization", href: "#solutions" },
-    { label: "Quality Monitoring", href: "#solutions" },
+    { label: "Veenero Sense", href: "#solutions" },
+    { label: "Veenero Intelligence", href: "#solutions" },
+    { label: "Veenero Insights", href: "#solutions" },
+    { label: "Water Verification", href: "#solutions" },
   ],
   company: [
-    { label: "About Us", href: "#about" },
-    { label: "Our Approach", href: "#approach" },
-    { label: "Impact", href: "#impact" },
+    { label: "About Veenero", href: "#about" },
+    { label: "How the Platform Works", href: "#approach" },
+    { label: "Benefits & Outcomes", href: "#impact" },
     { label: "Careers", href: "#careers" },
   ],
   resources: [
@@ -42,8 +42,7 @@ export const Footer = () => {
               </span>
             </a>
             <p className="text-primary-foreground/70 leading-relaxed mb-6 max-w-sm">
-              Pioneering sustainable water solutions through innovative
-              technology. Join us in making every drop count.
+              Building India’s Water Intelligence Network—making every litre visible through a real-time water data platform.
             </p>
             <div className="text-primary-foreground/70 text-sm mb-6">
               <p className="mb-2">
@@ -122,7 +121,8 @@ export const Footer = () => {
         {/* Bottom */}
         <div className="pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-primary-foreground/60">
-            © 2023 Veenero Sustainable Solutions. All rights reserved.
+            © 2024 Veenero. All rights reserved.
+
           </p>
           <div className="flex items-center gap-6 text-sm text-primary-foreground/60">
             <a href="#" className="hover:text-primary-foreground transition-colors">

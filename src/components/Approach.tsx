@@ -3,49 +3,34 @@ import { CheckCircle2 } from "lucide-react";
 const steps = [
   {
     number: "01",
-    title: "Assessment & Analysis",
+    title: "Sense: Measure Every Litre",
     description:
-      "We begin with a comprehensive audit of your current water systems, identifying inefficiencies and opportunities for improvement.",
-    points: [
-      "Infrastructure evaluation",
-      "Usage pattern analysis",
-      "Baseline measurements",
-    ],
+      "Onboard your water data sources to build Water Visibility—so usage is measurable across sites, assets, and operations.",
+    points: ["Data capture mapping", "Baseline measurement", "Integrity & validation checks"],
   },
   {
     number: "02",
-    title: "Custom Solution Design",
+    title: "Intelligence: Monitor & Benchmark",
     description:
-      "Our engineers develop a tailored strategy that addresses your specific challenges while maximizing ROI and sustainability impact.",
-    points: [
-      "Technology selection",
-      "Integration planning",
-      "Cost-benefit analysis",
-    ],
+      "Use real-time analytics to track performance, compare across peers, and surface Water Risk early.",
+    points: ["Real-time analytics", "Benchmarking", "Operational anomaly signals"],
   },
   {
     number: "03",
-    title: "Implementation & Integration",
+    title: "Optimize: Act with Evidence",
     description:
-      "Expert installation and seamless integration with your existing systems, minimizing disruption while maximizing results.",
-    points: [
-      "Professional deployment",
-      "System calibration",
-      "Staff training",
-    ],
+      "Transform insights into interventions—improving Water Efficiency through quantified recommendations and measurable outcomes.",
+    points: ["Optimization scenarios", "Efficiency tracking", "Actionable workflows"],
   },
   {
     number: "04",
-    title: "Monitoring & Optimization",
+    title: "Verify: Prove Accountability",
     description:
-      "Continuous oversight and refinement ensure your water management systems perform at peak efficiency over time.",
-    points: [
-      "24/7 monitoring",
-      "Performance reports",
-      "Ongoing support",
-    ],
+      "Verification-ready reporting and audit trails help teams demonstrate Water Accountability with confidence.",
+    points: ["Verification trails", "Audit-ready dashboards", "Ongoing assurance"],
   },
 ];
+
 
 export const Approach = () => {
   return (

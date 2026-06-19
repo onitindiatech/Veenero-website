@@ -35,7 +35,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-6 flex items-center justify-between">
         <a href="#" className="flex items-center group">
           <span className="text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-primary">
-            Veenero Sustainable Solutions
+Veenero
           </span>
         </a>
 

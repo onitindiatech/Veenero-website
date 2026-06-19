@@ -3,35 +3,35 @@ import { TrendingUp, Globe, Award, Droplets } from "lucide-react";
 const impacts = [
   {
     icon: Droplets,
-    value: "500M+",
-    label: "Gallons Saved Annually",
-    description: "Through our leak detection and optimization systems",
+    value: "100%+",
+    label: "Visibility Coverage",
+    description: "Real-time measurement coverage across sites and systems",
   },
   {
     icon: TrendingUp,
-    value: "35%",
-    label: "Average Cost Reduction",
-    description: "For our clients' water-related expenses",
+    value: "Optimized",
+    label: "Water Efficiency Gains",
+    description: "Actionable recommendations backed by verified analytics",
   },
   {
     icon: Globe,
-    value: "150+",
-    label: "Communities Served",
-    description: "Across residential, commercial, and municipal sectors",
+    value: "India-wide",
+    label: "Network Benchmarking",
+    description: "Comparative insights that help prioritize Water Risk",
   },
   {
     icon: Award,
-    value: "12",
-    label: "Industry Awards",
-    description: "Recognizing our innovation and impact",
+    value: "Audit-ready",
+    label: "Verified Reporting",
+    description: "Water Accountability with traceable data and governance",
   },
 ];
 
 const testimonial = {
   quote:
-    "Veenero's solutions have transformed how we manage water resources. Their technology reduced our water loss by 42% in the first year alone.",
+    "Veenero gave us Water Visibility we could finally trust. With benchmarked intelligence and verification-ready reporting, our teams moved from estimates to evidence—faster decisions, stronger accountability.",
   author: "Sarah Chen",
-  role: "Director of Utilities",
+  role: "Sustainability & Water Lead",
   company: "Metro Water District",
 };
 
@@ -48,14 +48,14 @@ export const Impact = () => {
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
           <p className="text-primary-foreground/80 font-medium mb-4 tracking-wider uppercase text-sm">
-            Our Impact
+            Benefits & Outcomes
           </p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-            Making Every Drop Count
+            Making Every Litre Visible
           </h2>
           <p className="text-lg text-primary-foreground/80 leading-relaxed">
-            Our commitment to sustainable water management has created
-            measurable positive impact for our partners and the planet.
+            Water Visibility creates Water Accountability. Veenero helps organizations measure, monitor, optimize, benchmark,
+            and verify water usage—so decisions are evidence-based and reporting is audit-ready.
           </p>
         </div>
 

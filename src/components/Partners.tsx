@@ -6,17 +6,17 @@ const partners = [
   {
     name: "IIT ROPAR",
     logo: partnerImage,
-    description: "A trusted partner in sustainable solutions.",
+    description: "Research collaboration for Water Intelligence and evidence-driven infrastructure.",
   },
   {
     name: "ELECTROPRENEUR PARK",
     logo: partner2Image,
-    description: "Another trusted partner in sustainable solutions.",
+    description: "Ecosystem partner supporting the Water Data Platform and network growth.",
   },
   {
     name: "VISHNU TBI",
     logo: part3Image,
-    description: "A trusted partner in sustainable solutions.",
+    description: "Innovation partner advancing Water Verification and real-time analytics.",
   },
 ];
 
@@ -27,13 +27,14 @@ export const Partners = () => {
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
           <p className="text-primary font-medium mb-4 tracking-wider uppercase text-sm">
-            Our Partners
+            Water Intelligence Network
           </p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Collaborating for a Sustainable Future
+            Collaborating to Make Water Visible Across India
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            We work with leading organizations to deliver innovative solutions that make a real impact.
+            We partner with research institutions, industry ecosystems, and infrastructure stakeholders to build
+            Water Intelligence, strengthen Water Verification, and accelerate network-scale benchmarking.
           </p>
         </div>
 

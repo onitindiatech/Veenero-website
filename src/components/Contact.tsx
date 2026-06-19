@@ -57,11 +57,11 @@ export const Contact = () => {
             Get In Touch
           </p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Let's Start a Conversation
+            Let’s Build Water Visibility Together
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Ready to optimize your water management? Have questions about our
-            solutions? We'd love to hear from you.
+            Want to measure, monitor, optimize, benchmark, and verify water usage? Book a demo of Veenero’s water data platform
+            and start making every litre visible.
           </p>
         </div>
 
@@ -91,11 +91,11 @@ export const Contact = () => {
 
             <div className="bg-gradient-ocean rounded-2xl p-8 text-primary-foreground">
               <h3 className="font-display text-xl font-semibold mb-4">
-                Schedule a Demo
+                Schedule a Platform Demo
               </h3>
               <p className="text-primary-foreground/85 mb-6">
-                See our solutions in action. Book a personalized demo with our
-                team.
+                Experience Veenero Sense, Intelligence, and Insights—built to deliver Water Verification-ready reporting and real-time
+                analytics for water accountability.
               </p>
               <Button variant="hero" size="lg" className="w-full">
                 Book Demo

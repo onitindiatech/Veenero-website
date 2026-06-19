@@ -3,21 +3,21 @@ import { Target, Heart, Users } from "lucide-react";
 const values = [
   {
     icon: Target,
-    title: "Our Mission",
+    title: "Water Intelligence",
     description:
-      "To drive sustainable development by delivering technology-enabled solutions that address environmental challenges across water, energy, and resource management.",
+      "We help organizations measure, monitor, optimize, benchmark, and verify water usage—turning fragmented data into actionable accountability.",
   },
   {
     icon: Heart,
-    title: "Our Vision",
+    title: "Water Visibility",
     description:
-      "A future where communities thrive through responsible resource use, smart infrastructure, and sustainable innovations that protect the planet.",
+      "Making every litre measurable across assets, sites, and systems—so decisions are data-driven, timely, and transparent.",
   },
   {
     icon: Users,
-    title: "Our Values",
+    title: "Water Accountability",
     description:
-      "Sustainability, innovation, and integrity guide our work. We believe in building solutions that create measurable impact and long-term resilience.",
+      "A verification-ready water data layer that supports reporting, governance, and performance improvement over time.",
   },
 ];
 
@@ -31,14 +31,13 @@ export const About = () => {
             About Veenero
           </p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Innovating for a Sustainable Future
+            Building India's Water Intelligence Network
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Veenero Sustainable Solutions is committed to building smart, scalable,
-            and eco-friendly technologies that help communities reduce waste,
-            conserve resources, and adopt sustainable living. Our expertise spans
-            water stewardship, environmental monitoring, and responsible resource
-            management.
+            Veenero is not a leak detection company, not a hardware provider, and not a single device approach.
+            We are the future digital infrastructure layer for water management—helping organizations create
+            Water Visibility, Water Accountability, and Water Verification through real-time analytics and a shared
+            water data platform.
           </p>
         </div>
 
@@ -66,10 +65,10 @@ export const About = () => {
         {/* Stats */}
         <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           {[
-            { value: "15+", label: "Years of Sustainable Innovation" },
-            { value: "500+", label: "Impact-Driven Projects" },
-            { value: "2M+", label: "Resources Conserved Daily" },
-            { value: "98%", label: "Partner Satisfaction" },
+            { value: "24/7", label: "Water Monitoring Coverage" },
+            { value: "Multi-site", label: "Benchmarking & Comparison" },
+            { value: "Audit-ready", label: "Verification-First Reporting" },
+            { value: "India", label: "Network Growth Focus" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <p className="font-display text-4xl md:text-5xl font-bold text-primary mb-2">

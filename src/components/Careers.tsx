@@ -37,12 +37,12 @@ export const Careers = () => {
             Join Our Team
           </p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Build a Sustainable Future With Us
+            Help Build India’s Water Intelligence Network
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            We're looking for passionate individuals who want to make a real
-            impact in sustainable technology. Join a team driven by innovation,
-            collaboration, and environmental responsibility.
+            We’re looking for builders who care about data integrity, real-time analytics, and sustainable infrastructure.
+            Join a team creating the future water data platform—so organizations can measure, monitor, optimize, benchmark,
+            and verify every litre.
           </p>
         </div>
 

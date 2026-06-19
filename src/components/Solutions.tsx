@@ -1,48 +1,48 @@
-import { Droplet, Search, BarChart3, Shield, Waves, Leaf } from "lucide-react";
+import { BarChart3, Search, Shield, Waves, Leaf, Cloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const solutions = [
   {
     icon: Search,
-    title: "Advanced Leak Detection",
+    title: "Veenero Sense",
     description:
-      "AI-powered sensors and analytics identify leaks before they become costly problems, reducing water loss by up to 40%.",
-    features: ["Real-time monitoring", "Predictive alerts", "Underground detection"],
+      "Capture water data and create Water Visibility—integrating measurements across sites, assets, and operational contexts.",
+    features: ["Real-time water data capture", "Multi-source integration", "Data integrity checks"],
   },
   {
     icon: BarChart3,
-    title: "Smart Water Analytics",
+    title: "Veenero Intelligence",
     description:
-      "Comprehensive dashboards and reporting tools that provide actionable insights into water usage patterns and efficiency.",
-    features: ["Usage forecasting", "Consumption trends", "Benchmark reports"],
+      "Turn signals into decisions with Water Intelligence—analytics that measure usage, identify patterns, benchmark performance, and optimize performance.",
+    features: ["Optimization insights", "Benchmarking reports", "Water Efficiency tracking"],
   },
   {
     icon: Waves,
-    title: "Flow Optimization",
+    title: "Veenero Insights",
     description:
-      "Intelligent systems that automatically adjust water pressure and flow to minimize waste while maintaining service quality.",
-    features: ["Pressure management", "Dynamic control", "Zone optimization"],
-  },
-  {
-    icon: Droplet,
-    title: "Rainwater Harvesting",
-    description:
-      "Sustainable collection and storage systems that capture and repurpose rainwater for non-potable applications.",
-    features: ["Collection design", "Storage solutions", "Distribution systems"],
+      "Communicate outcomes with Water Verification-ready reporting—auditable analytics designed for accountability across teams and stakeholders.",
+    features: ["Audit-ready dashboards", "Verification workflows", "Actionable accountability"],
   },
   {
     icon: Shield,
-    title: "Quality Monitoring",
+    title: "Water Verification",
     description:
-      "Continuous water quality assessment ensuring compliance with regulations and protecting public health.",
-    features: ["Contaminant detection", "pH monitoring", "Compliance reporting"],
+      "A verification-first approach that helps organizations demonstrate measurement validity, governance, and ongoing monitoring quality.",
+    features: ["Verification trails", "Compliance-ready exports", "Change & assurance history"],
+  },
+  {
+    icon: Cloud,
+    title: "Water Data Platform",
+    description:
+      "The infrastructure layer that unifies water data across organizations—enabling benchmarking, governance, and future network-scale intelligence.",
+    features: ["Network-ready architecture", "Role-based governance", "Benchmark datasets"],
   },
   {
     icon: Leaf,
-    title: "Irrigation Management",
+    title: "Water Risk & Accountability",
     description:
-      "Smart irrigation solutions that use weather data and soil sensors to optimize water delivery for agriculture and landscaping.",
-    features: ["Soil moisture sensing", "Weather integration", "Crop-specific plans"],
+      "Assess Water Risk and drive Water Accountability—so organizations can prioritize interventions based on evidence, not assumptions.",
+    features: ["Risk scoring", "Operational accountability", "Verified performance outcomes"],
   },
 ];
 
@@ -53,14 +53,14 @@ export const Solutions = () => {
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
           <p className="text-primary font-medium mb-4 tracking-wider uppercase text-sm">
-            Our Solutions
+            Product Suite
           </p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Technology-Driven Water Conservation
+            India’s Water Intelligence Platform
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Our comprehensive suite of solutions addresses every aspect of water
-            management, from detection to optimization to sustainability.
+            Veenero is building a shared water data infrastructure to help organizations measure, monitor, optimize,
+            benchmark, and verify water usage—so every litre becomes visible and accountable.
           </p>
         </div>
 
@@ -95,10 +95,11 @@ export const Solutions = () => {
         {/* CTA */}
         <div className="text-center mt-16">
           <Button variant="ocean" size="xl">
-            View All Solutions
+            Explore the Suite
           </Button>
         </div>
       </div>
     </section>
   );
 };
+
