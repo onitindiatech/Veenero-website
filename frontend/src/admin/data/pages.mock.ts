@@ -1,0 +1,218 @@
+import { CmsPage } from '../types/cms.types';
+
+// ─── Mock Pages Data ─────────────────────────────────────────────────────────
+// 10 core Veenero website pages used as initial CMS state.
+// This is the foundation for making the public website CMS-driven.
+
+export const mockPages: CmsPage[] = [
+  {
+    id: 'page-home',
+    name: 'Home',
+    slug: '/',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'Veenero | Intelligent Water Management Platform',
+    seoMetaDescription:
+      'Veenero is a smart water intelligence platform helping enterprises monitor, optimise, and reduce water consumption across global facilities.',
+    seoStatus: 'good',
+    lastUpdated: '2026-08-14T10:30:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-hero', name: 'Hero', type: 'hero', visible: true },
+      { id: 's-solutions', name: 'Solutions Overview', type: 'content', visible: true },
+      { id: 's-impact', name: 'Impact Numbers', type: 'content', visible: true },
+      { id: 's-partners', name: 'Partners Strip', type: 'gallery', visible: true },
+      { id: 's-cta', name: 'Call to Action', type: 'cta', visible: true },
+    ],
+  },
+  {
+    id: 'page-about',
+    name: 'About',
+    slug: '/about',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'About Veenero | Our Mission & Vision',
+    seoMetaDescription:
+      'Learn about Veenero\'s mission to transform water management through AI-driven intelligence and sustainable technology solutions.',
+    seoStatus: 'good',
+    lastUpdated: '2026-08-13T14:20:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-about-hero', name: 'About Hero', type: 'hero', visible: true },
+      { id: 's-mission', name: 'Mission & Vision', type: 'content', visible: true },
+      { id: 's-team', name: 'Leadership Team', type: 'gallery', visible: true },
+      { id: 's-timeline', name: 'Company Timeline', type: 'content', visible: false },
+    ],
+  },
+  {
+    id: 'page-solutions',
+    name: 'Solutions',
+    slug: '/solutions',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'Water Intelligence Solutions | Veenero',
+    seoMetaDescription:
+      'Explore Veenero\'s suite of water management solutions: real-time monitoring, AI analytics, risk management, and efficiency reporting.',
+    seoStatus: 'good',
+    lastUpdated: '2026-08-12T09:45:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-solutions-hero', name: 'Solutions Hero', type: 'hero', visible: true },
+      { id: 's-monitoring', name: 'Real-Time Monitoring', type: 'content', visible: true },
+      { id: 's-analytics', name: 'AI Analytics', type: 'content', visible: true },
+      { id: 's-risk', name: 'Risk Management', type: 'content', visible: true },
+      { id: 's-reports', name: 'Reports & Exports', type: 'content', visible: true },
+    ],
+  },
+  {
+    id: 'page-industries',
+    name: 'Industries',
+    slug: '/industries',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'Industries We Serve | Veenero Water Intelligence',
+    seoMetaDescription:
+      'Veenero serves enterprise clients across manufacturing, hospitality, healthcare, data centres, and municipal sectors.',
+    seoStatus: 'needs-work',
+    lastUpdated: '2026-08-10T16:00:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-industries-hero', name: 'Industries Hero', type: 'hero', visible: true },
+      { id: 's-manufacturing', name: 'Manufacturing', type: 'content', visible: true },
+      { id: 's-hospitality', name: 'Hospitality', type: 'content', visible: true },
+      { id: 's-healthcare', name: 'Healthcare', type: 'content', visible: true },
+      { id: 's-datacenter', name: 'Data Centres', type: 'content', visible: false },
+    ],
+  },
+  {
+    id: 'page-approach',
+    name: 'Approach',
+    slug: '/approach',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'Our Approach | Veenero Methodology',
+    seoMetaDescription:
+      'Discover how Veenero\'s proven four-step methodology helps organisations achieve measurable water efficiency improvements.',
+    seoStatus: 'good',
+    lastUpdated: '2026-08-11T11:15:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-approach-hero', name: 'Approach Hero', type: 'hero', visible: true },
+      { id: 's-methodology', name: 'Four-Step Methodology', type: 'content', visible: true },
+      { id: 's-process', name: 'Our Process', type: 'content', visible: true },
+    ],
+  },
+  {
+    id: 'page-impact',
+    name: 'Impact',
+    slug: '/impact',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'Real World Impact | Veenero Results',
+    seoMetaDescription:
+      'See how Veenero has helped clients save millions of litres of water and reduce operational costs through intelligent monitoring.',
+    seoStatus: 'needs-work',
+    lastUpdated: '2026-08-08T13:45:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-impact-hero', name: 'Impact Hero', type: 'hero', visible: true },
+      { id: 's-stats', name: 'Key Statistics', type: 'content', visible: true },
+      { id: 's-case-highlights', name: 'Case Study Highlights', type: 'content', visible: true },
+      { id: 's-testimonials', name: 'Client Testimonials', type: 'testimonials', visible: false },
+    ],
+  },
+  {
+    id: 'page-partners',
+    name: 'Partners',
+    slug: '/partners',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'Our Partners | Veenero Ecosystem',
+    seoMetaDescription:
+      'Veenero partners with leading technology, sustainability, and infrastructure organisations to deliver best-in-class water intelligence.',
+    seoStatus: 'poor',
+    lastUpdated: '2026-08-06T10:00:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-partners-hero', name: 'Partners Hero', type: 'hero', visible: true },
+      { id: 's-partner-grid', name: 'Partner Logos Grid', type: 'gallery', visible: true },
+      { id: 's-partner-cta', name: 'Become a Partner CTA', type: 'cta', visible: true },
+    ],
+  },
+  {
+    id: 'page-careers',
+    name: 'Careers',
+    slug: '/careers',
+    status: 'draft',
+    featuredImage: null,
+    seoMetaTitle: 'Careers at Veenero | Join Our Team',
+    seoMetaDescription:
+      'Join Veenero and help shape the future of water intelligence. View open positions across engineering, sales, and operations.',
+    seoStatus: 'good',
+    lastUpdated: '2026-08-07T09:30:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: false,
+    sections: [
+      { id: 's-careers-hero', name: 'Careers Hero', type: 'hero', visible: true },
+      { id: 's-openings', name: 'Open Positions', type: 'content', visible: true },
+      { id: 's-culture', name: 'Our Culture', type: 'content', visible: false },
+    ],
+  },
+  {
+    id: 'page-insights',
+    name: 'Insights',
+    slug: '/insights',
+    status: 'draft',
+    featuredImage: null,
+    seoMetaTitle: 'Water Intelligence Insights & Articles | Veenero',
+    seoMetaDescription:
+      'Read the latest insights, research, and thought leadership on water management, sustainability, and smart infrastructure from Veenero.',
+    seoStatus: 'needs-work',
+    lastUpdated: '2026-08-09T15:00:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: false,
+    sections: [
+      { id: 's-insights-hero', name: 'Insights Hero', type: 'hero', visible: true },
+      { id: 's-featured', name: 'Featured Article', type: 'content', visible: true },
+      { id: 's-article-grid', name: 'Article Grid', type: 'custom', visible: true },
+    ],
+  },
+  {
+    id: 'page-contact',
+    name: 'Contact',
+    slug: '/contact',
+    status: 'published',
+    featuredImage: null,
+    seoMetaTitle: 'Contact Veenero | Get in Touch',
+    seoMetaDescription:
+      'Contact the Veenero team to request a demo, ask questions, or discuss how we can help your organisation manage water intelligently.',
+    seoStatus: 'good',
+    lastUpdated: '2026-08-14T08:00:00Z',
+    updatedBy: 'Aditya Choubey',
+    isCoreSystemPage: true,
+    sections: [
+      { id: 's-contact-hero', name: 'Contact Hero', type: 'hero', visible: true },
+      { id: 's-contact-form', name: 'Contact Form', type: 'content', visible: true },
+      { id: 's-offices', name: 'Office Locations', type: 'content', visible: true },
+    ],
+  },
+];
+
+// ─── Helper: Generate a new duplicate page ───────────────────────────────────
+export const duplicatePage = (original: CmsPage): CmsPage => ({
+  ...original,
+  id: `page-${Date.now()}`,
+  name: `${original.name} (Copy)`,
+  slug: `${original.slug}-copy`,
+  status: 'draft',
+  lastUpdated: new Date().toISOString(),
+  updatedBy: 'Aditya Choubey',
+  isCoreSystemPage: false,
+});
