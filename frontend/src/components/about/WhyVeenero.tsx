@@ -1,17 +1,11 @@
 import React from "react";
 import { AboutContent } from "@/content/about";
-import { Layers, Zap, FileCheck2, Network, CheckCircle } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
+import { techPulse, dataSensor } from "@/assets/animations";
 
 interface WhyVeeneroProps {
   data: AboutContent["whyVeenero"];
 }
-
-const iconMap: Record<string, React.ElementType> = {
-  Layers,
-  Zap,
-  FileCheck2,
-  Network,
-};
 
 export const WhyVeenero: React.FC<WhyVeeneroProps> = ({ data }) => {
   return (
@@ -41,15 +35,23 @@ export const WhyVeenero: React.FC<WhyVeeneroProps> = ({ data }) => {
         {/* 2x2 Differentiator Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {data.list.map((item, idx) => {
-            const IconComponent = iconMap[item.icon] || CheckCircle;
+            const imgSrc = getWaterPhotograph((item as any).iconImage || (item as any).imageUrl, item.title, idx);
+            const animAsset = idx % 2 === 0 ? techPulse : dataSensor;
             return (
               <div
                 key={idx}
                 className="group bg-card p-8 rounded-2xl border border-border/40 hover:border-teal-600/30 shadow-sm hover:shadow-soft hover:-translate-y-1 transition-all duration-300 flex items-start gap-6 font-sans"
               >
                 {/* Icon Badge */}
-                <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <IconComponent className="h-6 w-6 stroke-[2]" />
+                <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/20 shrink-0 group-hover:scale-110 transition-transform duration-300 w-12 h-12 flex items-center justify-center overflow-hidden relative">
+                  <img
+                    src={imgSrc}
+                    alt={item.title}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                  <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-screen">
+                    <img src={animAsset} alt="" className="w-full h-full object-cover" />
+                  </div>
                 </div>
 
                 {/* Content */}

@@ -1,5 +1,6 @@
 import React from "react";
 import { Search, FileText, Users, Rocket } from "lucide-react";
+import { processGear, waterRipple } from "@/assets/animations";
 
 export const HiringProcess: React.FC = () => {
   const steps = [
@@ -60,7 +61,7 @@ export const HiringProcess: React.FC = () => {
                     {step.num}
                   </span>
 
-                  {/* Circular Icon with double ripple rings */}
+                  {/* Circular Icon with double ripple rings & processGear asset */}
                   <div className="relative flex items-center justify-center">
                     {/* Ripple outer circle */}
                     <div className="absolute -inset-2.5 rounded-full border border-teal-500/10 dark:border-teal-500/5 animate-pulse" />
@@ -68,8 +69,11 @@ export const HiringProcess: React.FC = () => {
                     <div className="absolute -inset-1.5 rounded-full border border-teal-500/20 dark:border-teal-500/10" />
                     
                     {/* Main Icon Circle */}
-                    <div className="h-14 w-14 rounded-full bg-card border border-border/80 shadow-sm flex items-center justify-center text-teal-600 dark:text-teal-400 group hover:border-teal-600/30 hover:scale-105 transition-all duration-300">
-                      <Icon className="h-5 w-5" />
+                    <div className="h-14 w-14 rounded-full bg-card border border-border/80 shadow-sm flex items-center justify-center text-teal-600 dark:text-teal-400 group hover:border-teal-600/30 hover:scale-105 transition-all duration-300 relative overflow-hidden">
+                      <div className="absolute inset-0 opacity-20 pointer-events-none p-1">
+                        <img src={processGear} alt="" className="w-full h-full object-contain" />
+                      </div>
+                      <Icon className="h-5 w-5 relative z-10" />
                     </div>
                   </div>
 

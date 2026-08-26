@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <style>
+      .leaf-sway {
+        animation: leafSway 3s ease-in-out infinite alternate;
+        transform-origin: center;
+      }
+      .aura-rotate {
+        animation: auraSpin 12s linear infinite;
+        transform-origin: center;
+      }
+      @keyframes leafSway {
+        0% { transform: rotate(-8deg) translateY(0px); }
+        100% { transform: rotate(12deg) translateY(-4px); }
+      }
+      @keyframes auraSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </defs>
+  <!-- Rotating Aura Ring -->
+  <circle class="aura-rotate" cx="100" cy="100" r="75" fill="none" stroke="#10B981" stroke-width="2" stroke-dasharray="20 15 10 15" opacity="0.6"/>
+
+  <!-- Water Drop Base -->
+  <path d="M100,45 C100,45 65,95 65,120 C65,139 81,155 100,155 C119,155 135,139 135,120 C135,95 100,45 100,45 Z" fill="#0F4C5C" opacity="0.8"/>
+  <path d="M100,55 C100,55 72,100 72,120 C72,135 84,148 100,148 C116,148 128,135 128,120 C128,100 100,55 100,55 Z" fill="#14B8A6"/>
+
+  <!-- Eco Leaf Overlay inside drop -->
+  <g class="leaf-sway">
+    <path d="M100,85 C75,95 80,130 105,125 C120,105 115,85 100,85 Z" fill="#10B981"/>
+    <path d="M92,118 Q100,108 108,94" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

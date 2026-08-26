@@ -1,17 +1,10 @@
 import React from "react";
 import { ImpactContent } from "@/content/impact";
-import { Droplets, TrendingUp, Globe, Award, CheckCircle } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
 
 interface ImpactOutcomesProps {
   data: ImpactContent["outcomes"];
 }
-
-const outcomeIcons: Record<string, React.ElementType> = {
-  Droplets,
-  TrendingUp,
-  Globe,
-  Award,
-};
 
 export const ImpactOutcomes: React.FC<ImpactOutcomesProps> = ({ data }) => {
   return (
@@ -41,7 +34,7 @@ export const ImpactOutcomes: React.FC<ImpactOutcomesProps> = ({ data }) => {
         {/* 4 Outcome Metric Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {data.pillars.map((pillar, idx) => {
-            const Icon = outcomeIcons[pillar.icon] || CheckCircle;
+            const imgSrc = getWaterPhotograph((pillar as any).iconImage || (pillar as any).imageUrl, pillar.label, idx);
             return (
               <div
                 key={idx}
@@ -50,8 +43,12 @@ export const ImpactOutcomes: React.FC<ImpactOutcomesProps> = ({ data }) => {
                 <div>
                   {/* Top Bar: Icon + Tag */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="h-6 w-6 stroke-[2]" />
+                    <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/20 group-hover:scale-110 transition-transform duration-300 w-12 h-12 flex items-center justify-center overflow-hidden shrink-0">
+                      <img
+                        src={imgSrc}
+                        alt={pillar.label}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
                     </div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400 bg-teal-50/80 dark:bg-teal-950/40 px-2.5 py-1 rounded-full border border-teal-600/10">
                       {pillar.tag}

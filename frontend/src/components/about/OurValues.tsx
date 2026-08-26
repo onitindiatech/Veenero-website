@@ -1,19 +1,10 @@
 import React from "react";
 import { AboutContent } from "@/content/about";
-import { Cpu, Eye, ShieldCheck, Activity, Leaf, Users, CheckCircle } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
 
 interface OurValuesProps {
   data: AboutContent["values"];
 }
-
-const iconMap: Record<string, React.ElementType> = {
-  Cpu,
-  Eye,
-  ShieldCheck,
-  Activity,
-  Leaf,
-  Users,
-};
 
 export const OurValues: React.FC<OurValuesProps> = ({ data }) => {
   return (
@@ -40,15 +31,19 @@ export const OurValues: React.FC<OurValuesProps> = ({ data }) => {
         {/* 4 Pillar Value Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {data.list.map((value, idx) => {
-            const IconComponent = iconMap[value.icon] || CheckCircle;
+            const imgSrc = getWaterPhotograph((value as any).iconImage || (value as any).imageUrl, value.title, idx);
             return (
               <div
                 key={idx}
                 className="group bg-card p-8 rounded-2xl border border-border/40 hover:border-teal-600/30 shadow-sm hover:shadow-soft hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-start font-sans h-full"
               >
                 {/* Circular Icon Wrapper */}
-                <div className="p-4 rounded-full bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <IconComponent className="h-6 w-6 stroke-[2]" />
+                <div className="p-1 rounded-full bg-teal-50 dark:bg-teal-950/20 mb-6 group-hover:scale-110 transition-transform duration-300 w-14 h-14 flex items-center justify-center overflow-hidden shrink-0">
+                  <img
+                    src={imgSrc}
+                    alt={value.title}
+                    className="w-full h-full object-cover rounded-full"
+                  />
                 </div>
 
                 {/* Title */}

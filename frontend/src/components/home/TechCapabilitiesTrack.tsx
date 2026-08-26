@@ -1,31 +1,7 @@
 import React from "react";
-import {
-  Cpu,
-  Radio,
-  ShieldCheck,
-  Sparkles,
-  LineChart,
-  FileCheck2,
-  Network,
-  BarChart3,
-  ShieldAlert,
-  Layers,
-  CheckCircle,
-} from "lucide-react";
 import { techCapabilitiesContent } from "@/content/home/techCapabilities";
-
-const iconMap: Record<string, React.ElementType> = {
-  Cpu,
-  Radio,
-  ShieldCheck,
-  Sparkles,
-  LineChart,
-  FileCheck2,
-  Network,
-  BarChart3,
-  ShieldAlert,
-  Layers,
-};
+import { getWaterPhotograph } from "@/utils/waterImages";
+import { techPulse } from "@/assets/animations";
 
 export const TechCapabilitiesTrack: React.FC = () => {
   const { eyebrow, title, description, items } = techCapabilitiesContent;
@@ -67,15 +43,22 @@ export const TechCapabilitiesTrack: React.FC = () => {
         {/* Seamless Scrolling Track */}
         <div className="flex gap-5 w-max animate-scroll-ltr group-hover:[animation-play-state:paused] py-2 px-4">
           {duplicatedItems.map((item, idx) => {
-            const Icon = iconMap[item.iconName] || CheckCircle;
+            const imgSrc = getWaterPhotograph(undefined, item.title, idx);
             return (
               <div
                 key={`${item.id}-${idx}`}
                 className="bg-card hover:bg-card/95 p-4 sm:p-5 rounded-2xl border border-border/40 hover:border-teal-600/30 shadow-sm hover:shadow-soft transition-all duration-300 flex items-center gap-4 min-w-[260px] sm:min-w-[290px] shrink-0 font-sans cursor-default group/card"
               >
-                {/* Icon Wrapper */}
-                <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 shrink-0 group-hover/card:scale-110 transition-transform duration-300">
-                  <Icon className="h-5 w-5 stroke-[2]" />
+                {/* Icon Wrapper with Animated Asset Accent */}
+                <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 shrink-0 group-hover/card:scale-110 transition-transform duration-300 w-11 h-11 flex items-center justify-center overflow-hidden relative">
+                  <img
+                    src={imgSrc}
+                    alt={item.title}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-screen">
+                    <img src={techPulse} alt="" className="w-full h-full object-cover" />
+                  </div>
                 </div>
 
                 {/* Text Content */}

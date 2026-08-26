@@ -15,7 +15,7 @@ export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
   };
 
   return (
-    <section className="relative min-h-[50vh] md:h-[60vh] flex items-center bg-background border-b border-border/10 overflow-hidden select-none">
+    <section className="relative min-h-[50vh] md:min-h-[60vh] flex items-center bg-background border-b border-border/10 overflow-hidden select-none">
       {/* RIGHT SIDE / BACKGROUND Image with Gradient Overlay Fades */}
       <div className="absolute right-0 top-0 bottom-0 w-full md:w-[60%] lg:w-[55%] z-0 select-none">
         <img
@@ -35,21 +35,18 @@ export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
         <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-background via-background/60 to-transparent md:hidden" />
       </div>
 
-      {/* LEFT SIDE CONTENT - Matching Careers, About, Solutions, and Impact Hero Typography */}
+      {/* LEFT SIDE CONTENT - Spacing matches the reference image */}
       <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 py-12 md:py-16">
         <div className="max-w-2xl text-left font-sans animate-fade-up">
+
           {/* Eyebrow */}
-          {data.eyebrow && (
-            <p className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping inline-block" />
-              {data.eyebrow}
-            </p>
-          )}
+          <p className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3">
+            CONTACT VEENERO
+          </p>
 
           {/* Editorial H1 Heading (Playfair Display) */}
           <h1 className="font-display text-4xl sm:text-5xl md:text-[3.25rem] lg:text-[4rem] font-bold text-foreground leading-[1.1] mb-5 tracking-tight">
-            Connect with Our <br className="hidden md:inline" />
-            Water Intelligence Team
+            Connect with Our Water Intelligence Team
           </h1>
 
           {/* Supporting Description */}
@@ -57,7 +54,7 @@ export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
             {data.description}
           </p>
 
-          {/* Action Buttons */}
+          {/* Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <button
               onClick={() => scrollToSection("contact-form-section")}

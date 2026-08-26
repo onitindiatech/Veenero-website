@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImageFallback from "@/assets/hero-water.jpg";
+import { waterRipple } from "@/assets/animations";
 import { heroContent } from "@/content/home/hero";
 import { getPublicHome, HomeHero } from "@/services/home.service";
 import { mergeHomeSection } from "@/utils/mergeHomeSection";
+import WaterCursorEffect from "@/components/effects/WaterCursorEffect";
+import WaterScrollEffect from "@/components/effects/WaterScrollEffect";
 
 export const Hero = () => {
   const [hero, setHero] = useState<HomeHero>(heroContent);
@@ -50,6 +53,9 @@ export const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-teal-950/50 via-transparent to-black/30 pointer-events-none" />
       </div>
 
+      {/* Water cursor ripple effect — above background (z-2), below content (z-10) */}
+      <WaterCursorEffect />
+
       {/* Floating Water Droplet Accents Matching Careers, About & Solutions Benchmark */}
       <div className="absolute top-[22%] left-[4%] w-6 h-6 rounded-full bg-teal-300/15 border border-teal-200/30 blur-[0.5px] pointer-events-none animate-float z-10" />
       <div className="absolute top-[48%] right-[5%] w-8 h-8 rounded-full bg-cyan-300/15 border border-cyan-200/30 blur-[1px] pointer-events-none animate-float animation-delay-400 z-10" />
@@ -59,68 +65,69 @@ export const Hero = () => {
       <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary-foreground/10 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-aqua/15 rounded-full blur-3xl animate-float animation-delay-400" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary-foreground/5 rounded-full blur-3xl animate-wave" />
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-6 relative z-10 text-center py-20">
-        <div className="max-w-4xl mx-auto">
-          {/* Eyebrow with Pulsing Live Indicator */}
-          {hero.eyebrow && (
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 opacity-0 animate-fade-up">
-              <span className="w-2 h-2 rounded-full bg-aqua animate-ping inline-block" />
-              <p className="text-primary-foreground/90 font-bold tracking-widest uppercase text-xs">
-                {hero.eyebrow}
-              </p>
-            </div>
-          )}
+        <WaterScrollEffect>
+          <div className="max-w-4xl mx-auto">
+            {/* Eyebrow with Pulsing Live Indicator */}
+            {hero.eyebrow && (
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 opacity-0 animate-fade-up">
+                <span className="w-2 h-2 rounded-full bg-aqua animate-ping inline-block" />
+                <p className="text-primary-foreground/90 font-bold tracking-widest uppercase text-xs">
+                  {hero.eyebrow}
+                </p>
+              </div>
+            )}
 
-          {/* Editorial H1 Heading */}
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-[1.1] mb-8 opacity-0 animate-fade-up animation-delay-200 tracking-tight">
-            {titleRest}{" "}
-            <span className="block sm:inline mt-2 sm:mt-0 bg-clip-text text-transparent bg-gradient-to-r from-white via-aqua to-teal-200 animate-gradient">
-              {titleLastWord}
-            </span>
-          </h1>
+            {/* Editorial H1 Heading */}
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-[1.1] mb-8 opacity-0 animate-fade-up animation-delay-200 tracking-tight">
+              {titleRest}{" "}
+              <span className="block sm:inline mt-2 sm:mt-0 bg-clip-text text-transparent bg-gradient-to-r from-white via-aqua to-teal-200 animate-gradient">
+                {titleLastWord}
+              </span>
+            </h1>
 
-          {/* Description */}
-          <p className="text-base sm:text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-10 leading-relaxed opacity-0 animate-fade-up animation-delay-400 font-sans">
-            {hero.description}
-          </p>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-up animation-delay-600">
-            <Button
-              variant="hero"
-              size="xl"
-              className="w-full sm:w-auto shadow-glow hover:shadow-soft hover:-translate-y-0.5 transition-all duration-200 font-bold group"
-              asChild
-            >
-              <a href={hero.primaryCtaLink || "/#solutions"}>
-                {hero.primaryCtaText || "Explore the Platform"}
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </a>
-            </Button>
-            <Button
-              variant="heroOutline"
-              size="xl"
-              className="w-full sm:w-auto hover:bg-white/15 hover:-translate-y-0.5 transition-all duration-200 font-bold group"
-              asChild
-            >
-              <a href={hero.secondaryCtaLink || "/approach"}>
-                <Play className="h-5 w-5 text-aqua fill-aqua/30" />
-                {hero.secondaryCtaText || "Watch How Water Visibility Works"}
-              </a>
-            </Button>
-          </div>
-
-          {/* Bottom Tagline */}
-          {hero.bottomText && (
-            <p className="mt-8 text-xs sm:text-sm md:text-base text-primary-foreground/80 tracking-widest uppercase font-semibold opacity-0 animate-fade-up animation-delay-700">
-              {hero.bottomText}
+            {/* Description */}
+            <p className="text-base sm:text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-10 leading-relaxed opacity-0 animate-fade-up animation-delay-400 font-sans">
+              {hero.description}
             </p>
-          )}
-        </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-up animation-delay-600">
+              <Button
+                variant="hero"
+                size="xl"
+                className="w-full sm:w-auto shadow-glow hover:shadow-soft hover:-translate-y-0.5 transition-all duration-200 font-bold group"
+                asChild
+              >
+                <a href={hero.primaryCtaLink || "/#solutions"}>
+                  {hero.primaryCtaText || "Explore the Platform"}
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </a>
+              </Button>
+              <Button
+                variant="heroOutline"
+                size="xl"
+                className="w-full sm:w-auto hover:bg-white/15 hover:-translate-y-0.5 transition-all duration-200 font-bold group"
+                asChild
+              >
+                <a href={hero.secondaryCtaLink || "/approach"}>
+                  <Play className="h-5 w-5 text-aqua fill-aqua/30" />
+                  {hero.secondaryCtaText || "Watch How Water Visibility Works"}
+                </a>
+              </Button>
+            </div>
+
+            {/* Bottom Tagline */}
+            {hero.bottomText && (
+              <p className="mt-8 text-xs sm:text-sm md:text-base text-primary-foreground/80 tracking-widest uppercase font-semibold opacity-0 animate-fade-up animation-delay-700">
+                {hero.bottomText}
+              </p>
+            )}
+          </div>
+        </WaterScrollEffect>
       </div>
 
       {/* Scroll Indicator */}

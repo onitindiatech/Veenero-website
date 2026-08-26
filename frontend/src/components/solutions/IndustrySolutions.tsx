@@ -1,17 +1,11 @@
 import React from "react";
 import { SolutionsContent } from "@/content/solutions";
-import { Factory, Building2, Building, Server, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
 
 interface IndustrySolutionsProps {
   data: SolutionsContent["industries"];
 }
-
-const industryIcons: Record<string, React.ElementType> = {
-  Factory,
-  Building2,
-  Building,
-  Server,
-};
 
 export const IndustrySolutions: React.FC<IndustrySolutionsProps> = ({ data }) => {
   return (
@@ -38,7 +32,7 @@ export const IndustrySolutions: React.FC<IndustrySolutionsProps> = ({ data }) =>
         {/* 4 Industry Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {data.list.map((industry, idx) => {
-            const Icon = industryIcons[industry.icon] || Factory;
+            const imgSrc = getWaterPhotograph((industry as any).iconImage || (industry as any).imageUrl, industry.title, idx);
             return (
               <div
                 key={idx}
@@ -46,8 +40,12 @@ export const IndustrySolutions: React.FC<IndustrySolutionsProps> = ({ data }) =>
               >
                 <div>
                   {/* Icon Wrapper */}
-                  <div className="p-4 rounded-full bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 mb-6 w-fit group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="h-6 w-6 stroke-[2]" />
+                  <div className="p-1 rounded-full bg-teal-50 dark:bg-teal-950/20 mb-6 w-14 h-14 group-hover:scale-110 transition-transform duration-300 overflow-hidden flex items-center justify-center shrink-0">
+                    <img
+                      src={imgSrc}
+                      alt={industry.title}
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   </div>
 
                   {/* Title */}

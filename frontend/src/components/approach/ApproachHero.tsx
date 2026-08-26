@@ -1,12 +1,7 @@
 import React from "react";
 import defaultHeroImage from "@/assets/hero-water.jpg";
-import { ImpactContent } from "@/content/impact";
 
-interface ImpactHeroProps {
-  data: ImpactContent["hero"];
-}
-
-export const ImpactHero: React.FC<ImpactHeroProps> = ({ data }) => {
+export const ApproachHero: React.FC = () => {
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -15,67 +10,59 @@ export const ImpactHero: React.FC<ImpactHeroProps> = ({ data }) => {
   };
 
   return (
-    <section className="relative min-h-[50vh] md:min-h-[60vh] flex items-center bg-background border-b border-border/10 overflow-hidden select-none">
+    <section className="relative min-h-[50vh] md:h-[60vh] flex items-center bg-background border-b border-border/10 overflow-hidden select-none">
+      
       {/* RIGHT SIDE / BACKGROUND Image with Gradient Overlay Fades */}
       <div className="absolute right-0 top-0 bottom-0 w-full md:w-[60%] lg:w-[55%] z-0 select-none">
         <img
           src={defaultHeroImage}
-          alt="Water impact and verifiable sustainability"
+          alt="Water ripples"
           className="w-full h-full object-cover transition-transform ease-out hover:scale-105"
           style={{ transitionDuration: "10s" }}
         />
-
-        {/* Water caustic light overlay */}
-        <div className="absolute inset-0 bg-teal-950/20 mix-blend-color-burn pointer-events-none" />
-
-        {/* Horizontal Gradient fade for Desktop */}
+        {/* Horizontal Gradient fade for Desktop (Solid white/light background to Transparent water image) */}
         <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background via-background/70 to-transparent hidden md:block" />
         
-        {/* Vertical Gradient fade for Mobile */}
+        {/* Vertical Gradient fade for Mobile (Solid background bottom up to image) */}
         <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-background via-background/60 to-transparent md:hidden" />
       </div>
 
-      {/* LEFT SIDE CONTENT - Matching Careers, About, and Solutions Hero Typography */}
+      {/* LEFT SIDE CONTENT - Spacing matches the reference image */}
       <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 py-12 md:py-16">
         <div className="max-w-2xl text-left font-sans animate-fade-up">
+
           {/* Eyebrow */}
-          {data.eyebrow && (
-            <p className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3">
-              {data.eyebrow}
-            </p>
-          )}
+          <p className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping inline-block" />
+            OUR APPROACH
+          </p>
 
           {/* Editorial H1 Heading (Playfair Display) */}
           <h1 className="font-display text-4xl sm:text-5xl md:text-[3.25rem] lg:text-[4rem] font-bold text-foreground leading-[1.1] mb-5 tracking-tight">
-            Making Every Litre <br className="hidden md:inline" />
-            Visible & Accountable
+            A Proven Path to <br className="hidden md:inline" />
+            Water Sustainability
           </h1>
 
           {/* Supporting Description */}
           <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mb-8">
-            {data.description}
+            Our methodical process helps organizations move from water visibility to informed action and long-term optimization.
           </p>
 
-          {/* Action Buttons */}
+          {/* Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <button
-              onClick={() => scrollToSection("impact-outcomes")}
+              onClick={() => scrollToSection("approach-steps")}
               className="w-full sm:w-auto px-6 py-3.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold shadow-soft hover:-translate-y-0.5 transition-all duration-200 text-sm flex items-center justify-center gap-2"
             >
-              {data.primaryCtaText || "Explore Outcomes"}
-              <span className="text-base leading-none">→</span>
-            </button>
-            <button
-              onClick={() => scrollToSection("impact-storyline")}
-              className="w-full sm:w-auto px-6 py-3.5 bg-card hover:bg-muted text-foreground border border-border/80 rounded-xl font-bold hover:-translate-y-0.5 transition-all duration-200 text-sm flex items-center justify-center shadow-soft"
-            >
-              {data.secondaryCtaText || "Impact Journey"}
+              Explore Our Process
+              <span className="text-base leading-none">↓</span>
             </button>
           </div>
         </div>
       </div>
+
     </section>
   );
 };
 
-export default ImpactHero;
+export default ApproachHero;

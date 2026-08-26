@@ -22,89 +22,65 @@ export const BlogHero: React.FC<BlogHeroProps> = ({ settings }) => {
   const hero = settings?.hero ?? DEFAULT;
 
   return (
-    <section className="relative w-full bg-[#F7FAFA] dark:bg-[#0a1a1a] overflow-hidden select-none">
-      
-      {/* Soft teal gradient mesh */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 right-0 w-72 h-72 bg-cyan-400/8 rounded-full blur-2xl pointer-events-none" />
+    <section className="relative min-h-[50vh] md:min-h-[60vh] flex items-center bg-background border-b border-border/10 overflow-hidden select-none">
+      {/* RIGHT SIDE / BACKGROUND Image with Gradient Overlay Fades */}
+      <div className="absolute right-0 top-0 bottom-0 w-full md:w-[60%] lg:w-[55%] z-0 select-none">
+        <img
+          src={FALLBACK_IMG}
+          alt={hero.imageAlt}
+          className="w-full h-full object-cover transition-transform ease-out hover:scale-105"
+          style={{ transitionDuration: "10s" }}
+        />
+        {/* Water caustic light overlay */}
+        <div className="absolute inset-0 bg-teal-950/20 mix-blend-color-burn pointer-events-none" />
+        
+        <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background via-background/70 to-transparent hidden md:block" />
+        <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-background via-background/60 to-transparent md:hidden" />
+      </div>
 
-      {/* Floating droplet accents */}
-      <div className="absolute top-8 left-[12%] w-3 h-3 rounded-full border border-teal-400/30 bg-teal-400/10 animate-float pointer-events-none" />
-      <div className="absolute bottom-10 left-[35%] w-2 h-2 rounded-full border border-cyan-400/40 bg-cyan-400/15 animate-float animation-delay-600 pointer-events-none" />
-      <div className="absolute top-16 right-[20%] w-4 h-4 rounded-full border border-teal-500/20 bg-teal-500/8 animate-float animation-delay-300 pointer-events-none" />
+      {/* LEFT SIDE CONTENT - Spacing matches the reference image */}
+      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 py-12 md:py-16">
+        <div className="max-w-2xl text-left font-sans animate-fade-up">
 
-      <div className="container mx-auto px-6 md:px-12 max-w-7xl py-16 md:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-          {/* Left — Text */}
-          <div className="space-y-6 order-2 lg:order-1">
-            {/* Eyebrow */}
-            <div className="flex items-center gap-3">
-              <div className="h-px w-8 bg-teal-600" />
-              <span className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">
-                {hero.eyebrow}
-              </span>
-            </div>
-
-            {/* H1 */}
-            <h1 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-foreground leading-[1.1] tracking-tight">
-              {hero.title.split('&').map((part, i, arr) =>
-                i < arr.length - 1 ? (
-                  <React.Fragment key={i}>
-                    {part}
-                    <span className="text-teal-600">&</span>
-                  </React.Fragment>
-                ) : (
-                  <React.Fragment key={i}>{part}</React.Fragment>
-                )
-              )}
-            </h1>
-
-            {/* Description */}
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg">
-              {hero.description}
+          {/* Eyebrow */}
+          {hero.eyebrow && (
+            <p className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3">
+              {hero.eyebrow}
             </p>
+          )}
 
-            {/* Subtle tag chips */}
-            <div className="flex flex-wrap gap-2 pt-2">
-              {['Water Intelligence', 'Sustainability', 'Technology', 'Research'].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-400 border border-teal-200/60 dark:border-teal-800/40 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+          {/* Editorial H1 Heading (Playfair Display) */}
+          <h1 className="font-display text-4xl sm:text-5xl md:text-[3.25rem] lg:text-[4rem] font-bold text-foreground leading-[1.1] mb-5 tracking-tight">
+            {hero.title}
+          </h1>
+
+          {/* Supporting Description */}
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mb-8">
+            {hero.description}
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <button
+              onClick={() => {
+                const el = document.getElementById('blog-grid');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full sm:w-auto px-6 py-3.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold shadow-soft hover:-translate-y-0.5 transition-all duration-200 text-sm flex items-center justify-center gap-2"
+            >
+              Explore Insights
+              <span className="text-base leading-none">→</span>
+            </button>
+            <button
+              onClick={() => {
+                const el = document.getElementById('newsletter');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full sm:w-auto px-6 py-3.5 bg-card hover:bg-muted text-foreground border border-border/80 rounded-xl font-bold hover:-translate-y-0.5 transition-all duration-200 text-sm flex items-center justify-center shadow-soft"
+            >
+              Subscribe
+            </button>
           </div>
-
-          {/* Right — Editorial Image */}
-          <div className="order-1 lg:order-2 relative">
-            <div className="relative rounded-3xl overflow-hidden aspect-[4/3] lg:aspect-[16/11] shadow-2xl">
-              <img
-                src={hero.image || FALLBACK_IMG}
-                alt={hero.imageAlt}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG;
-                }}
-              />
-              {/* Teal overlay at bottom */}
-              <div className="absolute inset-0 bg-gradient-to-t from-teal-900/30 via-transparent to-transparent" />
-
-              {/* Floating badge */}
-              <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-background/90 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-lg border border-white/30">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse" />
-                  <span className="text-[11px] font-bold text-foreground">Live Insights</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Decorative offset ring */}
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-teal-200/40 dark:border-teal-800/40 rounded-3xl pointer-events-none" />
-          </div>
-
         </div>
       </div>
     </section>

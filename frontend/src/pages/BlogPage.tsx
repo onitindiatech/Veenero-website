@@ -122,18 +122,21 @@ export const BlogPage: React.FC = () => {
   const seoTitle = settings?.seo?.metaTitle || 'Water Intelligence Insights & Articles | Veenero';
   const seoDesc = settings?.seo?.metaDescription || 'Read the latest insights on water management, sustainability, and smart infrastructure from Veenero.';
 
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.title = seoTitle;
+    }
+  }, [seoTitle]);
+
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-hidden">
-      {/* Update page title */}
-      {typeof document !== 'undefined' && (document.title = seoTitle)}
-
       {/* Floating background droplet decor */}
       <div className="absolute top-[20%] left-[2%] w-6 h-6 rounded-full bg-teal-500/10 border border-teal-600/20 blur-[0.5px] pointer-events-none animate-float z-0" />
       <div className="absolute top-[60%] right-[3%] w-7 h-7 rounded-full bg-cyan-500/10 border border-cyan-600/20 blur-[1px] pointer-events-none animate-float z-0" />
 
       <Navbar />
 
-      <main className="flex-1 bg-[#FCFDFD] dark:bg-background pt-24 pb-20 relative z-10">
+      <main className="flex-1 bg-[#FCFDFD] dark:bg-background relative z-10">
 
         {/* 1. Blog Hero — always visible, uses settings */}
         <BlogHero settings={settings} />

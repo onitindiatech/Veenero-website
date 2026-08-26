@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <style>
+      .radar-sweep {
+        animation: radarSpin 4s linear infinite;
+        transform-origin: center;
+      }
+      .drop-pulse {
+        animation: dropFloat 2.5s ease-in-out infinite alternate;
+        transform-origin: center;
+      }
+      .wave-expand {
+        animation: waveExpand 3s ease-out infinite;
+        transform-origin: center;
+      }
+      @keyframes radarSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes dropFloat {
+        0% { transform: translateY(0px) scale(0.95); }
+        100% { transform: translateY(-6px) scale(1.05); }
+      }
+      @keyframes waveExpand {
+        0% { r: 15px; opacity: 0.9; stroke-width: 2px; }
+        100% { r: 80px; opacity: 0; stroke-width: 1px; }
+      }
+    </style>
+  </defs>
+  <!-- Background Radar Concentric Rings -->
+  <circle cx="100" cy="100" r="80" fill="none" stroke="#0F4C5C" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="100" cy="100" r="55" fill="none" stroke="#14B8A6" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6"/>
+  <circle cx="100" cy="100" r="30" fill="none" stroke="#38BDF8" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Radar Scanning Beam -->
+  <g class="radar-sweep">
+    <path d="M 100 100 L 175 60 A 80 80 0 0 0 100 20 Z" fill="#38BDF8" opacity="0.25"/>
+    <line x1="100" y1="100" x2="175" y2="60" stroke="#38BDF8" stroke-width="2"/>
+  </g>
+
+  <!-- Expanding Wave -->
+  <circle class="wave-expand" cx="100" cy="100" r="20" fill="none" stroke="#38BDF8"/>
+
+  <!-- Central Water Droplet Sensor Icon -->
+  <g class="drop-pulse">
+    <path d="M100,72 C100,72 84,94 84,106 C84,115 91,122 100,122 C109,122 116,115 116,106 C116,94 100,72 100,72 Z" fill="#14B8A6"/>
+    <path d="M96,98 C96,98 90,106 90,110 C90,113 92,116 95,116" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,17 +1,11 @@
 import React from "react";
 import { ImpactContent } from "@/content/impact";
-import { Radio, Sparkles, BarChart3, FileCheck2, CheckCircle2, ChevronRight } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
 
 interface ImpactStorylineProps {
   data: ImpactContent["storyline"];
 }
-
-const stepIcons: Record<string, React.ElementType> = {
-  Radio,
-  Sparkles,
-  BarChart3,
-  FileCheck2,
-};
 
 export const ImpactStoryline: React.FC<ImpactStorylineProps> = ({ data }) => {
   return (
@@ -41,7 +35,7 @@ export const ImpactStoryline: React.FC<ImpactStorylineProps> = ({ data }) => {
         {/* 4-Step Connected Journey Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
           {data.steps.map((step, idx) => {
-            const Icon = stepIcons[step.icon] || Radio;
+            const imgSrc = getWaterPhotograph((step as any).iconImage || (step as any).imageUrl, step.title, idx);
             return (
               <div
                 key={idx}
@@ -53,8 +47,12 @@ export const ImpactStoryline: React.FC<ImpactStorylineProps> = ({ data }) => {
                     <span className="font-display text-2xl font-bold text-teal-600/40 dark:text-teal-400/30 group-hover:text-teal-600 transition-colors">
                       {step.number}
                     </span>
-                    <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="h-5 w-5 stroke-[2]" />
+                    <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/20 group-hover:scale-110 transition-transform duration-300 w-11 h-11 flex items-center justify-center overflow-hidden shrink-0">
+                      <img
+                        src={imgSrc}
+                        alt={step.title}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
                     </div>
                   </div>
 

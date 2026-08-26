@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <style>
+      .gear-spin {
+        animation: gearRotate 12s linear infinite;
+        transform-origin: center;
+      }
+      .center-pulse {
+        animation: centerPulse 2s ease-in-out infinite alternate;
+        transform-origin: center;
+      }
+      @keyframes gearRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes centerPulse {
+        0% { transform: scale(0.9); }
+        100% { transform: scale(1.1); }
+      }
+    </style>
+  </defs>
+  <!-- Outer Rotating Gear Teeth -->
+  <g class="gear-spin">
+    <path d="M100,30 L108,30 L112,45 C119,47 126,51 132,56 L146,48 L152,54 L144,68 C149,74 153,81 155,88 L170,92 L170,100 L170,108 L155,112 C153,119 149,126 144,132 L152,146 L146,152 L132,144 C126,149 119,153 112,155 L108,170 L100,170 L92,170 L88,155 C81,153 74,149 68,144 L54,152 L48,146 L56,132 C51,126 47,119 45,112 L30,108 L30,100 L30,92 L45,88 C47,81 51,74 56,68 L48,54 L54,48 L68,56 C74,51 81,47 88,45 L92,30 Z" fill="#0F4C5C" stroke="#14B8A6" stroke-width="2.5" opacity="0.85"/>
+    <circle cx="100" cy="100" r="46" fill="#14B8A6" opacity="0.3"/>
+  </g>
+
+  <!-- Central Water Drop Core -->
+  <g class="center-pulse">
+    <circle cx="100" cy="100" r="32" fill="#0F4C5C"/>
+    <path d="M100,82 C100,82 89,98 89,106 C89,112 94,117 100,117 C106,117 111,112 111,106 C111,98 100,82 100,82 Z" fill="#38BDF8"/>
+  </g>
+</svg>

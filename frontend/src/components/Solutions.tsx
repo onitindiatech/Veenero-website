@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getPublicHome, HomeSolutions } from "@/services/home.service";
 import { solutionsContent } from "@/content/home/solutions";
 import { mergeHomeSection } from "@/utils/mergeHomeSection";
+import { getWaterPhotograph } from "@/utils/waterImages";
 
 export const Solutions = () => {
   const [solutions, setSolutions] = useState<HomeSolutions>(solutionsContent);
@@ -41,14 +42,18 @@ export const Solutions = () => {
         {/* Solutions Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {solutions.list.map((solution, idx) => {
-            const IconComp = (Icons as any)[solution.iconName] || Icons.Search;
+            const imgSrc = getWaterPhotograph((solution as any).iconImage || (solution as any).imageUrl || (solution.iconName?.startsWith('http') ? solution.iconName : undefined), solution.title, idx);
             return (
               <div
                 key={`${solution.title}-${idx}`}
                 className="group bg-card rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 border border-border hover:border-primary/30 hover:-translate-y-1"
               >
-                <div className="w-12 h-12 bg-gradient-ocean rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <IconComp className="h-6 w-6 text-primary-foreground" />
+                <div className="w-12 h-12 bg-gradient-ocean rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                  <img
+                    src={imgSrc}
+                    alt={solution.title}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
                 </div>
                 <h3 className="font-display text-xl font-semibold text-foreground mb-3">
                   {solution.title}

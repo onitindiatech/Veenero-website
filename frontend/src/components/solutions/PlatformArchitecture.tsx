@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 import { SolutionsContent } from "@/content/solutions";
-import { Cpu, Activity, BarChart3, ShieldCheck, CheckCircle2, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronRight } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
+import { techPulse, dataSensor } from "@/assets/animations";
 
 interface PlatformArchitectureProps {
   data: SolutionsContent["architecture"];
 }
-
-const layerIcons: Record<string, React.ElementType> = {
-  Cpu,
-  Activity,
-  BarChart3,
-  ShieldCheck,
-};
 
 export const PlatformArchitecture: React.FC<PlatformArchitectureProps> = ({ data }) => {
   const [activeLayer, setActiveLayer] = useState<number>(0);
@@ -46,7 +41,7 @@ export const PlatformArchitecture: React.FC<PlatformArchitectureProps> = ({ data
           {/* Layer Indicator Tabs for Fast Scanning */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {data.layers.map((layer, idx) => {
-              const Icon = layerIcons[layer.icon] || Cpu;
+              const imgSrc = getWaterPhotograph((layer as any).iconImage || (layer as any).imageUrl, layer.title, idx);
               const isActive = activeLayer === idx;
               return (
                 <button
@@ -59,14 +54,12 @@ export const PlatformArchitecture: React.FC<PlatformArchitectureProps> = ({ data
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                        isActive
-                          ? "bg-teal-600 text-white"
-                          : "bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
+                      <img
+                        src={imgSrc}
+                        alt={layer.title}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
                     </div>
                     <div>
                       <p className="text-[10px] uppercase font-bold tracking-wider text-teal-600 dark:text-teal-400">
@@ -89,6 +82,11 @@ export const PlatformArchitecture: React.FC<PlatformArchitectureProps> = ({ data
           <div className="bg-card p-8 md:p-10 rounded-2xl border border-border/40 shadow-soft relative overflow-hidden font-sans">
             {/* Ambient Data-Stream Pulse Line */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-600" />
+            
+            {/* Animated SVG Asset Accent */}
+            <div className="absolute -right-10 -bottom-10 w-64 h-64 opacity-15 pointer-events-none z-0">
+              <img src={techPulse} alt="" className="w-full h-full object-contain" />
+            </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
@@ -134,7 +132,7 @@ export const PlatformArchitecture: React.FC<PlatformArchitectureProps> = ({ data
           {/* 4 Connected Flow Columns (Desktop & Mobile Overview) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
             {data.layers.map((layer, idx) => {
-              const Icon = layerIcons[layer.icon] || Cpu;
+              const imgSrc = getWaterPhotograph((layer as any).iconImage || (layer as any).imageUrl, layer.title, idx);
               return (
                 <div
                   key={idx}
@@ -142,8 +140,12 @@ export const PlatformArchitecture: React.FC<PlatformArchitectureProps> = ({ data
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform duration-300">
-                        <Icon className="h-5 w-5 stroke-[2]" />
+                      <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/20 group-hover:scale-110 transition-transform duration-300 w-11 h-11 flex items-center justify-center overflow-hidden shrink-0">
+                        <img
+                          src={imgSrc}
+                          alt={layer.title}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
                       </div>
                       <span className="font-display text-xl font-bold text-muted-foreground/30">
                         {layer.number}

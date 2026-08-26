@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F4C5C" stop-opacity="0.2"/>
+      <stop offset="30%" stop-color="#14B8A6" stop-opacity="0.9"/>
+      <stop offset="70%" stop-color="#38BDF8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#0F4C5C" stop-opacity="0.2"/>
+    </linearGradient>
+    <style>
+      .flow-path-1 {
+        stroke-dasharray: 40 15;
+        animation: dashMove 12s linear infinite;
+      }
+      .flow-path-2 {
+        stroke-dasharray: 20 10;
+        animation: dashMoveReverse 8s linear infinite;
+      }
+      .particle-glow {
+        animation: particleFly 4s ease-in-out infinite;
+      }
+      @keyframes dashMove {
+        from { stroke-dashoffset: 600; }
+        to { stroke-dashoffset: 0; }
+      }
+      @keyframes dashMoveReverse {
+        from { stroke-dashoffset: 0; }
+        to { stroke-dashoffset: 600; }
+      }
+      @keyframes particleFly {
+        0% { transform: translate(0, 0); opacity: 0; }
+        30% { opacity: 0.8; }
+        70% { opacity: 0.8; }
+        100% { transform: translate(400px, -20px); opacity: 0; }
+      }
+    </style>
+  </defs>
+  <path class="flow-path-1" d="M0,100 C150,40 300,160 450,100 C520,70 570,90 600,100" fill="none" stroke="url(#flowGradient)" stroke-width="4" stroke-linecap="round"/>
+  <path class="flow-path-2" d="M0,110 C120,160 280,50 420,120 C500,150 560,110 600,90" fill="none" stroke="#38BDF8" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+  <circle class="particle-glow" cx="50" cy="100" r="4" fill="#38BDF8"/>
+  <circle class="particle-glow" cx="150" cy="80" r="3" fill="#14B8A6" style="animation-delay: 1.5s;"/>
+</svg>

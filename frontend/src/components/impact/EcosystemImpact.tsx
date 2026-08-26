@@ -1,17 +1,11 @@
 import React from "react";
 import { ImpactContent } from "@/content/impact";
-import { Building2, Landmark, Factory, HeartHandshake, CheckCircle2, Quote } from "lucide-react";
+import { CheckCircle2, Quote } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
 
 interface EcosystemImpactProps {
   data: ImpactContent["ecosystem"];
 }
-
-const domainIcons: Record<string, React.ElementType> = {
-  Building2,
-  Landmark,
-  Factory,
-  HeartHandshake,
-};
 
 export const EcosystemImpact: React.FC<EcosystemImpactProps> = ({ data }) => {
   return (
@@ -38,7 +32,7 @@ export const EcosystemImpact: React.FC<EcosystemImpactProps> = ({ data }) => {
         {/* 4 Ecosystem Domain Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {data.domains.map((domain, idx) => {
-            const Icon = domainIcons[domain.icon] || Building2;
+            const imgSrc = getWaterPhotograph((domain as any).iconImage || (domain as any).imageUrl, domain.title, idx);
             return (
               <div
                 key={idx}
@@ -46,8 +40,12 @@ export const EcosystemImpact: React.FC<EcosystemImpactProps> = ({ data }) => {
               >
                 <div>
                   {/* Icon Wrapper */}
-                  <div className="p-4 rounded-full bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 mb-6 w-fit group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="h-6 w-6 stroke-[2]" />
+                  <div className="p-1 rounded-full bg-teal-50 dark:bg-teal-950/20 mb-6 w-14 h-14 group-hover:scale-110 transition-transform duration-300 overflow-hidden flex items-center justify-center shrink-0">
+                    <img
+                      src={imgSrc}
+                      alt={domain.title}
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   </div>
 
                   {/* Title */}

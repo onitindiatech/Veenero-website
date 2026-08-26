@@ -1,28 +1,11 @@
 import React from "react";
 import { SolutionsContent } from "@/content/solutions";
-import {
-  Radio,
-  Sparkles,
-  LineChart,
-  FileCheck2,
-  Layers,
-  ShieldAlert,
-  CheckCircle,
-  Check,
-} from "lucide-react";
+import { Check } from "lucide-react";
+import { getWaterPhotograph } from "@/utils/waterImages";
 
 interface SolutionsGridProps {
   data: SolutionsContent["solutionsGrid"];
 }
-
-const solutionIcons: Record<string, React.ElementType> = {
-  Radio,
-  Sparkles,
-  LineChart,
-  FileCheck2,
-  Layers,
-  ShieldAlert,
-};
 
 export const SolutionsGrid: React.FC<SolutionsGridProps> = ({ data }) => {
   return (
@@ -52,7 +35,7 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({ data }) => {
         {/* 6 Modular Solution Cards (3 columns on desktop, 2 on tablet, 1 on mobile) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.solutions.map((solution, idx) => {
-            const Icon = solutionIcons[solution.icon] || CheckCircle;
+            const imgSrc = getWaterPhotograph((solution as any).iconImage || (solution as any).imageUrl, solution.title, idx);
             return (
               <div
                 key={solution.id || idx}
@@ -61,8 +44,12 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({ data }) => {
                 <div>
                   {/* Top Bar: Icon + Pillar Tag */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="h-6 w-6 stroke-[2]" />
+                    <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/20 group-hover:scale-110 transition-transform duration-300 w-12 h-12 flex items-center justify-center overflow-hidden shrink-0">
+                      <img
+                        src={imgSrc}
+                        alt={solution.title}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
                     </div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400 bg-teal-50/80 dark:bg-teal-950/40 px-2.5 py-1 rounded-full border border-teal-600/10">
                       {solution.pillar}
