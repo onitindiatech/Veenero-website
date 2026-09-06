@@ -1,0 +1,65 @@
+{
+  "health": {
+    "status": 200,
+    "ok": true,
+    "db": "connected"
+  },
+  "login": {
+    "status": 200,
+    "ok": true
+  },
+  "unauth_upload": {
+    "status": 401,
+    "ok": true
+  },
+  "image_upload": {
+    "status": 201,
+    "ok": true,
+    "publicId": "veenero/shared/rqauzdr57qw5o98ge8h9",
+    "secureUrl": "https://res.cloudinary.com/jibshwhn/image/upload/v1788169887/veenero/shared/rqauzdr57qw5o98ge8h9.png",
+    "mongoId": "6a954ea0651f3067cf8ff74e",
+    "format": "png",
+    "bytes": 68
+  },
+  "video_upload": {
+    "status": 201,
+    "ok": true,
+    "publicId": "veenero/shared/xefyouvvvj3v9j50j25j",
+    "secureUrl": "https://res.cloudinary.com/jibshwhn/video/upload/v1788169891/veenero/shared/xefyouvvvj3v9j50j25j.mp4",
+    "mongoId": "6a954ea4651f3067cf8ff751",
+    "format": "mp4",
+    "resourceType": "video"
+  },
+  "invalid_mime": {
+    "status": 415,
+    "ok": true
+  },
+  "image_delete": {
+    "status": 200,
+    "ok": true,
+    "msg": "Media asset deleted successfully."
+  },
+  "video_delete": {
+    "status": 200,
+    "ok": true,
+    "msg": "Media asset deleted successfully."
+  },
+  "double_delete": {
+    "status": 404,
+    "ok": true
+  },
+  "blog": {
+    "status": 200,
+    "ok": true,
+    "posts": 6
+  },
+  "careers": {
+    "status": 200,
+    "ok": true,
+    "careers": 1
+  },
+  "admin_blog": {
+    "status": 200,
+    "ok": true
+  }
+}

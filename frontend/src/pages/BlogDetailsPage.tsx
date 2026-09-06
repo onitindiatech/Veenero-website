@@ -7,7 +7,7 @@ import { BlogCard } from '@/components/blog/BlogCard';
 import { Article } from '@/components/blog/types';
 import * as BlogService from '@/services/blog.service';
 
-// ─── Skeleton ──────────────────────────────────────────────────────────────────
+// Skeleton loader
 const ArticleSkeleton = () => (
   <div className="space-y-6 animate-pulse">
     <div className="h-4 w-24 bg-muted/40 rounded-full" />
@@ -22,7 +22,7 @@ const ArticleSkeleton = () => (
   </div>
 );
 
-// ─── Markdown parser ───────────────────────────────────────────────────────────
+// Markdown / rich text content block parser
 const parseContent = (contentString: string) => {
   const blocks = contentString.trim().split(/\n\n+/);
   return blocks.map((block, idx) => {
@@ -30,7 +30,7 @@ const parseContent = (contentString: string) => {
 
     if (trimmed.startsWith('## ')) {
       return (
-        <h2 key={idx} className="text-xl sm:text-2xl font-bold text-foreground mt-8 mb-4 tracking-tight leading-tight">
+        <h2 key={idx} className="font-display text-2xl sm:text-3xl font-bold text-foreground mt-10 mb-4 tracking-tight leading-tight">
           {trimmed.replace('## ', '')}
         </h2>
       );
@@ -38,7 +38,7 @@ const parseContent = (contentString: string) => {
 
     if (trimmed.startsWith('### ')) {
       return (
-        <h3 key={idx} className="text-lg font-bold text-foreground mt-6 mb-3 tracking-tight leading-tight">
+        <h3 key={idx} className="font-display text-xl font-bold text-foreground mt-8 mb-3 tracking-tight leading-tight">
           {trimmed.replace('### ', '')}
         </h3>
       );
@@ -47,10 +47,10 @@ const parseContent = (contentString: string) => {
     if (trimmed.startsWith('- ')) {
       const items = trimmed.split('\n').map((line) => line.replace(/^- /, '').trim());
       return (
-        <ul key={idx} className="list-none space-y-2.5 my-4">
+        <ul key={idx} className="list-none space-y-3 my-6">
           {items.map((item, i) => (
-            <li key={i} className="flex items-start gap-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              <span className="w-1.5 h-1.5 bg-teal-600 rounded-full mt-2 shrink-0" />
+            <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+              <span className="w-2 h-2 bg-teal-600 dark:text-teal-400 rounded-full mt-2 shrink-0" />
               <span>{item}</span>
             </li>
           ))}
@@ -61,10 +61,10 @@ const parseContent = (contentString: string) => {
     if (/^\d+\.\s/.test(trimmed)) {
       const items = trimmed.split('\n').map((line) => line.replace(/^\d+\.\s/, '').trim());
       return (
-        <ol key={idx} className="list-none space-y-2.5 my-4">
+        <ol key={idx} className="list-none space-y-3 my-6">
           {items.map((item, i) => (
-            <li key={i} className="flex items-start gap-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              <span className="font-bold text-teal-700 dark:text-teal-400 shrink-0 mt-0.5 w-5">{i + 1}.</span>
+            <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+              <span className="font-bold text-teal-700 dark:text-teal-400 shrink-0 mt-0.5 w-6">{i + 1}.</span>
               <span>{item}</span>
             </li>
           ))}
@@ -73,14 +73,13 @@ const parseContent = (contentString: string) => {
     }
 
     return (
-      <p key={idx} className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-line mb-4">
+      <p key={idx} className="text-sm sm:text-base text-muted-foreground leading-relaxed whitespace-pre-line mb-6">
         {trimmed}
       </p>
     );
   });
 };
 
-// ─── Page Component ────────────────────────────────────────────────────────────
 export const BlogDetailsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -163,45 +162,45 @@ export const BlogDetailsPage: React.FC = () => {
             </div>
           )}
 
-          {/* Article content */}
+          {/* Article Content */}
           {!loading && !error && article && (
             <>
               {/* Header block */}
               <div className="space-y-6">
-                <span className="inline-block px-3 py-1 bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 border border-teal-600/10 rounded-xl text-[10px] font-extrabold uppercase tracking-wider">
+                <span className="inline-block px-3 py-1 bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-600/20 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
                   {article.category}
                 </span>
 
-                <h1 className="font-display text-3xl md:text-[2.75rem] font-bold text-foreground leading-[1.15] tracking-tight">
+                <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-[1.15] tracking-tight">
                   {article.title}
                 </h1>
 
                 {/* Meta row */}
-                <div className="flex flex-wrap items-center gap-6 text-[11px] font-semibold text-muted-foreground/80 border-y border-border/30 py-4">
+                <div className="flex flex-wrap items-center gap-6 text-xs font-semibold text-muted-foreground border-y border-border/30 py-4">
                   {article.author && (
                     <div className="flex items-center gap-2">
-                      <User className="h-3.5 w-3.5 text-teal-600" />
+                      <User className="h-4 w-4 text-teal-600 dark:text-teal-400" />
                       <span>{article.author}</span>
                     </div>
                   )}
                   {dateDisplay && (
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-3.5 w-3.5 text-teal-600" />
+                      <Calendar className="h-4 w-4 text-teal-600 dark:text-teal-400" />
                       <span>{dateDisplay}</span>
                     </div>
                   )}
                   {article.readingTime && (
                     <div className="flex items-center gap-2">
-                      <Clock className="h-3.5 w-3.5 text-teal-600" />
+                      <Clock className="h-4 w-4 text-teal-600 dark:text-teal-400" />
                       <span>{article.readingTime}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Hero Image */}
+              {/* Featured Hero Image */}
               {imgSrc && (
-                <div className="w-full h-64 sm:h-[400px] rounded-3xl overflow-hidden shadow-sm relative">
+                <div className="w-full h-64 sm:h-[420px] rounded-3xl overflow-hidden shadow-sm relative bg-slate-950">
                   <img
                     src={imgSrc}
                     alt={imgAlt}
@@ -213,26 +212,26 @@ export const BlogDetailsPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Article body */}
-              <article className="bg-card p-8 border border-border/40 rounded-3xl shadow-sm space-y-2 text-foreground font-sans">
+              {/* Article Body Container */}
+              <article className="bg-card p-8 sm:p-12 border border-border/40 rounded-3xl shadow-sm space-y-2 text-foreground font-sans leading-relaxed">
                 {parseContent(article.content)}
               </article>
 
-              {/* Related insights */}
+              {/* Related Insights Grid */}
               {related.length > 0 && (
-                <div className="pt-12 border-t border-border/30 space-y-8">
+                <div className="pt-16 border-t border-border/30 space-y-8 select-none">
                   <div className="flex justify-between items-end">
                     <div>
                       <span className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs block mb-1">
                         MORE FROM VEENERO
                       </span>
-                      <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+                      <h3 className="font-display text-2xl font-bold text-foreground">
                         Related Insights
                       </h3>
                     </div>
                     <Link
                       to="/blog"
-                      className="text-teal-700 dark:text-teal-400 text-xs font-bold flex items-center gap-1 hover:underline"
+                      className="text-teal-700 dark:text-teal-300 text-xs font-bold flex items-center gap-1 hover:underline"
                     >
                       All Articles
                       <ChevronRight className="h-4 w-4" />

@@ -382,6 +382,7 @@ const HomePageSettingsSchema = new Schema<IHomePageSettings>(
   },
   {
     timestamps: true,
+    suppressReservedKeysWarning: true,
     toJSON: {
       transform: (_, ret: any) => {
         ret.id = ret._id;

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ArrowRight, Calendar, Clock } from 'lucide-react';
 import { Article } from './types';
-import heroWater from '@/assets/hero-water.jpg';
+import heroWater from '@/assets/about/about-journey-water-infrastructure.webp';
 
 interface BlogCardProps {
   article: Article;
@@ -21,62 +21,58 @@ export const BlogCard: React.FC<BlogCardProps> = ({ article, onViewDetails }) =>
   return (
     <div
       onClick={() => onViewDetails(article.slug)}
-      className="group bg-card hover:bg-card/95 p-5 rounded-2xl border border-border/40 hover:border-teal-600/30 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between h-full font-sans cursor-pointer overflow-hidden"
+      className="group bg-card p-6 sm:p-7 rounded-2xl border border-border/60 hover:border-teal-500/50 shadow-xs hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full font-sans cursor-pointer overflow-hidden relative text-left"
     >
-      <div className="space-y-4">
+      {/* Top Gradient Accent Line */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
 
-        {/* Aspect Ratio image block */}
-        <div className="h-44 sm:h-48 rounded-xl overflow-hidden relative bg-muted/30">
+      <div className="space-y-3.5">
+        {/* Aspect Ratio Image Container */}
+        <div className="h-44 sm:h-48 rounded-xl overflow-hidden relative bg-slate-950">
           <img
             src={imgSrc || FALLBACK_IMG}
             alt={imgAlt}
-            className="w-full h-full object-cover transition-transform ease-out group-hover:scale-105"
-            style={{ transitionDuration: '6000ms' }}
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG;
             }}
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
         </div>
 
         {/* Category Badge */}
-        <span className="inline-block px-2.5 py-0.5 bg-teal-50 dark:bg-teal-950/20 text-teal-700 dark:text-teal-400 border border-teal-600/10 rounded-full text-[9px] font-bold uppercase tracking-wider">
-          {article.category}
-        </span>
+        <div>
+          <span className="inline-block px-2.5 py-0.5 bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-600/20 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono">
+            {article.category}
+          </span>
+        </div>
 
-        {/* Title (H3) */}
-        <h3 className="text-base sm:text-lg font-bold text-foreground group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors leading-snug">
+        {/* Title */}
+        <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors leading-snug line-clamp-2">
           {article.title}
         </h3>
 
         {/* Excerpt */}
-        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
+        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
           {article.excerpt}
         </p>
-
       </div>
 
       {/* Card Footer */}
-      <div className="flex items-center justify-between pt-5 mt-5 border-t border-border/20">
-
+      <div className="flex items-center justify-between pt-4 mt-5 border-t border-border/30">
         {/* Date and Reading Time */}
-        <div className="text-[10px] font-semibold text-muted-foreground/80 flex items-center gap-2">
+        <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2 font-mono">
           {dateDisplay && <span>{dateDisplay}</span>}
-          {dateDisplay && article.readingTime && <span className="w-0.5 h-0.5 bg-muted-foreground/30 rounded-full" />}
+          {dateDisplay && article.readingTime && <span className="w-1 h-1 bg-teal-500 rounded-full" />}
           {article.readingTime && <span>{article.readingTime}</span>}
         </div>
 
-        {/* Link arrow */}
-        <div className="flex items-center gap-1">
-          <span className="text-teal-700 dark:text-teal-400 text-[11px] font-bold group-hover:underline">
-            Read Article
-          </span>
-          <div className="h-7 w-7 rounded-full bg-muted/60 group-hover:bg-teal-50 dark:group-hover:bg-teal-950/30 flex items-center justify-center text-muted-foreground group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-all duration-200">
-            <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-          </div>
+        {/* Action Link */}
+        <div className="flex items-center gap-1 text-teal-700 dark:text-teal-300 text-xs font-bold transition-colors">
+          <span>Read</span>
+          <ArrowRight className="h-3.5 w-3.5 arrow-shift group-hover:translate-x-1 transition-transform duration-200" />
         </div>
-
       </div>
-
     </div>
   );
 };

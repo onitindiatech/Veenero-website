@@ -1,42 +1,71 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ContactHero } from "@/components/contact/ContactHero";
 import { ContactFormSection } from "@/components/contact/ContactFormSection";
-import { ContactFAQ } from "@/components/contact/ContactFAQ";
 import { ContactCTA } from "@/components/contact/ContactCTA";
 import { contactPageContent } from "@/content/contact";
+import { getPublicContactContent, PublicContactData } from "@/services/contact.service";
 
 export const ContactPage: React.FC = () => {
+  const [cmsData, setCmsData] = useState<PublicContactData | null>(null);
+
   useEffect(() => {
     document.title = "Contact Us | Veenero - Water Intelligence Network";
     window.scrollTo(0, 0);
+
+    getPublicContactContent()
+      .then((data) => {
+        if (data) {
+          setCmsData(data);
+          if (data.seo?.metaTitle) {
+            document.title = data.seo.metaTitle;
+          }
+          if (data.seo?.metaDescription) {
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute("content", data.seo.metaDescription);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("Using fallback contact content:", err);
+      });
   }, []);
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-hidden">
-      {/* Floating droplet background accents matching Careers, About, Solutions, and Impact benchmark */}
-      <div className="absolute top-[18%] left-[2%] w-6 h-6 rounded-full bg-teal-500/10 border border-teal-600/20 blur-[0.5px] pointer-events-none animate-float z-0" />
-      <div className="absolute top-[38%] right-[3%] w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-600/20 blur-[1px] pointer-events-none animate-float animation-delay-400 z-0" />
-      <div className="absolute top-[62%] left-[3%] w-5 h-5 rounded-full bg-teal-400/15 border border-teal-500/30 blur-[0.5px] pointer-events-none animate-float animation-delay-200 z-0" />
-      <div className="absolute top-[82%] right-[2%] w-7 h-7 rounded-full bg-cyan-400/10 border border-cyan-500/20 blur-[0.8px] pointer-events-none animate-float animation-delay-600 z-0" />
+  const heroData = cmsData?.hero || contactPageContent.hero;
+  const contactInfoData = cmsData?.contactInfo || contactPageContent.contactInfo;
+  const demoCardData = cmsData?.demoCard || contactPageContent.demoCard;
+  const formData = cmsData?.form || contactPageContent.form;
 
-      {/* Navbar */}
+  return (
+    <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-x-hidden">
+      {/* Subtle Ambient Water Glows matching Design Language */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
+        <div className="absolute -top-[15%] -left-[10%] w-[65vw] h-[65vw] max-w-[700px] max-h-[700px] bg-gradient-to-br from-teal-500/[0.04] to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-[35%] -right-[15%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] bg-gradient-to-bl from-cyan-500/[0.03] via-teal-500/[0.02] to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-[68%] -left-[12%] w-[60vw] h-[60vw] max-w-[680px] max-h-[680px] bg-gradient-to-tr from-teal-500/[0.03] to-transparent rounded-full blur-3xl" />
+      </div>
+
+      {/* Main Global Navbar */}
       <Navbar />
 
-      {/* Page Content */}
-      <main className="flex-1 bg-[#FCFDFD] dark:bg-background">
-        <ContactHero data={contactPageContent.hero} />
+      {/* Page Content: Hero → Contact Options → Form + Office → Closing CTA */}
+      <main className="flex-1 bg-transparent">
+        {/* 1. HERO SECTION */}
+        <ContactHero data={heroData} />
+
+        {/* 2. CONTACT OPTIONS + MAIN FORM + OFFICE SECTION */}
         <ContactFormSection
-          contactInfo={contactPageContent.contactInfo}
-          demoCard={contactPageContent.demoCard}
-          form={contactPageContent.form}
+          contactInfo={contactInfoData}
+          demoCard={demoCardData}
+          form={formData}
         />
-        <ContactFAQ data={contactPageContent.faq} />
-        <ContactCTA data={contactPageContent.cta} />
+
+        {/* 3. FINAL CTA — Ready to Make an Impact? / Let's Work Together */}
+        <ContactCTA />
       </main>
 
-      {/* Footer */}
+      {/* Main Global Footer */}
       <Footer />
     </div>
   );

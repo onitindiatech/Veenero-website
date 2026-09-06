@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { getPublicHome, HomeContact } from "@/services/home.service";
 import { contactContent } from "@/content/home/contact";
 import { mergeHomeSection } from "@/utils/mergeHomeSection";
+import { submitContactInquiry, getPublicContactContent } from "@/services/contact.service";
+import { DemoRequestModal } from "@/components/contact/DemoRequestModal";
 
 export const Contact = () => {
   const [contactData, setContactData] = useState<HomeContact>(contactContent);
@@ -18,30 +20,76 @@ export const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    getPublicHome()
-      .then((data) => {
-        if (!cancelled && data?.contact) {
-          setContactData(mergeHomeSection(contactContent, data.contact));
+    Promise.all([
+      getPublicHome().catch(() => null),
+      getPublicContactContent().catch(() => null),
+    ]).then(([homeData, contactCms]) => {
+      if (cancelled) return;
+      let merged = contactContent;
+      if (homeData?.contact) {
+        merged = mergeHomeSection(merged, homeData.contact);
+      }
+      if (contactCms) {
+        if (contactCms.contactInfo?.items?.length) {
+          merged = {
+            ...merged,
+            infoTitle: contactCms.contactInfo.title || merged.infoTitle,
+            infoList: contactCms.contactInfo.items.map((it) => ({
+              iconName: it.iconName || "MapPin",
+              label: it.label,
+              value: it.value,
+            })),
+          };
         }
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
+        if (contactCms.demoCard?.title) {
+          merged = {
+            ...merged,
+            demoTitle: contactCms.demoCard.title,
+            demoDescription: contactCms.demoCard.description || merged.demoDescription,
+            demoButtonText: contactCms.demoCard.buttonText || merged.demoButtonText,
+          };
+        }
+      }
+      setContactData(merged);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formState.email.trim())) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
     setIsSubmitting(true);
+    try {
+      await submitContactInquiry({
+        name: formState.name.trim(),
+        email: formState.email.trim(),
+        organization: formState.company.trim(),
+        message: formState.message.trim(),
+        source: "Public Contact Section",
+      });
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setIsSuccess(true);
-    setFormState({ name: "", email: "", company: "", message: "" });
-    setIsSubmitting(false);
-    setTimeout(() => setIsSuccess(false), 5000);
+      setIsSuccess(true);
+      setFormState({ name: "", email: "", company: "", message: "" });
+      setTimeout(() => setIsSuccess(false), 6000);
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (contactData.visible === false) return null;
@@ -50,8 +98,13 @@ export const Contact = () => {
     <section id="contact" className="py-16 md:py-20 bg-gradient-wave relative">
       <div className="container mx-auto px-6">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-
+        <div className="max-w-3xl mx-auto text-center mb-12 reveal-on-scroll">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 mb-4 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping inline-block" />
+            <span className="text-teal-700 dark:text-teal-300 font-bold uppercase tracking-widest text-[10px] md:text-xs">
+              GET IN TOUCH
+            </span>
+          </div>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             {contactData.title}
           </h2>
@@ -60,10 +113,10 @@ export const Contact = () => {
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-12">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-12 reveal-on-scroll reveal-delay-100">
           {/* Contact Info */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-card rounded-2xl p-8 shadow-card border border-border">
+            <div className="bg-card rounded-2xl p-8 shadow-card border border-border hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 group/info">
               <h3 className="font-display text-xl font-semibold text-foreground mb-6">
                 {contactData.infoTitle || "Contact Information"}
               </h3>
@@ -72,7 +125,7 @@ export const Contact = () => {
                   const IconComp = (Icons as any)[info.iconName] || Icons.MapPin;
                   return (
                     <div key={`${info.label}-${idx}`} className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center flex-shrink-0 group-hover/info:scale-105 hover-ripple-subtle transition-all duration-300">
                         <IconComp className="h-5 w-5 text-primary" />
                       </div>
                       <div>
@@ -87,29 +140,35 @@ export const Contact = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-ocean rounded-2xl p-8 text-primary-foreground">
+            <div className="bg-gradient-ocean rounded-2xl p-8 text-primary-foreground shadow-card hover:shadow-glow hover:-translate-y-1 transition-all duration-300">
               <h3 className="font-display text-xl font-semibold mb-4">
                 {contactData.demoTitle || "Schedule a Platform Demo"}
               </h3>
               <p className="text-primary-foreground/85 mb-6">
                 {contactData.demoDescription}
               </p>
-              <Button variant="hero" size="lg" className="w-full">
+              <Button
+                variant="hero"
+                size="lg"
+                className="w-full cursor-pointer transition-all hover:scale-[1.02]"
+                onClick={() => setIsDemoModalOpen(true)}
+              >
                 {contactData.demoButtonText || "Book Demo"}
               </Button>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 flex flex-col">
             <form
               onSubmit={handleSubmit}
-              className="bg-card rounded-2xl p-8 shadow-card border border-border"
+              className="bg-card rounded-2xl p-8 md:p-9 shadow-card border border-border hover:border-primary/30 transition-all duration-300 flex-1 flex flex-col justify-between"
             >
-              <h3 className="font-display text-xl font-semibold text-foreground mb-6">
-                {contactData.formTitle || "Send Us a Message"}
-              </h3>
               <div className="space-y-6">
+                <h3 className="font-display text-xl sm:text-2xl font-semibold text-foreground">
+                  {contactData.formTitle || "Send Us a Message"}
+                </h3>
+
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
@@ -141,6 +200,7 @@ export const Contact = () => {
                     />
                   </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
                     Company
@@ -154,6 +214,7 @@ export const Contact = () => {
                     className="h-12"
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
                     Message *
@@ -161,18 +222,22 @@ export const Contact = () => {
                   <Textarea
                     required
                     placeholder="Tell us about your water management needs..."
-                    rows={5}
+                    rows={6}
+                    className="min-h-[160px] resize-none"
                     value={formState.message}
                     onChange={(e) =>
                       setFormState({ ...formState, message: e.target.value })
                     }
                   />
                 </div>
+              </div>
+
+              <div className="pt-6 mt-6 border-t border-border/30">
                 <Button
                   type="submit"
                   variant="ocean"
                   size="xl"
-                  className="w-full"
+                  className="w-full cursor-pointer"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -184,8 +249,13 @@ export const Contact = () => {
                     </>
                   )}
                 </Button>
+                {errorMessage && (
+                  <div className="mt-4 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-sm font-medium text-center animate-in fade-in-0">
+                    ✕ {errorMessage}
+                  </div>
+                )}
                 {isSuccess && (
-                  <div className="mt-4 p-4 bg-teal-50 border border-teal-200 rounded-xl text-teal-800 text-sm font-medium text-center">
+                  <div className="mt-4 p-4 bg-teal-50 border border-teal-200 rounded-xl text-teal-800 text-sm font-medium text-center animate-in fade-in-0">
                     ✓ Message sent successfully! We'll get back to you within 24 hours.
                   </div>
                 )}
@@ -194,6 +264,15 @@ export const Contact = () => {
           </div>
         </div>
       </div>
+
+      {/* Book Demo Interactive Modal Flow */}
+      <DemoRequestModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+        title={contactData.demoTitle || "Schedule a Platform Demo"}
+        description={contactData.demoDescription || "Experience Veenero Sense, Intelligence, and Insights live on your infrastructure."}
+        source="Home Page Book Demo Button"
+      />
     </section>
   );
 };

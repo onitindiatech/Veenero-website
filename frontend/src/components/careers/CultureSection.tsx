@@ -1,73 +1,110 @@
 import React from "react";
-import cultureImage from "@/assets/careers_culture.png";
+import { ShieldCheck, Eye, Cpu, HeartHandshake, Quote } from "lucide-react";
 
 export const CultureSection: React.FC = () => {
+  const values = [
+    {
+      icon: Eye,
+      title: "Evidence Over Opinion",
+      subtitle: "Empirical Ground Truth",
+      description: "We don't argue with assumptions. We calibrate sensors, verify telemetry pipelines, and let empirical physics guide technical and business decisions.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Radical Transparency",
+      subtitle: "Open Books & Open Code",
+      description: "Company metrics, roadmap priorities, and code reviews are shared openly with everyone. Direct, thoughtful feedback is expected and celebrated.",
+    },
+    {
+      icon: Cpu,
+      title: "High Agency & Autonomy",
+      subtitle: "Bias Toward Execution",
+      description: "We hire builders who spot problems and take initiative to solve them. You don't need three layers of approval to optimize a query or fix an edge case.",
+    },
+    {
+      icon: HeartHandshake,
+      title: "Customer & Resource Empathy",
+      subtitle: "Real People, Real Litres",
+      description: "Our technology serves real plant operators, municipal engineers, and civic water users. We build robust tools that perform flawlessly in the rain and dirt.",
+    },
+  ];
+
   return (
-    <section id="culture" className="py-24 bg-background relative overflow-hidden">
-      {/* Background radial accent */}
-      <div className="absolute top-[20%] left-[-10%] w-[450px] h-[450px] rounded-full bg-teal-500/5 blur-[100px] pointer-events-none" />
+    <section id="what-we-value" className="py-12 sm:py-16 lg:py-20 bg-slate-50/70 dark:bg-slate-900/30 border-b border-border/15 select-none relative overflow-hidden">
+      {/* Background Soft Glow */}
+      <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-96 h-96 bg-teal-500/[0.04] rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-7xl mx-auto font-sans">
-          
-          {/* Visual/Image Area (Left or Right Column: let's place it on the left) */}
-          <div className="lg:col-span-5 relative group">
-            <div className="absolute inset-0 bg-gradient-to-tr from-teal-600/10 to-cyan-500/10 rounded-2xl -rotate-2 group-hover:rotate-0 transition-transform duration-300 pointer-events-none" />
-            <div className="relative overflow-hidden rounded-2xl border border-border/40 shadow-soft">
-              <img
-                src={cultureImage}
-                alt="Veenero Team Workspace and Collaboration"
-                className="w-full h-[400px] object-cover group-hover:scale-[1.02] transition-transform duration-500"
-              />
-            </div>
-            
-            {/* Soft overlay gradient block */}
-            <div className="absolute -bottom-6 -right-6 p-6 max-w-xs rounded-2xl bg-card border border-border/40 shadow-card hidden md:block">
-              <p className="text-xs font-semibold text-teal-800 dark:text-teal-400 italic">
-                "We don't manage desk hours; we empower execution and intellectual honesty."
-              </p>
-            </div>
-          </div>
-
-          {/* Content Area (Right Column) */}
-          <div className="lg:col-span-7 space-y-6">
-            <span className="text-teal-600 font-bold uppercase tracking-widest text-xs block font-sans">
-              How We Work
+      <div className="container mx-auto px-6 md:px-12 max-w-7xl space-y-10">
+        
+        {/* Section Header */}
+        <div className="text-left font-sans max-w-3xl">
+          <div>
+            <span className="text-teal-700 dark:text-teal-400 font-bold uppercase tracking-widest text-xs font-mono block mb-1.5">
+              WHAT WE VALUE
             </span>
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              Our Culture
-            </h2>
-            
-            <div className="space-y-4 text-sm sm:text-base text-muted-foreground font-sans leading-relaxed">
-              <p>
-                At Veenero, we believe that the best work happens when high agency meets deep ownership. We operate with a flat hierarchy where transparency, direct feedback, and constructive debates are actively encouraged.
-              </p>
-              <p>
-                Whether you are refining an IoT board in our Adilabad lab, crafting SaaS dashboard components, or explaining data points to a facility manager, you are given the autonomy to make decisions.
-              </p>
-              <p>
-                We do not use micromanagement or artificial metrics. Instead, we foster a collaborative environment focused on rapid iteration, continuous learning (including weekly tech talks), and a shared commitment to global water conservation.
-              </p>
-            </div>
-
-            {/* Core Values grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-              <div className="p-5 rounded-xl border border-border/60 bg-muted/20">
-                <h3 className="text-base font-bold text-foreground mb-2">High Agency</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  We expect our builders to identify bugs, propose solutions, and write code independently.
-                </p>
-              </div>
-              <div className="p-5 rounded-xl border border-border/60 bg-muted/20">
-                <h3 className="text-base font-bold text-foreground mb-2">Transparency First</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  All metrics, feedback, and product strategies are shared transparently with the entire team.
-                </p>
-              </div>
-            </div>
+            <div className="w-10 h-0.5 bg-teal-600 rounded-full mb-3" />
           </div>
 
+          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 leading-tight tracking-tight">
+            Principles That Guide How We Build
+          </h2>
+
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+            Our culture isn't a poster in an office. It is the operating manual for how we make decisions, critique code, and collaborate every day.
+          </p>
         </div>
+
+        {/* 4 Clean Visual Value Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          {values.map((val, idx) => {
+            const Icon = val.icon;
+            return (
+              <div
+                key={idx}
+                className="group bg-card p-6 sm:p-7 rounded-2xl border border-border/60 hover:border-teal-500/40 shadow-xs hover:shadow-soft hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between font-sans relative overflow-hidden text-left"
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-700 dark:text-teal-300 flex items-center justify-center border border-teal-500/20 group-hover:scale-105 transition-transform mb-4">
+                    <Icon className="w-5 h-5" />
+                  </div>
+
+                  <h3 className="font-display text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">
+                    {val.title}
+                  </h3>
+
+                  <p className="text-xs font-semibold text-teal-600 dark:text-teal-400 mb-2.5 font-mono">
+                    {val.subtitle}
+                  </p>
+
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    {val.description}
+                  </p>
+                </div>
+
+                <div className="pt-3 mt-4 border-t border-border/30 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                  <span>Core Value 0{idx + 1}</span>
+                  <span className="text-teal-600 dark:text-teal-400 font-bold">Standard</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Culture Quote Card */}
+        <div className="bg-gradient-to-r from-slate-950 via-[#031d22] to-teal-950 text-white rounded-3xl p-6 sm:p-8 border border-teal-500/30 shadow-xl relative overflow-hidden font-sans text-left">
+          <div className="flex items-start gap-4">
+            <Quote className="w-8 h-8 text-teal-400/40 shrink-0 mt-1" />
+            <div className="space-y-2">
+              <p className="font-display text-sm sm:text-base md:text-lg font-medium leading-relaxed text-cyan-100 max-w-3xl">
+                "We don't manage desk hours or micro-manage tasks. We hire exceptional minds, give them tough engineering challenges, provide complete context, and trust them to execute."
+              </p>
+              <p className="text-xs text-teal-300 font-mono">
+                Veenero Engineering &amp; Operations Charter
+              </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   );

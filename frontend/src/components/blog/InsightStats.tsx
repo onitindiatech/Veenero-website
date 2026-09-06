@@ -1,5 +1,6 @@
 import React from 'react';
 import { InsightStat } from './types';
+import { Quote } from 'lucide-react';
 
 interface InsightStatsProps {
   stats?: InsightStat[];
@@ -12,8 +13,8 @@ interface InsightStatsProps {
 
 const DEFAULT_STATS: InsightStat[] = [
   { value: '100%', label: 'Water Visibility' },
-  { value: '24/7', label: 'Monitoring' },
-  { value: 'Real-Time', label: 'Intelligence' },
+  { value: '24/7', label: 'Telemetry Monitoring' },
+  { value: 'Real-Time', label: 'Water Intelligence' },
 ];
 
 const DEFAULT_QUOTE = {
@@ -26,46 +27,45 @@ export const InsightStats: React.FC<InsightStatsProps> = ({ stats, quote }) => {
   const displayQuote = quote || DEFAULT_QUOTE;
 
   return (
-    <section className="py-12 md:py-16 bg-[#E6F3F3] dark:bg-teal-950/10 border-y border-teal-600/10 relative overflow-hidden select-none">
+    <section className="py-12 sm:py-16 bg-gradient-to-r from-teal-900/90 via-teal-950 to-slate-950 text-white rounded-3xl p-8 sm:p-12 border border-teal-500/30 shadow-xl relative overflow-hidden select-none font-sans">
+      {/* Background Ripple Effect */}
+      <div className="absolute right-[-20px] bottom-[-20px] w-80 h-80 opacity-20 pointer-events-none z-0">
+        <div className="absolute inset-0 rounded-full border border-teal-400 opacity-60" />
+        <div className="absolute inset-8 rounded-full border border-cyan-400 opacity-40" />
+      </div>
 
-      {/* Subtle droplet overlay background decoration */}
-      <div className="absolute top-[10%] left-[20%] w-6 h-6 rounded-full bg-teal-500/5 border border-teal-500/10 blur-[0.5px] pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[15%] w-8 h-8 rounded-full bg-cyan-500/5 border border-cyan-500/10 blur-[1px] pointer-events-none" />
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
-      <div className="container mx-auto px-6 md:px-12 max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center font-sans">
-
-        {/* Quote / editorial mission text */}
-        <div className="lg:col-span-6 text-center lg:text-left space-y-3">
-          {displayQuote.eyebrow && (
-            <span className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px]">
-              {displayQuote.eyebrow}
-            </span>
-          )}
-          <h3 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight max-w-lg mx-auto lg:mx-0">
+        {/* Editorial Mission Text */}
+        <div className="lg:col-span-7 space-y-3">
+          <div className="flex items-center gap-2">
+            <Quote className="w-8 h-8 text-teal-400/40 shrink-0" />
+            {displayQuote.eyebrow && (
+              <span className="text-cyan-300 font-bold uppercase tracking-widest text-[10px] block">
+                {displayQuote.eyebrow}
+              </span>
+            )}
+          </div>
+          <h3 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug">
             "{displayQuote.title}"
           </h3>
           {displayQuote.description && (
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-md mx-auto lg:mx-0">
+            <p className="text-xs sm:text-sm text-cyan-100/80 leading-relaxed max-w-lg">
               {displayQuote.description}
             </p>
           )}
         </div>
 
-        {/* Metrics counters — use dynamic count */}
-        <div className={`lg:col-span-6 grid gap-4 text-center grid-cols-${Math.min(displayStats.length, 3)}`}>
+        {/* Metric Counter Cards */}
+        <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4">
           {displayStats.map((stat, i) => (
-            <div key={i} className="space-y-1 bg-card/45 backdrop-blur-sm p-4 border border-border/20 rounded-2xl shadow-sm">
-              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-teal-700 dark:text-teal-400 block">
+            <div key={i} className="bg-slate-900/60 backdrop-blur-md p-4 border border-teal-500/20 rounded-2xl text-center space-y-1">
+              <span className="font-display text-2xl sm:text-3xl font-extrabold text-teal-400 block tracking-tight">
                 {stat.value}
               </span>
-              <span className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider block">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-cyan-200 block">
                 {stat.label}
               </span>
-              {stat.description && (
-                <span className="text-[9px] text-muted-foreground/70 block leading-relaxed">
-                  {stat.description}
-                </span>
-              )}
             </div>
           ))}
         </div>

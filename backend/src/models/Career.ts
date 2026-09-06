@@ -35,7 +35,7 @@ export interface ICareer extends Document {
 const CareerSchema = new Schema<ICareer>(
   {
     title: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, lowercase: true, trim: true, index: true },
+    slug: { type: String, required: true, lowercase: true, trim: true },
     department: { type: String, required: true, trim: true },
     location: { type: String, required: true, trim: true },
     employmentType: { type: String, required: true, trim: true },

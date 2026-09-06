@@ -24,6 +24,16 @@ export interface EcosystemDomain {
   impactPoints: string[];
 }
 
+export interface SustainabilityContent {
+  eyebrow: string;
+  title: string;
+  description: string;
+  pillars: Array<{
+    title: string;
+    description: string;
+  }>;
+}
+
 export interface ImpactContent {
   hero: {
     eyebrow: string;
@@ -56,6 +66,7 @@ export interface ImpactContent {
       organization: string;
     };
   };
+  sustainability: SustainabilityContent;
   cta: {
     title: string;
     description: string;
@@ -68,141 +79,150 @@ export interface ImpactContent {
 
 export const impactPageContent: ImpactContent = {
   hero: {
-    eyebrow: "MEASURABLE OUTCOMES",
-    title: "Making Every Litre Visible & Accountable",
+    eyebrow: "MEASURING WHAT MATTERS",
+    title: "Turning Water Intelligence Into Measurable Impact",
     description:
       "Water Visibility creates Water Accountability. Veenero helps organizations measure, monitor, optimize, benchmark, and verify water usage—transforming unmetered blindspots into evidence-based sustainability and verifiable compliance.",
-    primaryCtaText: "Explore Outcomes",
-    secondaryCtaText: "Impact Journey",
+    primaryCtaText: "Explore Impact",
+    secondaryCtaText: "View Metrics",
   },
   outcomes: {
-    eyebrow: "CORE IMPACT PILLARS",
-    title: "Real-World Value Delivered Across Networks",
+    eyebrow: "IMPACT METRICS",
+    title: "Quantified Performance Across 4 Core Areas",
     description:
-      "Our water intelligence infrastructure transforms how enterprises and public utilities govern their most vital resource.",
+      "Our water intelligence infrastructure delivers measurable value across water visibility, waste reduction, operational efficiency, and ESG verification.",
     pillars: [
       {
         value: "100%",
-        label: "Visibility Coverage",
+        label: "Water Visibility",
         description:
-          "Real-time continuous measurement across assets, sites, and operational systems—eliminating blindspots.",
-        icon: "Droplets",
+          "Real-time continuous measurement across assets, sites, and operational systems—eliminating unmetered blindspots.",
+        icon: "Eye",
         tag: "Water Visibility",
       },
       {
-        value: "Optimized",
-        label: "Water Efficiency Gains",
+        value: "40%",
+        label: "Waste Reduction",
         description:
-          "Targeted interventions, instant micro-leak alerts, and actionable recommendations backed by verified analytics.",
-        icon: "TrendingUp",
-        tag: "Water Intelligence",
+          "Targeted interventions, instant micro-leak alerts, and pressure optimization to curb non-revenue water losses.",
+        icon: "TrendingDown",
+        tag: "Waste Reduction",
       },
       {
-        value: "Pan-India",
-        label: "Network Benchmarking",
+        value: "25%+",
+        label: "Operational Efficiency",
         description:
-          "Comparative peer insights across facilities to prioritize operational risks and capital interventions.",
-        icon: "Globe",
-        tag: "Cross-Site Intelligence",
+          "Automated pumping schedule optimization, energy savings, and cross-site efficiency benchmarking.",
+        icon: "TrendingUp",
+        tag: "Operational Efficiency",
       },
       {
         value: "Audit-Ready",
-        label: "Verified Reporting",
+        label: "Accountability & Verification",
         description:
           "Verification-ready data layers with traceable audit trails for ESG governance and regulatory compliance.",
-        icon: "Award",
-        tag: "Water Accountability",
+        icon: "ShieldCheck",
+        tag: "Accountability & Verification",
       },
     ],
   },
   storyline: {
-    eyebrow: "THE IMPACT JOURNEY",
-    title: "From Telemetry to Verifiable Conservation",
+    eyebrow: "IMPACT JOURNEY",
+    title: "Measure → Understand → Optimize → Verify → Improve",
     description:
-      "How Veenero's digital infrastructure layer guides organizations from raw data collection to boardroom governance.",
+      "A structured 5-step visual roadmap guiding organizations from physical flow telemetry to continuous boardroom governance.",
     steps: [
       {
         number: "01",
-        stage: "Sense & Unify",
-        title: "Eliminating Water Blindspots",
+        stage: "Measure",
+        title: "Telemetry & Edge Sensing",
         description:
-          "Deploying rugged edge telemetry across distributed nodes to capture continuous flow, pressure, and volume data.",
-        outcome: "100% real-time data visibility across all facility assets.",
+          "Deploy rugged edge sensors across pipes, pumps, tanks, and treatment facilities to measure every drop in real time.",
+        outcome: "100% telemetry coverage with zero blindspots.",
         icon: "Radio",
       },
       {
         number: "02",
-        stage: "Detect & Optimize",
-        title: "Mitigating Unaccounted Loss",
+        stage: "Understand",
+        title: "Baseline & Anomaly Analysis",
         description:
-          "AI analytics detect bursts, pressure drops, and baseline anomalies the instant they manifest, preventing costly losses.",
-        outcome: "Rapid anomaly resolution before water loss compounds.",
-        icon: "Sparkles",
+          "AI analytics establish consumption baselines, detect pressure drops, and analyze usage patterns across connected assets.",
+        outcome: "Contextual understanding of network health.",
+        icon: "Search",
       },
       {
         number: "03",
-        stage: "Benchmark & Allocate",
-        title: "Driving Operational Accountability",
+        stage: "Optimize",
+        title: "Targeted Interventions",
         description:
-          "Sub-metering and cross-facility indexing assign clear accountability and reveal hidden conservation opportunities.",
-        outcome: "Data-driven efficiency targets for facility teams.",
-        icon: "BarChart3",
+          "Execute instant leak resolution, pressure zone balancing, and automated pumping schedules to eliminate wasteful loss.",
+        outcome: "Immediate reduction in unmetered water loss.",
+        icon: "Sliders",
       },
       {
         number: "04",
-        stage: "Verify & Report",
-        title: "Proving Impact with Assurance",
+        stage: "Verify",
+        title: "Audit-Grade Assurance",
         description:
-          "Generating cryptographic, tamper-evident audit logs designed for ESG disclosures, BRSR compliance, and green ratings.",
-        outcome: "Zero-guesswork, verification-first compliance.",
+          "Generate tamper-evident provenance logs and traceable audit trails for third-party ESG governance and compliance.",
+        outcome: "100% audit-ready reporting confidence.",
         icon: "FileCheck2",
+      },
+      {
+        number: "05",
+        stage: "Improve",
+        title: "Long-Term Water Resilience",
+        description:
+          "Continuously refine conservation targets, benchmark multi-site assets, and build a water-positive future.",
+        outcome: "Sustainable, resilient infrastructure.",
+        icon: "Sparkles",
       },
     ],
   },
   ecosystem: {
-    eyebrow: "BROADER ECOSYSTEM IMPACT",
-    title: "Transforming Water Management Across Sectors",
+    eyebrow: "REAL-WORLD IMPACT",
+    title: "Creating Value Across Industries & Infrastructure",
     description:
-      "Veenero's impact reaches beyond individual buildings to strengthen regional watershed resilience and corporate governance.",
+      "Veenero's impact reaches across municipal distribution networks, heavy industrial facilities, commercial real estate, and regional water networks.",
     domains: [
       {
-        title: "Enterprise ESG Governance",
-        icon: "Building2",
-        description:
-          "Empowering corporations to meet stringent ESG disclosure requirements (BRSR, GRI, CDP) with verifiable, audit-grade water accounting.",
-        impactPoints: [
-          "Verifiable water stewardship proof",
-          "Automated ESG compliance exports",
-          "Transparent board-level reporting",
-        ],
-      },
-      {
-        title: "Municipal & Utility Resilience",
+        title: "Municipalities & Utilities",
         icon: "Landmark",
         description:
-          "Helping city water utilities curb Non-Revenue Water (NRW), stabilize district pressures, and safeguard civic drinking water distribution.",
+          "Equip city water distribution networks with district metering, pressure management, and non-revenue water (NRW) reduction intelligence.",
         impactPoints: [
           "District Metered Area (DMA) telemetry",
-          "Distribution loss prevention",
-          "Equitable municipal water allocation",
+          "Distribution leak & burst prevention",
+          "Equitable civic drinking water allocation",
         ],
       },
       {
-        title: "Industrial Resource Stewardship",
+        title: "Industrial Facilities",
         icon: "Factory",
         description:
-          "Enabling manufacturing, power, and pharmaceutical plants to optimize cooling towers, effluent treatment, and zero liquid discharge (ZLD).",
+          "Monitor process water loops, cooling tower evaporation, and effluent discharge to ensure zero unmetered loss and compliance.",
         impactPoints: [
-          "Process water recycling oversight",
-          "Effluent compliance verification",
-          "Cooling loop efficiency gains",
+          "Cooling tower cycle optimization",
+          "Process water balance & recycling",
+          "Effluent discharge compliance monitoring",
         ],
       },
       {
-        title: "Civic & Watershed Protection",
-        icon: "HeartHandshake",
+        title: "Commercial Operations",
+        icon: "Building",
         description:
-          "Preserving shared groundwater reservoirs and local aquifers by reducing excessive drawdown through precision demand forecasting.",
+          "Gain granular visibility across multi-tenant buildings, HVAC systems, and landscape irrigation to lower utility bills.",
+        impactPoints: [
+          "Tenant sub-metering & billing allocation",
+          "HVAC chiller loop efficiency",
+          "Overnight leak & overflow mitigation",
+        ],
+      },
+      {
+        title: "Water Networks & Aquifers",
+        icon: "Globe",
+        description:
+          "Preserve shared groundwater reservoirs and local aquifers by reducing excessive drawdown through precision demand forecasting.",
         impactPoints: [
           "Aquifer drawdown prevention",
           "Watershed vulnerability tracking",
@@ -217,8 +237,31 @@ export const impactPageContent: ImpactContent = {
       organization: "Enterprise Infrastructure Partner",
     },
   },
+  sustainability: {
+    eyebrow: "RESPONSIBLE INFRASTRUCTURE",
+    title: "Connecting Water Intelligence to Long-Term Sustainability",
+    description:
+      "Water security is the foundation of economic resilience. Veenero bridges the gap between physical water management and ESG governance.",
+    pillars: [
+      {
+        title: "Audit-Ready ESG Disclosure",
+        description:
+          "Generate verifiable, tamper-evident data trails designed to satisfy rigorous BRSR, GRI, and CDP sustainability reporting frameworks.",
+      },
+      {
+        title: "Resource Efficiency & Decarbonization",
+        description:
+          "Optimizing water pumping schedules reduces energy consumption and operational carbon emissions across municipal and industrial assets.",
+      },
+      {
+        title: "Aquifer & Watershed Preservation",
+        description:
+          "Preventing excessive groundwater extraction safeguards regional aquifers and secures water availability for local communities.",
+      },
+    ],
+  },
   cta: {
-    title: "Ready to Create Measurable Water Impact?",
+    title: "Making Every Litre Measurable & Meaningful",
     description:
       "Partner with Veenero to deploy verification-ready water intelligence across your facility network.",
     primaryButtonText: "Partner with Veenero",

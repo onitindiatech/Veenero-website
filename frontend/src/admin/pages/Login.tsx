@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Lock, Mail, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck, AlertCircle, Clock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,6 +11,7 @@ import heroWater from '@/assets/hero-water.jpg';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +19,9 @@ export const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Detect session-expired redirect (from inactivity auto-logout)
+  const sessionExpired = searchParams.get('expired') === '1';
 
   // If already logged in, bypass login
   useEffect(() => {
@@ -39,6 +43,7 @@ export const Login: React.FC = () => {
 
     try {
       await login(email, password);
+      // Only store the email (never the password) for convenience
       if (rememberMe) {
         localStorage.setItem('veenero_remember_email', email);
       } else {
@@ -113,6 +118,14 @@ export const Login: React.FC = () => {
             <p className="text-xs text-gray-500 mt-1">Sign in to Veenero Admin</p>
           </div>
 
+          {/* Session-expired banner (shown after inactivity auto-logout) */}
+          {sessionExpired && !errorMsg && (
+            <div className="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs font-semibold flex items-start gap-2.5 leading-relaxed">
+              <Clock className="h-4 w-4 shrink-0 text-amber-500 mt-0.5" />
+              <span>Your session expired due to inactivity. Please sign in again.</span>
+            </div>
+          )}
+
           {/* Inline Error block if validation/credentials fail */}
           {errorMsg && (
             <div className="mb-5 p-3.5 bg-rose-50 border border-rose-100 rounded-xl text-rose-700 text-xs font-semibold flex items-start gap-2.5 leading-relaxed">
@@ -150,8 +163,8 @@ export const Login: React.FC = () => {
                   href="#forgot"
                   onClick={(e) => {
                     e.preventDefault();
-                    toast.info('Credential Retrieval', {
-                      description: 'Use the seed password configured in your .env variables (default: admin123).',
+                    toast.info('Password Recovery', {
+                      description: 'Please contact your system administrator to reset your admin credentials.',
                     });
                   }}
                   className="text-xs font-semibold text-teal-700 hover:text-teal-800 transition-colors"

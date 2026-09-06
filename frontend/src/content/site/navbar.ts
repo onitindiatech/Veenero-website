@@ -3,7 +3,7 @@ export interface NavLink {
   label: string;
 }
 
-// Foundation: Static Navbar Content (Our Partners removed from navbar)
+// Foundation: Static Navbar Content
 export const navLinks: NavLink[] = [
   { href: "/about", label: "About Us" },
   { href: "/solutions", label: "Solutions" },
@@ -11,5 +11,4 @@ export const navLinks: NavLink[] = [
   { href: "/impact", label: "Impact" },
   { href: "/careers", label: "Careers" },
   { href: "/blog", label: "Blog / Insights" },
-  { href: "/contact", label: "Contact" },
 ];

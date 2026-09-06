@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { logger } from '../utils/logger';
 import { config } from '../config/env';
 
 // ─── MongoDB Connection Service ───────────────────────────────────────────────
@@ -43,7 +44,7 @@ export async function connectDatabase(): Promise<void> {
 
   // Attach connection event listeners (once)
   mongoose.connection.once('open', () => {
-    console.log('[MongoDB] ✓ Connection established');
+    logger.success('[MongoDB] Connection established');
   });
 
   mongoose.connection.on('error', (err: Error) => {

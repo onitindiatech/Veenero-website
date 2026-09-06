@@ -12,6 +12,9 @@ import {
   getRecycleBin,
   restoreCareer,
   permanentlyDeleteCareer,
+  getPublicCareerSettings,
+  getAdminCareerSettings,
+  updateAdminCareerSettings,
 } from '../controllers/career.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
@@ -19,6 +22,7 @@ import { requireRole } from '../middleware/role.middleware';
 // ─── PUBLIC ROUTER ───────────────────────────────────────────────────────────
 export const publicRouter = Router();
 
+publicRouter.get('/settings', getPublicCareerSettings);
 publicRouter.get('/', getPublicCareers);
 publicRouter.get('/:slug', getPublicCareerBySlug);
 
@@ -27,6 +31,8 @@ export const adminRouter = Router();
 
 adminRouter.use(authenticate);
 
+adminRouter.get('/settings', requireRole(['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'VIEWER']), getAdminCareerSettings);
+adminRouter.put('/settings', requireRole(['SUPER_ADMIN', 'ADMIN', 'EDITOR']), updateAdminCareerSettings);
 adminRouter.get('/', requireRole(['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'VIEWER']), getAdminCareers);
 adminRouter.get('/recycle-bin', requireRole(['SUPER_ADMIN', 'ADMIN', 'VIEWER']), getRecycleBin);
 adminRouter.get('/:id', requireRole(['SUPER_ADMIN', 'ADMIN', 'EDITOR', 'VIEWER']), getAdminCareerById);
@@ -37,3 +43,4 @@ adminRouter.post('/:id/duplicate', requireRole(['SUPER_ADMIN', 'ADMIN', 'EDITOR'
 adminRouter.patch('/:id/restore', requireRole(['SUPER_ADMIN', 'ADMIN']), restoreCareer);
 adminRouter.delete('/:id/permanent', requireRole(['SUPER_ADMIN', 'ADMIN']), permanentlyDeleteCareer);
 adminRouter.delete('/:id', requireRole(['SUPER_ADMIN', 'ADMIN']), softDeleteCareer);
+

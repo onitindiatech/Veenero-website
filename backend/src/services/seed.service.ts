@@ -5,7 +5,8 @@ import { CareerModel } from '../models/Career';
 import { BlogPostModel } from '../models/BlogPost';
 import { BlogLandingSettingsModel } from '../models/BlogLandingSettings';
 import { HomePageSettingsModel } from '../models/HomePageSettings';
-
+import { AboutPageSettingsModel } from '../models/AboutPageSettings';
+import { MediaModel } from '../models/Media';
 
 const mockPages = [
   {
@@ -748,7 +749,695 @@ By deploying smart telemetry networks and making the datasets public, we can emp
       console.log('[Seed] Home page settings already populated. Skipping home seed.');
     }
 
+    // ─────────────────────────────────────────────────────────────────────
+    // ABOUT PAGE MEDIA SEED
+    // Each entry is keyed by seedKey (PAGE|SECTION|SLOT) for idempotency.
+    // Local assets bundled by Vite are registered as 'local' entries.
+    // Running multiple times will NOT create duplicates.
+    // ─────────────────────────────────────────────────────────────────────
+    await seedAboutMedia();
+
+    // ─────────────────────────────────────────────────────────────────────
+    // 7. ABOUT PAGE CMS SETTINGS SEED
+    // ─────────────────────────────────────────────────────────────────────
+    await seedAboutPageSettings();
+
   } catch (error) {
     console.error('[Seed] Error during seeding:', (error as Error).message);
   }
+}
+
+async function seedAboutPageSettings(): Promise<void> {
+  const count = await AboutPageSettingsModel.countDocuments();
+  if (count > 0) {
+    console.log('[Seed] About page settings already populated. Skipping about seed.');
+    return;
+  }
+
+  console.log('[Seed] About page settings not found. Seeding default About CMS settings from current content...');
+
+  // Helper to find media URL by seedKey
+  const mediaMap = new Map<string, { secureUrl: string; publicId: string }>();
+  const mediaDocs = await MediaModel.find({ page: 'about', deletedAt: null });
+  for (const doc of mediaDocs) {
+    if (doc.seedKey) {
+      mediaMap.set(doc.seedKey, { secureUrl: doc.secureUrl, publicId: doc.publicId });
+    }
+  }
+
+  const getMedia = (key: string, fallback: string = '') => {
+    const item = mediaMap.get(key);
+    return {
+      url: item?.secureUrl || fallback,
+      publicId: item?.publicId || '',
+    };
+  };
+
+  const heroMedia = getMedia('ABOUT|HERO|HERO_VISUAL', '');
+  const storyVideo = getMedia('ABOUT|OUR_STORY|STORY_VIDEO', '');
+  const storyPoster = getMedia('ABOUT|HERO|HERO_VISUAL', '');
+  const journeyMedia = getMedia('ABOUT|OUR_JOURNEY|JOURNEY_VISUAL', '');
+
+  const pillar1 = getMedia('ABOUT|PILLARS|PURPOSE_FIRST', '');
+  const pillar2 = getMedia('ABOUT|PILLARS|INTEGRITY_ALWAYS', '');
+  const pillar3 = getMedia('ABOUT|PILLARS|IMPACT_AT_SCALE', '');
+  const pillar4 = getMedia('ABOUT|PILLARS|INNOVATION_RELENTLESS', '');
+  const pillar5 = getMedia('ABOUT|PILLARS|STRONGER_TOGETHER', '');
+
+  const why1 = getMedia('ABOUT|WHY_VEENERO|END_TO_END', '');
+  const why2 = getMedia('ABOUT|WHY_VEENERO|REAL_TIME', '');
+  const why3 = getMedia('ABOUT|WHY_VEENERO|VERIFICATION', '');
+  const why4 = getMedia('ABOUT|WHY_VEENERO|OPEN_ECOSYSTEM', '');
+
+  const team1 = getMedia('ABOUT|LEADERSHIP|FOUNDING_TEAM', '');
+  const team2 = getMedia('ABOUT|LEADERSHIP|EDGE_ENGINEERING', '');
+  const team3 = getMedia('ABOUT|LEADERSHIP|DATA_SCIENCE', '');
+
+  await AboutPageSettingsModel.create({
+    hero: {
+      visible: true,
+      eyebrow: 'ABOUT VEENERO',
+      title: "Building India's",
+      highlightedText: 'Water Intelligence',
+      description:
+        'We are the digital infrastructure layer for water management—creating Water Visibility, Water Accountability, and Water Verification through real-time telemetry and advanced analytics.',
+      primaryCtaText: 'Our Story',
+      primaryCtaLink: '#our-story',
+      secondaryCtaText: 'Core Values',
+      secondaryCtaLink: '#core-values',
+      image: heroMedia.url,
+      imageAlt: 'Veenero Water Intelligence Infrastructure, Telemetry Network, and Verification Platform',
+      mediaPublicId: heroMedia.publicId,
+    },
+    ourStory: {
+      visible: true,
+      eyebrow: 'OUR STORY & ORIGIN',
+      title: 'From Water Blindspots to Real-Time Intelligence',
+      paragraphs: [
+        'Veenero was founded with a singular conviction: organizations cannot manage or preserve what they cannot measure. Across municipal systems, industrial plants, and commercial facilities, billions of litres of water move unmonitored every single day.',
+        'Traditional approaches relied on static hardware or isolated leak detectors. Veenero is fundamentally different—we build the future digital infrastructure layer for water management.',
+        'By unifying rugged edge sensors, cloud telemetry, and AI-driven anomaly signals into a shared water data platform, we empower enterprise leaders and utilities to make every litre visible, accountable, and verifiable.',
+      ],
+      badgePillars: ['Water Visibility', 'Water Accountability', 'Water Verification'],
+      video: storyVideo.url,
+      videoPoster: storyPoster.url,
+      mediaPublicId: storyVideo.publicId,
+    },
+    impactStats: {
+      visible: true,
+      eyebrow: 'MEASURABLE IMPACT',
+      title: 'Numbers That Drive Accountability',
+      description: 'Delivering visibility and measurable water savings across India.',
+      list: [
+        {
+          value: 'Billions of Litres',
+          label: 'Monitored Every Day',
+          sublabel: 'Across municipal & enterprise networks',
+          icon: 'Droplets',
+          order: 1,
+          isActive: true,
+        },
+        {
+          value: '10,000+',
+          label: 'Sensors Deployed',
+          sublabel: 'Active sub-second IoT edge nodes',
+          icon: 'Radio',
+          order: 2,
+          isActive: true,
+        },
+        {
+          value: '1M+',
+          label: 'Data Points Processed',
+          sublabel: 'Streamed daily to anomaly models',
+          icon: 'Activity',
+          order: 3,
+          isActive: true,
+        },
+        {
+          value: '100+',
+          label: 'Facilities & Cities',
+          sublabel: 'Nationwide water resilience',
+          icon: 'Building2',
+          order: 4,
+          isActive: true,
+        },
+      ],
+    },
+    ourJourney: {
+      visible: true,
+      eyebrow: 'OUR JOURNEY',
+      title: 'Milestones That Flow Forward',
+      description: 'From our founding vision to nationwide water intelligence infrastructure across India.',
+      journeyImage: journeyMedia.url,
+      journeyCaption:
+        'Rugged edge sensors and IoT transmission units monitoring high-pressure water conduits, clarifiers, and urban distribution networks in real time.',
+      mediaPublicId: journeyMedia.publicId,
+      milestones: [
+        {
+          year: '2021',
+          title: 'The Idea',
+          description: 'Identified the water data gap in India',
+          iconType: 'idea',
+          order: 1,
+          isActive: true,
+        },
+        {
+          year: '2022',
+          title: 'First Prototype',
+          description: 'Built our first IoT prototype for leak and flow monitoring',
+          iconType: 'prototype',
+          order: 2,
+          isActive: true,
+        },
+        {
+          year: '2023',
+          title: 'Early Adoptions',
+          description: 'Piloted across municipal & industrial installations',
+          iconType: 'adoption',
+          order: 3,
+          isActive: true,
+        },
+        {
+          year: '2024',
+          title: 'Scaling Impact',
+          description: 'Expanded to multiple states with advanced analytics',
+          iconType: 'scale',
+          order: 4,
+          isActive: true,
+        },
+        {
+          year: '2025 & Beyond',
+          title: 'Building the Future',
+          description: 'AI, predictive intelligence & nationwide impact',
+          iconType: 'future',
+          order: 5,
+          isActive: true,
+        },
+      ],
+    },
+    purposeDirection: {
+      visible: true,
+      eyebrow: 'PURPOSE & DIRECTION',
+      title: 'Shaping a Water-Secure Future',
+      description:
+        'Guiding our engineering, partnerships, and operations toward verifiable water accountability across every level of infrastructure.',
+      vision: {
+        badge: 'Universal Visibility',
+        title: 'Our Vision',
+        description:
+          'A world where zero water goes unmeasured, unaccounted, or wasted. We envision sustainable, resilient ecosystems powered by universal water visibility and real-time intelligence.',
+        isActive: true,
+      },
+      mission: {
+        badge: 'Digital Infrastructure',
+        title: 'Our Mission',
+        description:
+          "To deliver India's most reliable and scalable telemetry infrastructure and water data platform, empowering organizations, utilities, and communities to secure their water future.",
+        isActive: true,
+      },
+    },
+    pillars: {
+      visible: true,
+      eyebrow: 'WHAT DRIVES US',
+      title: 'The Pillars of Veenero',
+      description:
+        'Our engineering, culture, and products are rooted in rigorous water accountability and sustainable impact.',
+      list: [
+        {
+          title: 'Purpose First',
+          description: 'We start with why—solving real water challenges.',
+          image: pillar1.url,
+          mediaPublicId: pillar1.publicId,
+          order: 1,
+          isActive: true,
+        },
+        {
+          title: 'Integrity Always',
+          description: 'We believe in transparency, trust & ethical innovation.',
+          image: pillar2.url,
+          mediaPublicId: pillar2.publicId,
+          order: 2,
+          isActive: true,
+        },
+        {
+          title: 'Impact at Scale',
+          description: 'We build solutions that create measurable, lasting impact.',
+          image: pillar3.url,
+          mediaPublicId: pillar3.publicId,
+          order: 3,
+          isActive: true,
+        },
+        {
+          title: 'Innovation Relentless',
+          description: 'We constantly push boundaries with technology.',
+          image: pillar4.url,
+          mediaPublicId: pillar4.publicId,
+          order: 4,
+          isActive: true,
+        },
+        {
+          title: 'Stronger Together',
+          description: 'We grow by empowering communities, partners & each other.',
+          image: pillar5.url,
+          mediaPublicId: pillar5.publicId,
+          order: 5,
+          isActive: true,
+        },
+      ],
+    },
+    whyChoose: {
+      visible: true,
+      eyebrow: 'WHY CHOOSE VEENERO',
+      title: 'What Sets',
+      highlightedText: 'Veenero Apart',
+      description:
+        'We do not provide single-point devices or surface-level charts. We deliver a complete digital infrastructure layer for enterprise water management.',
+      bottomTrustText: 'Built for reliability. Designed for scale. Driven by impact.',
+      list: [
+        {
+          title: 'End-to-End Infrastructure',
+          description:
+            'From edge telemetry sensors and gateway hardware to cloud intelligence and executive dashboards.',
+          icon: 'Layers',
+          image: why1.url,
+          mediaPublicId: why1.publicId,
+          order: 1,
+          isActive: true,
+        },
+        {
+          title: 'Real-Time Actionability',
+          description:
+            'Instant anomaly detection and threshold triggers so teams can intervene before losses compound.',
+          icon: 'Zap',
+          image: why2.url,
+          mediaPublicId: why2.publicId,
+          order: 2,
+          isActive: true,
+        },
+        {
+          title: 'Verification-Ready Auditing',
+          description:
+            'Tamper-resistant audit trails designed to meet stringent ESG compliance and regulatory requirements.',
+          icon: 'ShieldCheck',
+          image: why3.url,
+          mediaPublicId: why3.publicId,
+          order: 3,
+          isActive: true,
+        },
+        {
+          title: 'Open & Scalable Ecosystem',
+          description:
+            'Seamless API integrations with enterprise ERPs, SCADA systems, and facility management platforms.',
+          icon: 'Share2',
+          image: why4.url,
+          mediaPublicId: why4.publicId,
+          order: 4,
+          isActive: true,
+        },
+      ],
+    },
+    leadership: {
+      visible: true,
+      eyebrow: 'OUR TEAM',
+      title: 'Driven by Water & Technology Pioneers',
+      description:
+        'Our multidisciplinary team unites IoT systems engineers, data scientists, and water conservation advocates.',
+      team: [
+        {
+          name: 'Founding Team',
+          role: 'Leadership & Strategy',
+          bio: "Steering the mission to establish India's most comprehensive digital water intelligence network.",
+          icon: 'Users2',
+          image: team1.url,
+          mediaPublicId: team1.publicId,
+          order: 1,
+          isActive: true,
+        },
+        {
+          name: 'Telemetry & Edge Engineering',
+          role: 'Hardware & IoT Systems',
+          bio: 'Designing rugged, industrial-grade sensors and edge gateways for high-precision water metering.',
+          icon: 'Cpu',
+          image: team2.url,
+          mediaPublicId: team2.publicId,
+          order: 2,
+          isActive: true,
+        },
+        {
+          name: 'Data Science & Cloud Platform',
+          role: 'Water Analytics & AI',
+          bio: 'Developing predictive consumption models, anomaly detection algorithms, and verification pipelines.',
+          icon: 'LineChart',
+          image: team3.url,
+          mediaPublicId: team3.publicId,
+          order: 3,
+          isActive: true,
+        },
+      ],
+    },
+    cta: {
+      visible: true,
+      eyebrow: 'JOIN THE WATER REVOLUTION',
+      title: 'The future of water is intelligent, accountable, and sustainable.',
+      description:
+        'Join forward-thinking enterprises and utilities creating water visibility and verifiable sustainability with Veenero.',
+      primaryButtonText: 'Join Us in Our Mission',
+      primaryButtonLink: '/contact',
+    },
+    seo: {
+      metaTitle: "About Us | Veenero - Building India's Water Intelligence",
+      metaDescription:
+        "Learn about Veenero's mission to transform water management through AI-driven intelligence, IoT telemetry, and verifiable data infrastructure.",
+    },
+    isPublished: true,
+    lastUpdatedBy: 'System Seed',
+  });
+
+  console.log('[Seed] About page settings seeded successfully.');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ABOUT PAGE MEDIA DEFINITIONS
+// Each record represents ONE real media asset referenced by the About page.
+// secureUrl for local assets is the Vite dev path — replace with Cloudinary URL
+// once the asset has been uploaded via the Media Library.
+// ─────────────────────────────────────────────────────────────────────────────
+const ABOUT_MEDIA_SEED: Array<{
+  seedKey:          string;
+  page:             string;
+  section:          string;
+  slot:             string;
+  description:      string;
+  displayName:      string;
+  altText:          string;
+  originalFilename: string;
+  resourceType:     'image' | 'video';
+  format:           string;
+  bytes:            number;
+  width?:           number;
+  height?:          number;
+  duration?:        number;
+  tags:             string[];
+  // For locally-bundled assets, secureUrl is a placeholder path.
+  // Replace with the real Cloudinary URL after uploading through Media Library.
+  secureUrl:        string;
+}> = [
+  // ── 01 HERO SECTION ────────────────────────────────────────────────────
+  {
+    seedKey:          'ABOUT|HERO|HERO_VISUAL',
+    page:             'about',
+    section:          'Hero Section',
+    slot:             'Hero Visual',
+    description:      'Full-width hero image for the About page. Water infrastructure landscape used as the primary editorial visual.',
+    displayName:      'About Hero — Water Infrastructure',
+    altText:          'Veenero Water Intelligence Infrastructure — telemetry network and verification platform',
+    originalFilename: 'about-hero-water-infrastructure.png',
+    resourceType:     'image',
+    format:           'png',
+    bytes:            2286464,
+    width:            2400,
+    height:           1600,
+    tags:             ['about', 'hero', 'water-infrastructure'],
+    secureUrl:        '/src/assets/about/about-hero-water-infrastructure.png',
+  },
+
+  // ── 02 OUR STORY & ORIGIN ──────────────────────────────────────────────
+  {
+    seedKey:          'ABOUT|OUR_STORY|STORY_VIDEO',
+    page:             'about',
+    section:          'Our Story & Origin',
+    slot:             'Story Overview Video',
+    description:      'Background video shown in the Our Story section. Auto-plays muted; poster is the hero image. Shows real water infrastructure.',
+    displayName:      'About Story — Water Infrastructure Video',
+    altText:          'Veenero water infrastructure story — real-time telemetry and monitoring system',
+    originalFilename: 'about-story-water-infrastructure.mp4',
+    resourceType:     'video',
+    format:           'mp4',
+    bytes:            3161779,
+    duration:         30,
+    tags:             ['about', 'story', 'video', 'water-infrastructure'],
+    secureUrl:        '/src/assets/about/about-story-water-infrastructure.mp4',
+  },
+
+  // ── 03 THE PILLARS OF VEENERO ─────────────────────────────────────────
+  {
+    seedKey:          'ABOUT|PILLARS|PURPOSE_FIRST',
+    page:             'about',
+    section:          'The Pillars of Veenero',
+    slot:             'Purpose First',
+    description:      'Pillar card 01 — Purpose First. Water-themed photographic image used as the card visual.',
+    displayName:      'Pillars — Purpose First',
+    altText:          'Purpose First — Veenero water intelligence pillar',
+    originalFilename: 'about-pillar-purpose.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            1946416,
+    width:            1920,
+    height:           1280,
+    tags:             ['about', 'pillars', 'purpose'],
+    secureUrl:        '/src/assets/about/about-pillar-purpose.webp',
+  },
+  {
+    seedKey:          'ABOUT|PILLARS|INTEGRITY_ALWAYS',
+    page:             'about',
+    section:          'The Pillars of Veenero',
+    slot:             'Integrity Always',
+    description:      'Pillar card 02 — Integrity Always. Water-themed photographic image used as the card visual.',
+    displayName:      'Pillars — Integrity Always',
+    altText:          'Integrity Always — Veenero core principle',
+    originalFilename: 'about-pillar-integrity.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            2200185,
+    width:            1920,
+    height:           1280,
+    tags:             ['about', 'pillars', 'integrity'],
+    secureUrl:        '/src/assets/about/about-pillar-integrity.webp',
+  },
+  {
+    seedKey:          'ABOUT|PILLARS|IMPACT_AT_SCALE',
+    page:             'about',
+    section:          'The Pillars of Veenero',
+    slot:             'Impact at Scale',
+    description:      'Pillar card 03 — Impact at Scale. Water infrastructure photograph used as the card visual.',
+    displayName:      'Pillars — Impact at Scale',
+    altText:          'Impact at Scale — Veenero water infrastructure reach',
+    originalFilename: 'about-pillar-impact.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            2826176,
+    width:            1920,
+    height:           1280,
+    tags:             ['about', 'pillars', 'impact'],
+    secureUrl:        '/src/assets/about/about-pillar-impact.webp',
+  },
+  {
+    seedKey:          'ABOUT|PILLARS|INNOVATION_RELENTLESS',
+    page:             'about',
+    section:          'The Pillars of Veenero',
+    slot:             'Innovation Relentless',
+    description:      'Pillar card 04 — Innovation Relentless. Water technology photograph used as the card visual.',
+    displayName:      'Pillars — Innovation Relentless',
+    altText:          'Innovation Relentless — Veenero technology-driven water management',
+    originalFilename: 'about-pillar-innovation.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            2007573,
+    width:            1920,
+    height:           1280,
+    tags:             ['about', 'pillars', 'innovation'],
+    secureUrl:        '/src/assets/about/about-pillar-innovation.webp',
+  },
+  {
+    seedKey:          'ABOUT|PILLARS|STRONGER_TOGETHER',
+    page:             'about',
+    section:          'The Pillars of Veenero',
+    slot:             'Stronger Together',
+    description:      'Pillar card 05 — Stronger Together. Community and collaboration photograph used as the card visual.',
+    displayName:      'Pillars — Stronger Together',
+    altText:          'Stronger Together — Veenero community and partnership',
+    originalFilename: 'about-pillar-together.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            2270992,
+    width:            1920,
+    height:           1280,
+    tags:             ['about', 'pillars', 'together'],
+    secureUrl:        '/src/assets/about/about-pillar-together.webp',
+  },
+
+  // ── 04 WHY CHOOSE VEENERO ─────────────────────────────────────────────
+  {
+    seedKey:          'ABOUT|WHY_VEENERO|END_TO_END',
+    page:             'about',
+    section:          'Why Choose Veenero',
+    slot:             'End-to-End Infrastructure',
+    description:      'Card image for the End-to-End Infrastructure differentiator. Shows an infrastructure sensor.',
+    displayName:      'Why Veenero — End-to-End Infrastructure',
+    altText:          'End-to-End Infrastructure — Veenero telemetry sensor and gateway hardware',
+    originalFilename: 'about-infrastructure-sensor.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            56304,
+    width:            1200,
+    height:           800,
+    tags:             ['about', 'why-veenero', 'infrastructure', 'sensor'],
+    secureUrl:        '/src/assets/about/about-infrastructure-sensor.webp',
+  },
+  {
+    seedKey:          'ABOUT|WHY_VEENERO|REAL_TIME',
+    page:             'about',
+    section:          'Why Choose Veenero',
+    slot:             'Real-Time Actionability',
+    description:      'Card image for the Real-Time Actionability differentiator. Shows analytics dashboard or monitoring system.',
+    displayName:      'Why Veenero — Real-Time Actionability',
+    altText:          'Real-Time Actionability — Veenero anomaly detection and threshold monitoring',
+    originalFilename: 'about-real-time-analytics.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            55352,
+    width:            1200,
+    height:           800,
+    tags:             ['about', 'why-veenero', 'analytics', 'real-time'],
+    secureUrl:        '/src/assets/about/about-real-time-analytics.webp',
+  },
+  {
+    seedKey:          'ABOUT|WHY_VEENERO|VERIFICATION',
+    page:             'about',
+    section:          'Why Choose Veenero',
+    slot:             'Verification-Ready Auditing',
+    description:      'Card image for the Verification-Ready Auditing differentiator. Shows field verification activity.',
+    displayName:      'Why Veenero — Verification-Ready Auditing',
+    altText:          'Verification-Ready Auditing — Veenero tamper-resistant audit trails and ESG compliance',
+    originalFilename: 'about-field-verification.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            61667,
+    width:            1200,
+    height:           800,
+    tags:             ['about', 'why-veenero', 'verification', 'auditing'],
+    secureUrl:        '/src/assets/about/about-field-verification.webp',
+  },
+  {
+    seedKey:          'ABOUT|WHY_VEENERO|OPEN_ECOSYSTEM',
+    page:             'about',
+    section:          'Why Choose Veenero',
+    slot:             'Open & Scalable Ecosystem',
+    description:      'Card image for the Open & Scalable Ecosystem differentiator. Shows industrial water system integration.',
+    displayName:      'Why Veenero — Open & Scalable Ecosystem',
+    altText:          'Open & Scalable Ecosystem — Veenero ERP and SCADA integration for enterprise water management',
+    originalFilename: 'about-industrial-water-system.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            70110,
+    width:            1200,
+    height:           800,
+    tags:             ['about', 'why-veenero', 'ecosystem', 'integration'],
+    secureUrl:        '/src/assets/about/about-industrial-water-system.webp',
+  },
+
+  // ── 05 LEADERSHIP & TEAM ──────────────────────────────────────────────
+  {
+    seedKey:          'ABOUT|LEADERSHIP|FOUNDING_TEAM',
+    page:             'about',
+    section:          'Leadership & Team',
+    slot:             'Founding Team',
+    description:      'Card image for the Founding Team leadership card. Shows team leadership visual.',
+    displayName:      'Leadership — Founding Team',
+    altText:          'Veenero founding team — leadership and strategy',
+    originalFilename: 'about-team-leadership.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            840106,
+    width:            1200,
+    height:           800,
+    tags:             ['about', 'leadership', 'team'],
+    secureUrl:        '/src/assets/about/about-team-leadership.webp',
+  },
+  {
+    seedKey:          'ABOUT|LEADERSHIP|EDGE_ENGINEERING',
+    page:             'about',
+    section:          'Leadership & Team',
+    slot:             'Telemetry & Edge Engineering',
+    description:      'Card image for the Telemetry & Edge Engineering team card. Reuses the field verification image.',
+    displayName:      'Leadership — Telemetry & Edge Engineering',
+    altText:          'Veenero telemetry and edge engineering team — IoT systems and hardware',
+    originalFilename: 'about-field-verification.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            61667,
+    width:            1200,
+    height:           800,
+    tags:             ['about', 'leadership', 'engineering', 'IoT'],
+    secureUrl:        '/src/assets/about/about-field-verification.webp',
+  },
+  {
+    seedKey:          'ABOUT|LEADERSHIP|DATA_SCIENCE',
+    page:             'about',
+    section:          'Leadership & Team',
+    slot:             'Data Science & Cloud Platform',
+    description:      'Card image for the Data Science & Cloud Platform team card. Reuses the real-time analytics image.',
+    displayName:      'Leadership — Data Science & Cloud Platform',
+    altText:          'Veenero data science and cloud platform team — water analytics and AI',
+    originalFilename: 'about-real-time-analytics.webp',
+    resourceType:     'image',
+    format:           'webp',
+    bytes:            55352,
+    width:            1200,
+    height:           800,
+    tags:             ['about', 'leadership', 'data-science', 'cloud'],
+    secureUrl:        '/src/assets/about/about-real-time-analytics.webp',
+  },
+];
+
+async function seedAboutMedia(): Promise<void> {
+  let inserted = 0;
+  let skipped  = 0;
+
+  for (const entry of ABOUT_MEDIA_SEED) {
+    try {
+      const existing = await MediaModel.findOne({ seedKey: entry.seedKey });
+      if (existing) {
+        skipped++;
+        continue;
+      }
+
+      // Use seedKey as stable publicId and assetId for local assets.
+      // Once uploaded to Cloudinary, the record should be replaced via Media Library.
+      const stableId = `local:${entry.seedKey}`;
+      await MediaModel.create({
+        assetId:          stableId,
+        publicId:         stableId,
+        resourceType:     entry.resourceType,
+        format:           entry.format,
+        secureUrl:        entry.secureUrl,
+        width:            entry.width,
+        height:           entry.height,
+        duration:         entry.duration,
+        bytes:            entry.bytes,
+        folder:           'veenero/about',
+        originalFilename: entry.originalFilename,
+        displayName:      entry.displayName,
+        altText:          entry.altText,
+        tags:             entry.tags,
+        page:             entry.page,
+        section:          entry.section,
+        slot:             entry.slot,
+        description:      entry.description,
+        seedKey:          entry.seedKey,
+        deletedAt:        null,
+      });
+      inserted++;
+    } catch (err: unknown) {
+      // Skip duplicate key errors silently (extra safety net)
+      const code = (err as { code?: number })?.code;
+      if (code === 11000) {
+        skipped++;
+      } else {
+        console.error(`[Seed] About media seed error for key ${entry.seedKey}:`, (err as Error).message);
+      }
+    }
+  }
+
+  console.log(`[Seed] About media: ${inserted} inserted, ${skipped} already existed.`);
 }

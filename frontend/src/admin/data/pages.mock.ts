@@ -43,7 +43,6 @@ export const mockPages: CmsPage[] = [
       { id: 's-about-hero', name: 'About Hero', type: 'hero', visible: true },
       { id: 's-mission', name: 'Mission & Vision', type: 'content', visible: true },
       { id: 's-team', name: 'Leadership Team', type: 'gallery', visible: true },
-      { id: 's-timeline', name: 'Company Timeline', type: 'content', visible: false },
     ],
   },
   {

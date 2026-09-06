@@ -2,13 +2,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { initScrollReveal } from "@/hooks/useScrollReveal";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-
 import AboutUsPage from "./pages/AboutUsPage";
-
 import SolutionsPage from "./pages/SolutionsPage";
+import SolutionDetailPage from "./pages/SolutionDetailPage";
 import ApproachPage from "./pages/ApproachPage";
 import ImpactPage from "./pages/ImpactPage";
 import PartnersPage from "./pages/PartnersPage";
@@ -28,77 +29,107 @@ import BlogSettingsPage from "./admin/pages/cms/BlogSettings";
 import BlogPage from "./pages/BlogPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 import HomeCms from "./admin/pages/cms/Home";
+import AboutCms from "./admin/pages/cms/About";
+import SolutionsCms from "./admin/pages/cms/Solutions";
+import ApproachCms from "./admin/pages/cms/Approach";
+import ImpactCms from "./admin/pages/cms/Impact";
+import ContactCms from "./admin/pages/cms/Contact";
+import LeadsAdmin from "./admin/pages/cms/Leads";
+import FooterCms from "./admin/pages/cms/Footer";
+import MediaLibrary from "./admin/pages/cms/MediaLibrary";
 
 // Auth Provider & Guard
 import { AuthProvider } from "./admin/context/AuthContext";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
 
+import LoadingScreen from "./components/LoadingScreen";
+
 const queryClient = new QueryClient();
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  useEffect(() => {
+    const cleanup = initScrollReveal();
+    return cleanup;
+  }, [location.pathname]);
+
+  return (
+    <div key={location.pathname} className="animate-page-enter min-h-screen">
+      <Routes location={location}>
+        <Route path="/" element={<Index />} />
+        <Route path="/about" element={<AboutUsPage />} />
+        <Route path="/solutions" element={<SolutionsPage />} />
+        <Route path="/solutions/:slug" element={<SolutionDetailPage />} />
+        <Route path="/approach" element={<ApproachPage />} />
+        <Route path="/impact" element={<ImpactPage />} />
+        <Route path="/partners" element={<PartnersPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/careers/:slug" element={<CareerDetailsPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogDetailsPage />} />
+        
+        {/* Admin Portal Routing */}
+        <Route path="/admin/login" element={<Login />} />
+        
+        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="sites" element={<Placeholder />} />
+          <Route path="monitoring" element={<Placeholder />} />
+          <Route path="analytics" element={<Placeholder />} />
+          <Route path="risk" element={<Placeholder />} />
+          <Route path="insights" element={<Placeholder />} />
+          <Route path="reports" element={<Placeholder />} />
+          <Route path="pages" element={<CmsPages />} />
+          <Route path="home" element={<HomeCms />} />
+          <Route path="home-sections" element={<Navigate to="/admin/home" replace />} />
+          <Route path="about" element={<AboutCms />} />
+          <Route path="solutions" element={<SolutionsCms />} />
+          <Route path="approach" element={<ApproachCms />} />
+          <Route path="careers" element={<Careers />} />
+          <Route path="impact" element={<ImpactCms />} />
+          <Route path="navigation" element={<Placeholder />} />
+          <Route path="footer" element={<FooterCms />} />
+          <Route path="seo" element={<Placeholder />} />
+          <Route path="global-settings" element={<Placeholder />} />
+          <Route path="job-applications" element={<Placeholder />} />
+          <Route path="activity-logs" element={<Placeholder />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="blog/settings" element={<BlogSettingsPage />} />
+          <Route path="media" element={<MediaLibrary />} />
+          <Route path="casestudies" element={<Placeholder />} />
+          <Route path="faqs" element={<Placeholder />} />
+          <Route path="testimonials" element={<Placeholder />} />
+          <Route path="partners" element={<Placeholder />} />
+          <Route path="leads" element={<LeadsAdmin />} />
+          <Route path="contact" element={<ContactCms />} />
+          <Route path="newsletters" element={<Placeholder />} />
+          <Route path="users" element={<Placeholder />} />
+          <Route path="roles" element={<Placeholder />} />
+          <Route path="settings" element={<Placeholder />} />
+          <Route path="audit" element={<Placeholder />} />
+          <Route path="health" element={<Placeholder />} />
+          <Route path="*" element={<Placeholder />} />
+        </Route>
+
+        {/* Catch-all route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
+        <LoadingScreen />
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<AboutUsPage />} />
-            <Route path="/solutions" element={<SolutionsPage />} />
-            <Route path="/approach" element={<ApproachPage />} />
-            <Route path="/impact" element={<ImpactPage />} />
-            <Route path="/partners" element={<PartnersPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/careers" element={<CareersPage />} />
-            <Route path="/careers/:slug" element={<CareerDetailsPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:slug" element={<BlogDetailsPage />} />
-            
-            {/* Admin Portal Routing */}
-            <Route path="/admin/login" element={<Login />} />
-            
-            <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="sites" element={<Placeholder />} />
-            <Route path="monitoring" element={<Placeholder />} />
-            <Route path="analytics" element={<Placeholder />} />
-            <Route path="risk" element={<Placeholder />} />
-            <Route path="insights" element={<Placeholder />} />
-            <Route path="reports" element={<Placeholder />} />
-            <Route path="pages" element={<CmsPages />} />
-            <Route path="home" element={<HomeCms />} />
-            <Route path="home-sections" element={<Navigate to="/admin/home" replace />} />
-            <Route path="careers" element={<Careers />} />
-            <Route path="navigation" element={<Placeholder />} />
-            <Route path="footer" element={<Placeholder />} />
-            <Route path="seo" element={<Placeholder />} />
-            <Route path="global-settings" element={<Placeholder />} />
-            <Route path="job-applications" element={<Placeholder />} />
-            <Route path="activity-logs" element={<Placeholder />} />
-            <Route path="blog" element={<Blog />} />
-            <Route path="blog/settings" element={<BlogSettingsPage />} />
-            <Route path="media" element={<Placeholder />} />
-            <Route path="casestudies" element={<Placeholder />} />
-            <Route path="faqs" element={<Placeholder />} />
-            <Route path="testimonials" element={<Placeholder />} />
-            <Route path="partners" element={<Placeholder />} />
-            <Route path="leads" element={<Placeholder />} />
-            <Route path="contact" element={<Placeholder />} />
-            <Route path="newsletters" element={<Placeholder />} />
-            <Route path="users" element={<Placeholder />} />
-            <Route path="roles" element={<Placeholder />} />
-            <Route path="settings" element={<Placeholder />} />
-            <Route path="audit" element={<Placeholder />} />
-            <Route path="health" element={<Placeholder />} />
-            <Route path="*" element={<Placeholder />} />
-          </Route>
-
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+          <AnimatedRoutes />
+        </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>

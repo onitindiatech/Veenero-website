@@ -27,10 +27,15 @@ export const Solutions = () => {
     <section id="solutions" className="py-16 md:py-20 bg-gradient-wave relative">
       <div className="container mx-auto px-6">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <p className="text-primary font-medium mb-4 tracking-wider uppercase text-sm">
-            {solutions.eyebrow}
-          </p>
+        <div className="max-w-3xl mx-auto text-center mb-12 reveal-on-scroll">
+          {solutions.eyebrow && (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 mb-4 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping inline-block" />
+              <span className="text-teal-700 dark:text-teal-300 font-bold uppercase tracking-widest text-[10px] md:text-xs">
+                {solutions.eyebrow}
+              </span>
+            </div>
+          )}
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             {solutions.title}
           </h2>
@@ -43,11 +48,13 @@ export const Solutions = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {solutions.list.map((solution, idx) => {
             const imgSrc = getWaterPhotograph((solution as any).iconImage || (solution as any).imageUrl || (solution.iconName?.startsWith('http') ? solution.iconName : undefined), solution.title, idx);
+            const staggerDelay = idx % 3 === 0 ? "reveal-delay-100" : idx % 3 === 1 ? "reveal-delay-200" : "reveal-delay-300";
             return (
               <div
                 key={`${solution.title}-${idx}`}
-                className="group bg-card rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 border border-border hover:border-primary/30 hover:-translate-y-1"
+                className={`group bg-card rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 border border-border hover:border-primary/30 hover:-translate-y-1 reveal-on-scroll ${staggerDelay}`}
               >
+
                 <div className="w-12 h-12 bg-gradient-ocean rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
                   <img
                     src={imgSrc}

@@ -259,17 +259,166 @@
     animation: scroll-ltr 40s linear infinite;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .animate-scroll-ltr {
-      animation: none;
+  /* ── Professional Scroll Reveal System ────────────────────────────── */
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal-on-scroll.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-fade {
+    opacity: 0;
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity;
+  }
+
+  .reveal-fade.is-revealed {
+    opacity: 1;
+  }
+
+  /* Permanent Settled State: Once entry animation completes, permanently lock properties */
+  .reveal-on-scroll.reveal-settled,
+  .reveal-fade.reveal-settled,
+  [data-reveal-settled="true"] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  /* Subtle card stagger delays */
+  .reveal-delay-100 { transition-delay: 80ms; }
+  .reveal-delay-200 { transition-delay: 160ms; }
+  .reveal-delay-300 { transition-delay: 240ms; }
+  .reveal-delay-400 { transition-delay: 320ms; }
+  .reveal-delay-500 { transition-delay: 400ms; }
+  .reveal-delay-600 { transition-delay: 480ms; }
+
+  /* ── Smooth Page Entrance Transition ────────────────────────────── */
+  @keyframes page-enter {
+    from {
+      opacity: 0;
     }
-    .animate-water-flow {
-      animation: none;
-    }
-    .animate-water-pulse {
-      animation: none;
+    to {
+      opacity: 1;
     }
   }
+
+  .animate-page-enter {
+    animation: page-enter 0.25s ease-out;
+  }
+
+  /* ── Standardized Interactive Hover Utilities ────────────────────────────── */
+  .card-hover-lift {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card-hover-lift:hover {
+    transform: translateY(-3px);
+  }
+
+  .btn-hover-lift {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-hover-lift:hover {
+    transform: translateY(-1.5px);
+  }
+  .btn-hover-lift:active {
+    transform: translateY(0) scale(0.99);
+  }
+
+  .img-hover-zoom {
+    overflow: hidden;
+  }
+  .img-hover-zoom img,
+  .img-hover-zoom > div {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .img-hover-zoom:hover img,
+  .img-hover-zoom:hover > div {
+    transform: scale(1.028);
+  }
+
+  /* Natural link and card arrow shift */
+  .arrow-shift {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .group:hover .arrow-shift,
+  a:hover .arrow-shift,
+  button:hover .arrow-shift {
+    transform: translateX(3px);
+  }
+
+  /* Contextual subtle pulse for telemetry/sensors */
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.65;
+      transform: scale(0.92);
+    }
+  }
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s ease-in-out infinite;
+  }
+
+  /* Interaction-triggered ripple for water & sensor icons */
+  @keyframes ripple-subtle {
+    0% {
+      box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.35);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(20, 184, 166, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(20, 184, 166, 0);
+    }
+  }
+  .hover-ripple-subtle {
+    transition: box-shadow 0.3s ease;
+  }
+  .group:hover .hover-ripple-subtle {
+    animation: ripple-subtle 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-page-enter,
+    .animate-scroll-ltr,
+    .animate-water-flow,
+    .animate-water-pulse,
+    .animate-pulse-subtle,
+    .animate-wave,
+    .animate-float,
+    .animate-ripple,
+    .animate-fade-up,
+    .animate-fade-in {
+      animation: none !important;
+    }
+    .reveal-on-scroll,
+    .reveal-fade,
+    .card-hover-lift,
+    .btn-hover-lift,
+    .arrow-shift,
+    .hover-ripple-subtle,
+    .img-hover-zoom img,
+    .img-hover-zoom > div {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+
 
   @keyframes water-flow {
     0% {
@@ -299,4 +448,66 @@
   .animate-water-pulse {
     animation: water-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  @keyframes bubble-float {
+    0% {
+      transform: translateY(100%) scale(0.6);
+      opacity: 0;
+    }
+    30% {
+      opacity: 0.7;
+    }
+    80% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(-120%) scale(1.1);
+      opacity: 0;
+    }
+  }
+
+  .animate-bubble {
+    animation: bubble-float 6s ease-in-out infinite;
+  }
+
+  @keyframes stream-flow {
+    0% {
+      stroke-dashoffset: 100;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .animate-stream {
+    stroke-dasharray: 12, 12;
+    animation: stream-flow 2.5s linear infinite;
+  }
+
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-12px) rotate(1.5deg);
+    }
+  }
+
+  .animate-float-slow {
+    animation: float-slow 5s ease-in-out infinite;
+  }
+
+  @keyframes shimmer-water {
+    0% {
+      transform: translateX(-100%) skewX(-15deg);
+    }
+    100% {
+      transform: translateX(200%) skewX(-15deg);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer-water 4s ease-in-out infinite;
+  }
 }
+

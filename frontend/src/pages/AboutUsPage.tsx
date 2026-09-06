@@ -1,43 +1,107 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AboutHero } from "@/components/about/AboutHero";
 import { OurStory } from "@/components/about/OurStory";
+import { AboutImpactStats } from "@/components/about/AboutImpactStats";
 import { VisionMission } from "@/components/about/VisionMission";
 import { OurValues } from "@/components/about/OurValues";
 import { WhyVeenero } from "@/components/about/WhyVeenero";
 import { Leadership } from "@/components/about/Leadership";
 import { AboutCTA } from "@/components/about/AboutCTA";
-import { aboutContent } from "@/content/about";
+import { getPublicAboutContent, PublicAboutData } from "@/services/about.service";
+import { getAssetBySlot, PublicMediaAsset } from "@/services/media.service";
 
 export const AboutUsPage: React.FC = () => {
+  const [aboutData, setAboutData] = useState<PublicAboutData | null>(null);
+
+  // Canonical hero image resolved from the Media Library.
+  // This is the source of truth — updated whenever an admin replaces the asset
+  // via Admin → Media Library → About → Hero Section → Hero Visual → Replace.
+  const [heroMediaAsset, setHeroMediaAsset] = useState<PublicMediaAsset | null>(null);
+
   useEffect(() => {
-    document.title = "About Us | Veenero - Water Intelligence Network";
+    let isMounted = true;
+
+    const loadContent = async () => {
+      // Run both fetches in parallel for performance
+      const [aboutResult, heroAsset] = await Promise.allSettled([
+        getPublicAboutContent(),
+        getAssetBySlot("about", "Hero Section", "Hero Visual"),
+      ]);
+
+      if (!isMounted) return;
+
+      if (aboutResult.status === "fulfilled") {
+        setAboutData(aboutResult.value);
+        if (aboutResult.value.seo?.metaTitle) {
+          document.title = aboutResult.value.seo.metaTitle;
+        }
+      } else {
+        console.warn("[About] Could not load dynamic CMS content from API, using default fallbacks.", aboutResult.reason);
+      }
+
+      if (heroAsset.status === "fulfilled" && heroAsset.value) {
+        setHeroMediaAsset(heroAsset.value);
+      }
+      // If heroAsset is null (404) or rejected (network error), AboutHero falls back to its local PNG
+    };
+
+    document.title = "About Us | Veenero - Building India's Water Intelligence";
+    loadContent();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-hidden">
-      {/* Floating droplet background accents matching Careers page benchmark */}
-      <div className="absolute top-[20%] left-[2%] w-6 h-6 rounded-full bg-teal-500/10 border border-teal-600/20 blur-[0.5px] pointer-events-none animate-float z-0" />
-      <div className="absolute top-[40%] right-[3%] w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-600/20 blur-[1px] pointer-events-none animate-float animation-delay-400 z-0" />
-      <div className="absolute top-[65%] left-[3%] w-5 h-5 rounded-full bg-teal-400/15 border border-teal-500/30 blur-[0.5px] pointer-events-none animate-float animation-delay-200 z-0" />
-      <div className="absolute top-[85%] right-[2%] w-7 h-7 rounded-full bg-cyan-400/10 border border-cyan-500/20 blur-[0.8px] pointer-events-none animate-float animation-delay-600 z-0" />
+      {/* Subtle Water-Inspired Atmospheric Lighting (Consistent with Home Identity) */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
+        {/* Soft top-left ambient teal glow */}
+        <div className="absolute -top-[15%] -left-[10%] w-[65vw] h-[65vw] max-w-[700px] max-h-[700px] bg-gradient-to-br from-teal-500/[0.045] to-transparent rounded-full blur-3xl" />
+        {/* Mid-right ambient cyan flow glow */}
+        <div className="absolute top-[35%] -right-[15%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] bg-gradient-to-bl from-cyan-500/[0.035] via-teal-500/[0.02] to-transparent rounded-full blur-3xl" />
+        {/* Lower-left ambient reservoir glow */}
+        <div className="absolute top-[68%] -left-[12%] w-[60vw] h-[60vw] max-w-[680px] max-h-[680px] bg-gradient-to-tr from-teal-500/[0.03] to-transparent rounded-full blur-3xl" />
+      </div>
 
-      {/* Navbar */}
+      {/* Main Global Navbar */}
       <Navbar />
 
-      {/* Page Content */}
-      <main className="flex-1 bg-[#FCFDFD] dark:bg-background">
-        <AboutHero data={aboutContent.hero} />
-        <OurStory data={aboutContent.ourStory} />
-        <VisionMission data={aboutContent.visionMission} />
-        <OurValues data={aboutContent.values} />
-        <WhyVeenero data={aboutContent.whyVeenero} />
-        <Leadership data={aboutContent.leadership} />
-        <AboutCTA data={aboutContent.cta} />
+      {/* Page Content with Cohesive Soft Gradients and White Content Surfaces */}
+      <main className="flex-1 bg-transparent relative">
+        {/* 1. HERO SECTION */}
+        <AboutHero
+          data={aboutData?.hero}
+          mediaUrl={heroMediaAsset?.secureUrl}
+          mediaAlt={heroMediaAsset?.altText}
+        />
+
+        {/* 2. WHO WE ARE (Technology. Purpose. Impact.) */}
+        <OurStory data={aboutData?.ourStory} />
+
+        {/* 3. CORE VALUES / PILLARS OF VEENERO (Directly follows Who We Are as in reference) */}
+        <OurValues data={aboutData?.pillars} />
+
+        {/* 4. IMPACT / STATS SECTION */}
+        <AboutImpactStats data={aboutData?.impactStats} />
+
+        {/* 5. PURPOSE & DIRECTION (VISION & MISSION) */}
+        <VisionMission data={aboutData?.purposeDirection} />
+
+        {/* 6. WHY VEENERO */}
+        <WhyVeenero data={aboutData?.whyChoose} />
+
+        {/* 7. LEADERSHIP & TEAM */}
+        <Leadership data={aboutData?.leadership} />
+
+        {/* 8. FINAL CTA */}
+        <AboutCTA data={aboutData?.cta} />
       </main>
 
-      {/* Footer */}
+      {/* Main Global Footer */}
       <Footer />
     </div>
   );

@@ -55,6 +55,11 @@ export const AdminLayout: React.FC = () => {
       items: [
         { label: 'Pages', path: '/admin/pages', iconName: 'FileEdit' },
         { label: 'Home CMS', path: '/admin/home', iconName: 'Layers' },
+        { label: 'About CMS', path: '/admin/about', iconName: 'Info' },
+        { label: 'Solutions CMS', path: '/admin/solutions', iconName: 'Cpu' },
+        { label: 'Approach CMS', path: '/admin/approach', iconName: 'Compass' },
+        { label: 'Impact CMS', path: '/admin/impact', iconName: 'Zap' },
+        { label: 'Contact CMS', path: '/admin/contact', iconName: 'Phone' },
         { label: 'Blog / Insights', path: '/admin/blog', iconName: 'Newspaper' },
         { label: 'Careers', path: '/admin/careers', iconName: 'Briefcase' },
         { label: 'Case Studies', path: '/admin/casestudies', iconName: 'BookOpen' },

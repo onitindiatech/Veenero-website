@@ -27,13 +27,17 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onViewDetails }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {jobs.map((job) => (
-        <JobCard
-          key={job.id || (job as any)._id}
-          job={job}
-          onViewDetails={onViewDetails}
-        />
-      ))}
+      {jobs.map((job, idx) => {
+        const staggerDelay = idx % 3 === 0 ? "reveal-delay-100" : idx % 3 === 1 ? "reveal-delay-200" : "reveal-delay-300";
+        return (
+          <div key={job.id || (job as any)._id} className={`reveal-on-scroll ${staggerDelay} h-full`}>
+            <JobCard
+              job={job}
+              onViewDetails={onViewDetails}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

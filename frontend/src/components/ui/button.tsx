@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:transform-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 group-hover:[&_svg]:translate-x-0.5 hover:[&_svg]:translate-x-0.5",
   {
     variants: {
       variant: {
@@ -15,9 +15,11 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-lg hover:shadow-xl font-semibold",
-        heroOutline: "border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 font-semibold",
-        ocean: "bg-gradient-ocean text-primary-foreground hover:opacity-90 shadow-soft hover:shadow-glow font-semibold",
+        hero: "bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-lg hover:shadow-xl font-semibold hover:-translate-y-0.5 active:translate-y-0",
+        heroOutline: "border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 font-semibold hover:-translate-y-0.5 active:translate-y-0",
+        ocean: "bg-gradient-ocean text-primary-foreground hover:opacity-90 shadow-soft hover:shadow-glow font-semibold hover:-translate-y-0.5 active:translate-y-0",
+        teal: "bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold shadow-soft hover:shadow-glow hover:-translate-y-0.5 active:translate-y-0",
+        tealOutline: "bg-card hover:bg-muted text-foreground border border-border/80 rounded-xl font-bold hover:-translate-y-0.5 active:translate-y-0 shadow-soft",
       },
       size: {
         default: "h-10 px-4 py-2",

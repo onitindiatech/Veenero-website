@@ -1,37 +1,70 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SolutionsHero } from "@/components/solutions/SolutionsHero";
-import { PlatformArchitecture } from "@/components/solutions/PlatformArchitecture";
-import { SolutionsGrid } from "@/components/solutions/SolutionsGrid";
-import { IndustrySolutions } from "@/components/solutions/IndustrySolutions";
+import { SolutionsCategories } from "@/components/solutions/SolutionsCategories";
+import { SolutionsImpact } from "@/components/solutions/SolutionsImpact";
 import { SolutionsCTA } from "@/components/solutions/SolutionsCTA";
 import { solutionsPageContent } from "@/content/solutions";
+import { getPublicSolutionsContent, PublicSolutionsData } from "@/services/solutions.service";
 
 export const SolutionsPage: React.FC = () => {
+  const [cmsData, setCmsData] = useState<PublicSolutionsData | null>(null);
+
   useEffect(() => {
-    document.title = "Solutions | Veenero - Water Intelligence Infrastructure";
     window.scrollTo(0, 0);
+
+    getPublicSolutionsContent()
+      .then((data) => {
+        setCmsData(data);
+        if (data.seo?.metaTitle) {
+          document.title = data.seo.metaTitle;
+        }
+        if (data.seo?.metaDescription) {
+          const metaDesc = document.querySelector('meta[name="description"]');
+          if (metaDesc) metaDesc.setAttribute("content", data.seo.metaDescription);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using fallback solutions content:", err);
+      });
   }, []);
 
+  // Safe fallbacks to static content for zero delay/flicker
+  const heroData = cmsData?.hero || solutionsPageContent.hero;
+  const introData = cmsData?.intro || solutionsPageContent.architecture;
+  const categoriesList = cmsData?.categories || [];
+  const solutionsList = cmsData?.solutions || [];
+  const gridHeader = cmsData?.gridHeader;
+  const featuredData = cmsData?.featuredSolution;
+  const ctaData = cmsData?.cta || solutionsPageContent.cta;
+
   return (
-    <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-hidden">
-      {/* Floating droplet background accents matching Careers and About page benchmark */}
-      <div className="absolute top-[18%] left-[2%] w-6 h-6 rounded-full bg-teal-500/10 border border-teal-600/20 blur-[0.5px] pointer-events-none animate-float z-0" />
-      <div className="absolute top-[38%] right-[3%] w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-600/20 blur-[1px] pointer-events-none animate-float animation-delay-400 z-0" />
-      <div className="absolute top-[62%] left-[3%] w-5 h-5 rounded-full bg-teal-400/15 border border-teal-500/30 blur-[0.5px] pointer-events-none animate-float animation-delay-200 z-0" />
-      <div className="absolute top-[82%] right-[2%] w-7 h-7 rounded-full bg-cyan-400/10 border border-cyan-500/20 blur-[0.8px] pointer-events-none animate-float animation-delay-600 z-0" />
+    <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-x-hidden">
 
       {/* Navbar */}
       <Navbar />
 
-      {/* Page Content */}
-      <main className="flex-1 bg-[#FCFDFD] dark:bg-background">
-        <SolutionsHero data={solutionsPageContent.hero} />
-        <PlatformArchitecture data={solutionsPageContent.architecture} />
-        <SolutionsGrid data={solutionsPageContent.solutionsGrid} />
-        <IndustrySolutions data={solutionsPageContent.industries} />
-        <SolutionsCTA data={solutionsPageContent.cta} />
+      {/* Page Content — clean section flow matching visual hierarchy */}
+      <main className="flex-1">
+
+        {/* 1. HERO — Compact 50-55vh Sustainable Solutions with light blue water background */}
+        <SolutionsHero data={heroData} />
+
+        {/* 2. SOLUTIONS CATEGORIES — 5-column grid with subtle 01-05 badges */}
+        <SolutionsCategories
+          data={solutionsPageContent.solutionsGrid}
+          categories={categoriesList}
+          solutions={solutionsList}
+          gridHeader={gridHeader}
+        />
+
+        {/* 3. REAL-WORLD IMPACT — Organic water wave transition, 4 sectors, and animated counters */}
+        <SolutionsImpact />
+
+        {/* 4. FINAL CTA — Water circularity & Earth splash banner */}
+        <SolutionsCTA data={ctaData} />
+
       </main>
 
       {/* Footer */}

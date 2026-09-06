@@ -3,6 +3,7 @@ import * as Icons from "lucide-react";
 import { getPublicHome, HomeImpact } from "@/services/home.service";
 import { impactContent } from "@/content/home/impact";
 import { mergeHomeSection } from "@/utils/mergeHomeSection";
+import { OneShotCounter } from "@/components/ui/OneShotCounter";
 
 export const Impact = () => {
   const [impactData, setImpactData] = useState<HomeImpact>(impactContent);
@@ -31,10 +32,15 @@ export const Impact = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <p className="text-primary-foreground/80 font-medium mb-4 tracking-wider uppercase text-sm">
-            {impactData.eyebrow}
-          </p>
+        <div className="max-w-3xl mx-auto text-center mb-12 reveal-on-scroll">
+          {impactData.eyebrow && (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-4 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-aqua animate-ping inline-block" />
+              <span className="text-primary-foreground/90 font-bold uppercase tracking-widest text-[10px] md:text-xs">
+                {impactData.eyebrow}
+              </span>
+            </div>
+          )}
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
             {impactData.title}
           </h2>
@@ -47,16 +53,17 @@ export const Impact = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12">
           {impactData.impacts.map((impact, idx) => {
             const IconComp = (Icons as any)[impact.iconName] || Icons.Droplets;
+            const staggerDelay = idx === 0 ? "reveal-delay-100" : idx === 1 ? "reveal-delay-200" : idx === 2 ? "reveal-delay-300" : "reveal-delay-400";
             return (
               <div
                 key={`${impact.label}-${idx}`}
-                className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8 text-center border border-primary-foreground/20 hover:bg-primary-foreground/15 transition-all duration-300"
+                className={`bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8 text-center border border-primary-foreground/20 hover:bg-primary-foreground/15 hover:-translate-y-1 transition-all duration-300 reveal-on-scroll ${staggerDelay}`}
               >
                 <div className="w-12 h-12 bg-primary-foreground/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <IconComp className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <p className="font-display text-4xl font-bold text-primary-foreground mb-2">
-                  {impact.value}
+                  <OneShotCounter value={impact.value} />
                 </p>
                 <p className="font-semibold text-primary-foreground mb-2">
                   {impact.label}
@@ -71,7 +78,7 @@ export const Impact = () => {
 
         {/* Testimonial */}
         {impactData.testimonial && (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto reveal-on-scroll reveal-delay-200">
             <div className="bg-primary-foreground rounded-3xl p-10 md:p-14 shadow-xl">
               <div className="text-6xl text-primary/20 font-serif mb-6">"</div>
               <blockquote className="font-display text-2xl md:text-3xl text-foreground leading-relaxed mb-8">

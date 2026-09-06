@@ -46,9 +46,9 @@ const BlogPostSchema = new Schema<IBlogPost>(
     },
     slug: {
       type: String,
-      required: [true, 'Slug is required'],
-      trim: true,
+      required: true,
       lowercase: true,
+      trim: true,
     },
     category: {
       type: String,

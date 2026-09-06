@@ -327,5 +327,80 @@ export const careerService = {
       throw new Error('Unable to connect to the CMS API.');
     }
   },
+
+  async getPageSettings(): Promise<CareerPageSettings> {
+    try {
+      const response = await fetch(`${PUBLIC_API_URL}/settings`);
+      if (!response.ok) {
+        throw await parseError(response, 'Failed to load career page settings');
+      }
+      const res = await response.json();
+      return res.data;
+    } catch (err: any) {
+      if (err.message && !err.message.includes('fetch')) throw err;
+      throw new Error('Unable to connect to the CMS API.');
+    }
+  },
+
+  async updatePageSettings(settings: Partial<CareerPageSettings>): Promise<CareerPageSettings> {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    try {
+      const response = await fetch(`${ADMIN_API_URL}/settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify(settings),
+      });
+      if (!response.ok) {
+        throw await parseError(response, 'Failed to update career page settings');
+      }
+      const res = await response.json();
+      return res.data;
+    } catch (err: any) {
+      if (err.message && !err.message.includes('fetch')) throw err;
+      throw new Error('Unable to connect to the CMS API.');
+    }
+  },
 };
+
+export interface CareerPageSettings {
+  hero: {
+    visible: boolean;
+    eyebrow: string;
+    title: string;
+    description: string;
+    primaryCtaText: string;
+    secondaryCtaText: string;
+  };
+  hiringProcess: {
+    visible: boolean;
+    eyebrow: string;
+    title: string;
+    description: string;
+    steps: Array<{
+      num: string;
+      icon: string;
+      title: string;
+      subtitle: string;
+      description: string;
+    }>;
+  };
+  cta: {
+    visible: boolean;
+    eyebrow: string;
+    title: string;
+    description: string;
+    buttonText: string;
+    email: string;
+  };
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+  };
+}
+
 export default careerService;
+

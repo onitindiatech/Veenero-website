@@ -1,78 +1,144 @@
-import React from "react";
-import defaultHeroImage from "@/assets/hero-water.jpg";
-import { SolutionsContent } from "@/content/solutions";
+import React, { useState, useEffect } from "react";
+import { ArrowRight, Leaf } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import defaultHeroBackground from "@/assets/solutions/solutions-hero-background.png";
 
 interface SolutionsHeroProps {
-  data: SolutionsContent["hero"];
+  data?: any;
 }
 
 export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
+  useScrollReveal([]);
+  const [offsetY, setOffsetY] = useState(0);
+
+  // Subtle parallax effect on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setOffsetY(window.scrollY * 0.15);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
+    const cleanId = id.replace(/^#/, "");
+    const el = document.getElementById(cleanId);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  return (
-    <section className="relative min-h-[50vh] md:h-[60vh] flex items-center bg-background border-b border-border/10 overflow-hidden select-none">
-      {/* RIGHT SIDE / BACKGROUND Image with Gradient Overlay Fades & Subtle Data-Stream Glow */}
-      <div className="absolute right-0 top-0 bottom-0 w-full md:w-[60%] lg:w-[55%] z-0 select-none">
-        <img
-          src={defaultHeroImage}
-          alt="Water infrastructure intelligence platform"
-          className="w-full h-full object-cover transition-transform ease-out hover:scale-105"
-          style={{ transitionDuration: "10s" }}
-        />
-        
-        {/* Subtle Water Caustic / Data-stream overlay mesh */}
-        <div className="absolute inset-0 bg-teal-950/20 mix-blend-color-burn pointer-events-none" />
+  const heroBg = data?.image || defaultHeroBackground;
+  const eyebrow = data?.eyebrow || "SUSTAINABLE SOLUTIONS";
+  const titlePart1 = data?.title || "Intelligent Water Infrastructure";
+  const titlePart2 = data?.highlightedText || "Built for a Better Tomorrow.";
+  const description =
+    data?.description ||
+    "Modular solutions to solve real-world water challenges with data, intelligence, and lasting impact.";
 
-        {/* Horizontal Gradient fade for Desktop */}
-        <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-background via-background/70 to-transparent hidden md:block" />
-        
-        {/* Vertical Gradient fade for Mobile */}
-        <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-background via-background/60 to-transparent md:hidden" />
+  return (
+    <section className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[420px] lg:h-[52vh] lg:min-h-[460px] lg:max-h-[560px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30">
+      {/* Background Hero Image Composition — Full width seamless water environment with uncropped droplet */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <img
+          src={heroBg}
+          alt={data?.imageAlt || "Veenero Sustainable Water Infrastructure Solutions"}
+          className="w-full h-full object-cover object-[right_center] select-none pointer-events-none"
+          loading="eager"
+        />
+
+        {/* Cool Water-Blue / Aqua Atmospheric Tonal Wash (eliminates chalky white, adds vibrant water depth) */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-teal-600/16 via-cyan-500/12 to-sky-500/18 mix-blend-multiply pointer-events-none" />
+
+        {/* Subtle Ambient Water Tone Overlay */}
+        <div className="absolute inset-0 bg-[#cceef5]/25 pointer-events-none" />
+
+        {/* Left-Side High-Readability Ice-Blue Gradient (replaces washed-out white with cool aquatic blue for strong text contrast) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#ccedf3]/94 via-[#d8f2f6]/80 via-48% to-transparent dark:from-[#021316]/95 dark:via-[#021316]/82 dark:via-48% dark:to-transparent pointer-events-none" />
       </div>
 
-      {/* LEFT SIDE CONTENT - Matching Careers and About Hero Spacing & Typography */}
-      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 py-12 md:py-16">
-        <div className="max-w-2xl text-left font-sans animate-fade-up">
-          {/* Eyebrow */}
-          {data.eyebrow && (
-            <p className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping inline-block" />
-              {data.eyebrow}
-            </p>
-          )}
+      {/* Subtle Floating Water Light Particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-1">
+        <div className="absolute top-1/4 left-1/3 w-3 h-3 rounded-full bg-teal-400/20 blur-xs animate-pulse" />
+        <div className="absolute top-1/2 left-1/4 w-2 h-2 rounded-full bg-cyan-300/30 blur-xs animate-ping" style={{ animationDuration: "3s" }} />
+        <div className="absolute top-1/3 right-1/3 w-4 h-4 rounded-full bg-teal-300/15 blur-sm" />
+      </div>
 
-          {/* Editorial H1 Heading (Playfair Display) */}
-          <h1 className="font-display text-4xl sm:text-5xl md:text-[3.25rem] lg:text-[4rem] font-bold text-foreground leading-[1.1] mb-5 tracking-tight">
-            Intelligent Water <br className="hidden md:inline" />
-            Infrastructure
+      {/* Floating Right Accents matching design mockup */}
+      <div className="hidden lg:block absolute top-24 right-10 sm:right-16 text-right pointer-events-none select-none z-10">
+        <div className="text-[10px] tracking-[0.25em] font-bold text-slate-700 dark:text-slate-200 uppercase leading-[1.4] opacity-85">
+          <span>SOLVING</span>
+          <br />
+          <span>TODAY</span>
+          <br />
+          <span>FOR A</span>
+          <br />
+          <span>BRIGHTER</span>
+          <br />
+          <span>TOMORROW</span>
+        </div>
+      </div>
+
+      <div className="hidden lg:block absolute bottom-10 right-10 sm:right-16 pointer-events-none select-none z-10">
+        <div className="px-5 py-3 rounded-2xl bg-white/45 dark:bg-slate-900/50 backdrop-blur-md border border-white/60 dark:border-white/15 shadow-sm">
+          <span className="text-xs font-bold tracking-wider text-slate-900 dark:text-white block uppercase leading-snug">
+            CLEANER
+            <br />
+            WATER
+            <br />
+            HEALTHIER
+            <br />
+            TOMORROWS
+          </span>
+        </div>
+      </div>
+
+      {/* Content Container */}
+      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 font-sans">
+        <div className="max-w-xl lg:max-w-2xl text-left">
+
+          {/* Eyebrow Capsule with Leaf Icon matching mockup */}
+          <div className="reveal-on-scroll inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600/10 dark:bg-teal-400/10 border border-teal-600/20 dark:border-teal-400/20 backdrop-blur-xs mb-3">
+            <Leaf className="w-3 h-3 text-teal-700 dark:text-teal-300" />
+            <span className="text-teal-800 dark:text-teal-300 font-bold uppercase tracking-widest text-[10px] sm:text-[11px] font-mono">
+              {eyebrow}
+            </span>
+          </div>
+
+          {/* H1 Headline */}
+          <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold leading-[1.16] tracking-tight mb-3">
+            <span className="text-slate-950 dark:text-white block">
+              {titlePart1}
+            </span>
+            <span className="text-[#136873] dark:text-teal-400 block font-bold">
+              {titlePart2}
+            </span>
           </h1>
 
           {/* Supporting Description */}
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mb-8">
-            {data.description}
+          <p className="reveal-on-scroll reveal-delay-200 text-xs sm:text-sm text-slate-700 dark:text-slate-200/90 leading-relaxed max-w-lg mb-5 font-sans">
+            {description}
           </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          {/* Action CTAs */}
+          <div className="reveal-on-scroll reveal-delay-300 flex flex-wrap items-center gap-3">
             <button
-              onClick={() => scrollToSection("solutions-grid")}
-              className="w-full sm:w-auto px-6 py-3.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold shadow-soft hover:-translate-y-0.5 transition-all duration-200 text-sm flex items-center justify-center gap-2"
+              onClick={() => scrollToSection("solutions-categories")}
+              className="px-6 py-2.5 sm:py-3 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
             >
-              {data.primaryCtaText || "Explore Solutions"}
-              <span className="text-base leading-none">→</span>
+              <span>Explore Solutions</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button
-              onClick={() => scrollToSection("platform-architecture")}
-              className="w-full sm:w-auto px-6 py-3.5 bg-card hover:bg-muted text-foreground border border-border/80 rounded-xl font-bold hover:-translate-y-0.5 transition-all duration-200 text-sm flex items-center justify-center shadow-soft"
+
+            <Link
+              to="/contact"
+              className="px-6 py-2.5 sm:py-3 rounded-full border border-slate-700/80 dark:border-slate-300/70 hover:border-slate-950 dark:hover:border-white text-slate-800 dark:text-white bg-white/40 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-xs sm:text-sm transition-all duration-200"
             >
-              {data.secondaryCtaText || "Platform Architecture"}
-            </button>
+              Talk to an Expert
+            </Link>
           </div>
+
         </div>
       </div>
     </section>

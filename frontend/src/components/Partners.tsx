@@ -49,11 +49,13 @@ export const Partners = () => {
 
         {/* Partners Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {partnersData.list.map((partner, idx) => (
-            <div
-              key={`${partner.name}-${idx}`}
-              className="group relative bg-card rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-500 border border-border hover:border-primary/30"
-            >
+          {partnersData.list.map((partner, idx) => {
+            const staggerDelay = idx % 3 === 0 ? "reveal-delay-100" : idx % 3 === 1 ? "reveal-delay-200" : "reveal-delay-300";
+            return (
+              <div
+                key={`${partner.name}-${idx}`}
+                className={`group relative bg-card rounded-2xl p-8 shadow-card hover:shadow-glow transition-all duration-300 border border-border hover:border-primary/30 hover:-translate-y-1 reveal-on-scroll ${staggerDelay}`}
+              >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-ocean rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="w-32 h-32 bg-accent rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
                 <img
@@ -69,7 +71,8 @@ export const Partners = () => {
                 {partner.description}
               </p>
             </div>
-          ))}
+          );
+        })}
         </div>
       </div>
     </section>

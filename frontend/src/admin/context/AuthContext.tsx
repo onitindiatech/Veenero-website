@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
 } from 'react';
 import {
   apiFetch,
@@ -42,6 +43,21 @@ interface AuthContextType {
   handleApiUnauthorized: () => void;
 }
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+/** 15 minutes of inactivity before auto-logout (in milliseconds). */
+const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000;
+
+/** DOM events that count as "activity" and reset the inactivity timer. */
+const ACTIVITY_EVENTS: (keyof WindowEventMap)[] = [
+  'mousemove',
+  'mousedown',
+  'keydown',
+  'touchstart',
+  'scroll',
+  'click',
+];
+
 // ─── Context ──────────────────────────────────────────────────────────────────
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,10 +70,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true); // true until first /me check completes
 
+  // Ref to the inactivity timeout so we can clear/reset it
+  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // ── Session-expiry handler ────────────────────────────────────────────────
-  // This is exposed so that any service using apiFetch can trigger a logout
-  // without importing AuthContext (circular dep) — they call apiFetch which
-  // fires the registered callback, which calls this.
   const handleApiUnauthorized = useCallback(() => {
     setUser(null);
     // loading stays false — ProtectedRoute will redirect to /admin/login
@@ -68,6 +84,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     registerUnauthorizedCallback(handleApiUnauthorized);
     return () => clearUnauthorizedCallback();
   }, [handleApiUnauthorized]);
+
+  // ── Logout (shared by manual logout and inactivity auto-logout) ───────────
+  const logout = useCallback(async () => {
+    try {
+      await apiFetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // Ignore network errors on logout — clear local state regardless
+    } finally {
+      setUser(null);
+    }
+  }, []);
+
+  // ── Inactivity auto-logout ────────────────────────────────────────────────
+  // Only active when the user IS authenticated. We attach lightweight event
+  // listeners to the window and reset the timer on any meaningful interaction.
+  // When the timer fires (15 min of silence), we log out and redirect to the
+  // login page with ?expired=1 so the login page can show a proper message.
+
+  const scheduleInactivityLogout = useCallback(() => {
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+    inactivityTimerRef.current = setTimeout(async () => {
+      // Perform server-side logout to clear the HttpOnly cookie
+      await logout();
+      // Redirect to login with expiry flag — router handles this via ProtectedRoute
+      // We navigate imperatively to avoid circular AuthContext → router imports.
+      window.location.replace('/admin/login?expired=1');
+    }, INACTIVITY_TIMEOUT_MS);
+  }, [logout]);
+
+  useEffect(() => {
+    // Only run inactivity tracking while authenticated
+    if (!user) {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+        inactivityTimerRef.current = null;
+      }
+      return;
+    }
+
+    // Start the initial timer
+    scheduleInactivityLogout();
+
+    // Reset timer on any activity
+    const handleActivity = () => scheduleInactivityLogout();
+
+    ACTIVITY_EVENTS.forEach((event) => {
+      window.addEventListener(event, handleActivity, { passive: true });
+    });
+
+    return () => {
+      // Cleanup on unmount or when user becomes null
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+        inactivityTimerRef.current = null;
+      }
+      ACTIVITY_EVENTS.forEach((event) => {
+        window.removeEventListener(event, handleActivity);
+      });
+    };
+  }, [user, scheduleInactivityLogout]);
 
   // ── Session restore on mount ──────────────────────────────────────────────
   useEffect(() => {
@@ -121,17 +199,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     setUser(data.user as AdminUser);
-  }, []);
-
-  // ── Logout ────────────────────────────────────────────────────────────────
-  const logout = useCallback(async () => {
-    try {
-      await apiFetch('/api/auth/logout', { method: 'POST' });
-    } catch {
-      // Ignore network errors on logout — clear local state regardless
-    } finally {
-      setUser(null);
-    }
   }, []);
 
   const value: AuthContextType = {

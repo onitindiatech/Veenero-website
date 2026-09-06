@@ -4,7 +4,6 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CareersHero } from "@/components/careers/CareersHero";
-import { WhyVeenero } from "@/components/careers/WhyVeenero";
 import { HiringProcess } from "@/components/careers/HiringProcess";
 import { JobFilters } from "@/components/careers/JobFilters";
 import { JobList } from "@/components/careers/JobList";
@@ -12,20 +11,20 @@ import { CareersCTA } from "@/components/careers/CareersCTA";
 import { CareerHeroData } from "@/components/careers/types";
 import { careerService, Career } from "@/admin/services/career.service";
 
-// Configurable Careers Hero Data (CMS & API structural representation)
-const careerHeroConfig: Partial<CareerHeroData> = {
+// Careers Hero Data
+const defaultCareerHeroConfig: Partial<CareerHeroData> = {
   eyebrow: "CAREERS AT VEENERO",
-  title: "Build the Future of Water With Us",
+  title: "Build the Future of Water Intelligence",
   description:
-    "We are building India's water intelligence platform. Join our mission to make every litre visible.",
-  backgroundImage: "", // CMS URL in future; empty string triggers default Home Hero image fallback
-  primaryCtaText: "Explore Open Positions",
-  secondaryCtaText: "Life at Veenero",
+    "We are building India's water intelligence platform. Join our mission to make every litre visible, verifiable, and meaningful.",
+  primaryCtaText: "Explore Opportunities",
+  secondaryCtaText: "Hiring Process",
 };
 
 export const CareersPage: React.FC = () => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<Career[]>([]);
+  const [pageSettings, setPageSettings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,20 +34,44 @@ export const CareersPage: React.FC = () => {
   const [selectedType, setSelectedType] = useState("");
 
   useEffect(() => {
-    const fetchJobs = async () => {
+    document.title = "Careers | Veenero - Build the Future of Water Intelligence";
+    window.scrollTo(0, 0);
+
+    const fetchAll = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await careerService.getPublicCareers();
-        setJobs(data);
+        const [jobsData, settingsData] = await Promise.allSettled([
+          careerService.getPublicCareers(),
+          careerService.getPageSettings(),
+        ]);
+        if (jobsData.status === "fulfilled") {
+          setJobs(jobsData.value);
+        }
+        if (settingsData.status === "fulfilled" && settingsData.value) {
+          setPageSettings(settingsData.value);
+          if (settingsData.value.seo?.metaTitle) {
+            document.title = settingsData.value.seo.metaTitle;
+          }
+        }
       } catch (err: any) {
         setError(err.message || "Failed to load positions.");
       } finally {
         setLoading(false);
       }
     };
-    fetchJobs();
+    fetchAll();
   }, []);
+
+  const heroConfig = pageSettings?.hero
+    ? {
+        eyebrow: pageSettings.hero.eyebrow || defaultCareerHeroConfig.eyebrow,
+        title: pageSettings.hero.title || defaultCareerHeroConfig.title,
+        description: pageSettings.hero.description || defaultCareerHeroConfig.description,
+        primaryCtaText: pageSettings.hero.primaryCtaText || defaultCareerHeroConfig.primaryCtaText,
+        secondaryCtaText: pageSettings.hero.secondaryCtaText || defaultCareerHeroConfig.secondaryCtaText,
+      }
+    : defaultCareerHeroConfig;
 
   // Extract unique filters from MongoDB data
   const departments = Array.from(new Set(jobs.map((j) => j.department)));
@@ -70,37 +93,47 @@ export const CareersPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-hidden">
-      {/* Floating droplet background accents matching mockups */}
-      <div className="absolute top-[25%] left-[2%] w-6 h-6 rounded-full bg-teal-500/10 border border-teal-600/20 blur-[0.5px] pointer-events-none animate-float z-0" />
-      <div className="absolute top-[45%] right-[3%] w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-600/20 blur-[1px] pointer-events-none animate-float animation-delay-400 z-0" />
-      <div className="absolute top-[70%] left-[4%] w-5 h-5 rounded-full bg-teal-400/15 border border-teal-500/30 blur-[0.5px] pointer-events-none animate-float animation-delay-200 z-0" />
+    <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-x-hidden">
+      {/* Subtle Ambient Water Glows matching Design Language */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
+        <div className="absolute -top-[15%] -left-[10%] w-[65vw] h-[65vw] max-w-[700px] max-h-[700px] bg-gradient-to-br from-teal-500/[0.04] to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-[35%] -right-[15%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] bg-gradient-to-bl from-cyan-500/[0.03] via-teal-500/[0.02] to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-[68%] -left-[12%] w-[60vw] h-[60vw] max-w-[680px] max-h-[680px] bg-gradient-to-tr from-teal-500/[0.03] to-transparent rounded-full blur-3xl" />
+      </div>
 
-      {/* Navbar */}
+      {/* Main Global Navbar */}
       <Navbar />
 
       {/* Page Content */}
-      <main className="flex-1 bg-[#FCFDFD] dark:bg-background">
+      <main className="flex-1 bg-transparent">
         
-        {/* 1. Careers Hero */}
-        <CareersHero data={careerHeroConfig} />
+        {/* 1. HERO SECTION */}
+        <CareersHero data={heroConfig} jobCount={jobs.length || 6} />
 
-        {/* 2. Open Positions Section */}
-        <section id="open-positions" className="py-10 md:py-12 relative bg-transparent">
-          <div className="container mx-auto px-6 md:px-12 max-w-7xl space-y-12">
+        {/* 2. OPEN OPPORTUNITIES — Interactive Job Listings */}
+        <section id="open-positions" className="py-12 sm:py-16 lg:py-20 relative bg-gradient-wave dark:bg-slate-900/30 border-b border-border/15 select-none">
+          <div className="container mx-auto px-6 md:px-12 max-w-7xl space-y-10">
             
             {/* Section Header */}
-            <div className="text-left font-sans">
-              <span className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs block mb-3">
-                OPEN POSITIONS
-              </span>
-              <h2 className="font-display text-3xl md:text-[2.5rem] font-bold text-foreground">
-                Find Your Next Opportunity
+            <div className="text-left font-sans max-w-3xl">
+              <div>
+                <span className="text-teal-700 dark:text-teal-400 font-bold uppercase tracking-widest text-xs font-mono block mb-1.5">
+                  OPEN OPPORTUNITIES
+                </span>
+                <div className="w-10 h-0.5 bg-teal-600 rounded-full mb-3" />
+              </div>
+
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 leading-tight tracking-tight">
+                Current Openings &amp; Roles
               </h2>
+
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+                Explore engineering, hardware, data science, and operations roles shaping water intelligence across India.
+              </p>
             </div>
 
             {/* Horizontal Filters UI */}
-            <div className="w-full">
+            <div className="w-full bg-card p-4 sm:p-5 rounded-2xl border border-border/60 shadow-xs">
               <JobFilters
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -116,14 +149,14 @@ export const CareersPage: React.FC = () => {
               />
             </div>
 
-            {/* Listings Grid (3 columns on desktop) */}
+            {/* Listings Grid */}
             {loading ? (
-              <div className="p-12 text-center flex flex-col items-center justify-center gap-3">
+              <div className="py-20 text-center flex flex-col items-center justify-center gap-3">
                 <Loader2 className="h-8 w-8 text-teal-600 animate-spin" />
                 <p className="text-xs text-muted-foreground font-semibold">Updating career opportunities...</p>
               </div>
             ) : error ? (
-              <div className="bg-rose-50 dark:bg-rose-950/10 border border-rose-100 p-6 rounded-2xl text-rose-700 text-xs font-semibold flex items-center gap-3 justify-center">
+              <div className="bg-rose-50 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-900/30 p-6 rounded-2xl text-rose-700 dark:text-rose-400 text-xs font-semibold flex items-center gap-3 justify-center">
                 <AlertCircle className="h-5 w-5 text-rose-500" />
                 <span>Error updating openings: {error}</span>
               </div>
@@ -134,8 +167,8 @@ export const CareersPage: React.FC = () => {
               />
             )}
 
-            {/* Center View All Open Positions Button */}
-            <div className="flex justify-center pt-4">
+            {/* Center Reset & View All Button */}
+            <div className="flex justify-center pt-2">
               <button
                 onClick={() => {
                   setSearchQuery("");
@@ -147,26 +180,24 @@ export const CareersPage: React.FC = () => {
                     el.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
-                className="px-6 py-3 border border-teal-600/30 text-teal-700 dark:text-teal-400 bg-card hover:bg-muted font-bold rounded-xl text-sm shadow-sm transition-all duration-150"
+                className="px-6 py-2.5 border border-teal-600/30 text-teal-700 dark:text-teal-400 bg-card hover:bg-muted font-bold rounded-xl text-xs sm:text-sm shadow-xs transition-all duration-150 cursor-pointer"
               >
-                View All Open Positions
+                Reset Filters &amp; View All Roles
               </button>
             </div>
 
           </div>
         </section>
 
-        {/* 3. Why Join Veenero Section */}
-        <WhyVeenero />
-
-        {/* 4. Selection Process Section */}
+        {/* 3. HIRING PROCESS — Animated Step Timeline */}
         <HiringProcess />
 
-        {/* 5. Impact CTA Section */}
+        {/* 4. CAREER CTA — Dark Aquatic Final Call to Action */}
         <CareersCTA />
+
       </main>
 
-      {/* Footer */}
+      {/* Main Global Footer */}
       <Footer />
     </div>
   );

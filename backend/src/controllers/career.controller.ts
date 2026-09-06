@@ -494,3 +494,100 @@ export const permanentlyDeleteCareer = async (
     next(error);
   }
 };
+
+// ─── Career Page Settings Controller Methods ─────────────────────────────────
+
+import { CareerPageSettingsModel, ICareerPageSettings } from '../models/CareerPageSettings';
+
+export async function getOrCreateCareerSettings(): Promise<ICareerPageSettings> {
+  let doc = await CareerPageSettingsModel.findOne();
+  if (!doc) {
+    doc = await CareerPageSettingsModel.create({
+      hiringProcess: {
+        steps: [
+          {
+            num: "01",
+            icon: "Search",
+            title: "Explore",
+            subtitle: "Find Your Fit",
+            description: "Browse our open roles across engineering, hardware, data science, and operations. Find the position that matches your passion and expertise.",
+          },
+          {
+            num: "02",
+            icon: "FileText",
+            title: "Apply",
+            subtitle: "Share Your Story",
+            description: "Submit your application with your resume and a note about what drives you. We read every application — no black boxes here.",
+          },
+          {
+            num: "03",
+            icon: "Users",
+            title: "Interview",
+            subtitle: "Meaningful Conversations",
+            description: "We run focused, respectful interviews designed to understand your thinking, values, and technical depth. Typically two to three rounds.",
+          },
+          {
+            num: "04",
+            icon: "Rocket",
+            title: "Join & Build",
+            subtitle: "Welcome to Veenero",
+            description: "Receive your offer, onboard with your team, and start building the water intelligence infrastructure that India needs.",
+          },
+        ],
+      },
+    });
+  }
+  return doc;
+}
+
+export const getPublicCareerSettings = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const settings = await getOrCreateCareerSettings();
+    res.status(200).json({ success: true, data: settings });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAdminCareerSettings = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const settings = await getOrCreateCareerSettings();
+    res.status(200).json({ success: true, data: settings });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateAdminCareerSettings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const updateData = req.body;
+    let doc = await getOrCreateCareerSettings();
+
+    const allowed = ['hero', 'hiringProcess', 'cta', 'seo'];
+    for (const key of allowed) {
+      if (updateData[key] !== undefined) {
+        (doc as any)[key] = updateData[key];
+      }
+    }
+
+    doc.updatedBy = req.user?.email || 'admin';
+    await doc.save();
+
+    res.status(200).json({ success: true, data: doc, message: 'Career page settings saved successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+

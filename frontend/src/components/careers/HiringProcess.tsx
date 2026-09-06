@@ -1,98 +1,208 @@
-import React from "react";
-import { Search, FileText, Users, Rocket } from "lucide-react";
-import { processGear, waterRipple } from "@/assets/animations";
+import React, { useEffect, useRef, useState } from "react";
+import { Search, FileText, Users, Rocket, CheckCircle } from "lucide-react";
+
+const steps = [
+  {
+    num: "01",
+    icon: Search,
+    title: "Explore",
+    subtitle: "Find Your Fit",
+    description:
+      "Browse our open roles across engineering, hardware, data science, and operations. Find the position that matches your passion and expertise.",
+    accent: "from-teal-500/20 to-cyan-500/10",
+    iconBg: "bg-teal-50 dark:bg-teal-950/50 border-teal-500/30 text-teal-700 dark:text-teal-300",
+    pill: "bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-600/20",
+  },
+  {
+    num: "02",
+    icon: FileText,
+    title: "Apply",
+    subtitle: "Share Your Story",
+    description:
+      "Submit your application with your resume and a note about what drives you. We read every application — no black boxes here.",
+    accent: "from-cyan-500/20 to-teal-500/10",
+    iconBg: "bg-cyan-50 dark:bg-cyan-950/50 border-cyan-500/30 text-cyan-700 dark:text-cyan-300",
+    pill: "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-300 border-cyan-600/20",
+  },
+  {
+    num: "03",
+    icon: Users,
+    title: "Interview",
+    subtitle: "Meaningful Conversations",
+    description:
+      "We run focused, respectful interviews designed to understand your thinking, values, and technical depth. Typically two to three rounds.",
+    accent: "from-teal-600/20 to-sky-500/10",
+    iconBg: "bg-teal-50 dark:bg-teal-950/50 border-teal-600/30 text-teal-700 dark:text-teal-300",
+    pill: "bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-600/20",
+  },
+  {
+    num: "04",
+    icon: Rocket,
+    title: "Join & Build",
+    subtitle: "Welcome to Veenero",
+    description:
+      "Receive your offer, onboard with your team, and start building the water intelligence infrastructure that India needs.",
+    accent: "from-sky-500/20 to-teal-400/10",
+    iconBg: "bg-sky-50 dark:bg-sky-950/50 border-sky-500/30 text-sky-700 dark:text-sky-300",
+    pill: "bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border-sky-500/20",
+  },
+];
 
 export const HiringProcess: React.FC = () => {
-  const steps = [
-    {
-      num: "01",
-      icon: Search,
-      title: "Explore",
-      description: "Browse open roles and find the opportunity that fits your passion."
-    },
-    {
-      num: "02",
-      icon: FileText,
-      title: "Apply",
-      description: "Submit your application and tell us what makes you unique."
-    },
-    {
-      num: "03",
-      icon: Users,
-      title: "Meet",
-      description: "We'll connect with you for meaningful conversations and evaluations."
-    },
-    {
-      num: "04",
-      icon: Rocket,
-      title: "Build With Us",
-      description: "Join the team and help build technology that changes lives."
-    }
-  ];
+  const sectionRef = useRef<HTMLElement>(null);
+  const [visibleSteps, setVisibleSteps] = useState<boolean[]>(Array(steps.length).fill(false));
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    stepRefs.current.forEach((el, idx) => {
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              setVisibleSteps((prev) => {
+                const next = [...prev];
+                next[idx] = true;
+                return next;
+              });
+            }, idx * 150);
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.15 }
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
 
   return (
-    <section id="selection-process" className="py-10 md:py-12 bg-transparent relative border-t border-border/10">
-      <div className="container mx-auto px-6 md:px-12 max-w-7xl space-y-16">
-        
+    <section
+      id="selection-process"
+      ref={sectionRef}
+      className="py-16 sm:py-24 lg:py-28 bg-slate-50/70 dark:bg-slate-900/30 border-t border-border/10 select-none relative overflow-hidden"
+    >
+      {/* Ambient background glow */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-1/4 -right-1/4 w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-gradient-to-bl from-teal-500/[0.04] to-transparent rounded-full blur-3xl" />
+        <div className="absolute -bottom-1/4 -left-1/4 w-[45vw] h-[45vw] max-w-[550px] max-h-[550px] bg-gradient-to-tr from-cyan-500/[0.03] to-transparent rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10">
+
         {/* Section Header */}
-        <div className="text-left font-sans">
-          <span className="text-teal-600 dark:text-teal-400 font-bold uppercase tracking-widest text-[10px] md:text-xs block mb-3">
-            OUR SELECTION PROCESS
-          </span>
-          <h2 className="font-display text-3xl md:text-[2.5rem] font-bold text-foreground">
-            Our Selection Process
+        <div className="text-left font-sans max-w-3xl mb-14 sm:mb-16">
+          <div>
+            <span className="text-teal-700 dark:text-teal-400 font-bold uppercase tracking-widest text-xs font-mono block mb-1.5">
+              THE HIRING PROCESS
+            </span>
+            <div className="w-10 h-0.5 bg-teal-600 rounded-full mb-4" />
+          </div>
+
+          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-3 leading-tight tracking-tight">
+            How We Hire at Veenero
           </h2>
+
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+            A transparent, candidate-first process designed to understand your expertise, values, and long-term alignment with our mission.
+          </p>
         </div>
 
-        {/* Timeline Layout */}
-        <div className="relative font-sans max-w-7xl mx-auto">
-          
-          {/* Horizontal connecting line for desktop */}
-          <div className="absolute top-[80px] left-[10%] right-[10%] h-[1px] bg-border/60 dark:bg-border/20 hidden md:block z-0" />
+        {/* Steps — Horizontal Timeline Desktop / Vertical Mobile */}
+        <div className="relative">
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+          {/* Desktop Connecting Line */}
+          <div className="hidden lg:block absolute top-[4.25rem] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent z-0" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 relative z-10">
             {steps.map((step, idx) => {
               const Icon = step.icon;
+              const isVisible = visibleSteps[idx];
               return (
-                <div key={idx} className="flex flex-col items-center text-center space-y-4">
-                  
-                  {/* Step Number (Top) */}
-                  <span className="text-xs font-bold text-teal-600 dark:text-teal-400">
-                    {step.num}
-                  </span>
-
-                  {/* Circular Icon with double ripple rings & processGear asset */}
-                  <div className="relative flex items-center justify-center">
-                    {/* Ripple outer circle */}
-                    <div className="absolute -inset-2.5 rounded-full border border-teal-500/10 dark:border-teal-500/5 animate-pulse" />
-                    {/* Ripple inner circle */}
-                    <div className="absolute -inset-1.5 rounded-full border border-teal-500/20 dark:border-teal-500/10" />
+                <div
+                  key={idx}
+                  ref={(el) => { stepRefs.current[idx] = el; }}
+                  className="group flex flex-col font-sans"
+                  style={{
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? "translateY(0)" : "translateY(28px)",
+                    transition: "opacity 0.55s ease, transform 0.55s ease",
+                  }}
+                >
+                  {/* Card */}
+                  <div className="flex flex-col h-full bg-card rounded-2xl border border-border/50 hover:border-teal-500/50 shadow-sm hover:shadow-card hover:-translate-y-1.5 transition-all duration-300 overflow-hidden relative">
                     
-                    {/* Main Icon Circle */}
-                    <div className="h-14 w-14 rounded-full bg-card border border-border/80 shadow-sm flex items-center justify-center text-teal-600 dark:text-teal-400 group hover:border-teal-600/30 hover:scale-105 transition-all duration-300 relative overflow-hidden">
-                      <div className="absolute inset-0 opacity-20 pointer-events-none p-1">
-                        <img src={processGear} alt="" className="w-full h-full object-contain" />
+                    {/* Top accent gradient bar */}
+                    <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${step.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+
+                    <div className="p-6 sm:p-7 flex flex-col h-full space-y-4">
+                      
+                      {/* Step number + icon row */}
+                      <div className="flex items-center gap-3">
+                        {/* Step Pill */}
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold border tracking-widest font-mono ${step.pill}`}>
+                          <CheckCircle className="w-3 h-3" />
+                          STEP {step.num}
+                        </span>
                       </div>
-                      <Icon className="h-5 w-5 relative z-10" />
+
+                      {/* Icon Circle */}
+                      <div className={`h-14 w-14 rounded-2xl border flex items-center justify-center group-hover:scale-105 hover-ripple-subtle transition-all duration-300 ${step.iconBg}`}>
+                        <Icon className="h-6 w-6" />
+                      </div>
+
+                      {/* Text */}
+                      <div className="flex-1 space-y-1.5">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                          {step.subtitle}
+                        </p>
+                        <h3 className="font-display text-lg font-bold text-foreground group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors leading-snug">
+                          {step.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed pt-1">
+                          {step.description}
+                        </p>
+                      </div>
+
+                      {/* Step indicator footer */}
+                      <div className="pt-4 border-t border-border/20 flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-muted-foreground font-mono tracking-widest">
+                          {idx + 1} of {steps.length}
+                        </span>
+                        <div className="flex gap-1">
+                          {steps.map((_, i) => (
+                            <div
+                              key={i}
+                              className={`h-1 rounded-full transition-all duration-300 ${
+                                i === idx
+                                  ? "w-5 bg-teal-500"
+                                  : i < idx
+                                  ? "w-1.5 bg-teal-300 dark:bg-teal-700"
+                                  : "w-1.5 bg-border/60"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
                     </div>
                   </div>
-
-                  {/* Title (H3) and description */}
-                  <div className="space-y-2 pt-2">
-                    <h3 className="text-base font-bold text-foreground">
-                      {step.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed max-w-xs mx-auto">
-                      {step.description}
-                    </p>
-                  </div>
-
                 </div>
               );
             })}
           </div>
-
         </div>
+
+        {/* Bottom summary note */}
+        <div className="mt-10 sm:mt-12 text-center font-sans">
+          <p className="text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            Most candidates complete the full process within{" "}
+            <span className="font-semibold text-foreground">10–14 working days</span>. We communicate clearly at every step.
+          </p>
+        </div>
+
       </div>
     </section>
   );

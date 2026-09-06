@@ -35,15 +35,16 @@ export const ImpactOutcomes: React.FC<ImpactOutcomesProps> = ({ data }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {data.pillars.map((pillar, idx) => {
             const imgSrc = getWaterPhotograph((pillar as any).iconImage || (pillar as any).imageUrl, pillar.label, idx);
+            const staggerDelay = idx === 0 ? "reveal-delay-100" : idx === 1 ? "reveal-delay-200" : idx === 2 ? "reveal-delay-300" : "reveal-delay-400";
             return (
               <div
                 key={idx}
-                className="group bg-card p-8 rounded-2xl border border-border/40 hover:border-teal-600/30 shadow-sm hover:shadow-soft hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between font-sans h-full relative"
+                className={`group bg-card p-8 rounded-2xl border border-border/40 hover:border-teal-500/50 shadow-sm hover:shadow-card hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between font-sans h-full relative reveal-on-scroll ${staggerDelay}`}
               >
                 <div>
                   {/* Top Bar: Icon + Tag */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/20 group-hover:scale-110 transition-transform duration-300 w-12 h-12 flex items-center justify-center overflow-hidden shrink-0">
+                    <div className="p-1 rounded-xl bg-teal-50 dark:bg-teal-950/20 group-hover:scale-105 hover-ripple-subtle transition-all duration-300 w-12 h-12 flex items-center justify-center overflow-hidden shrink-0">
                       <img
                         src={imgSrc}
                         alt={pillar.label}

@@ -26,24 +26,26 @@ export const JobFilters: React.FC<JobFiltersProps> = ({
   setSelectedType,
   departments,
   locations,
-  types
+  types,
 }) => {
+  const isFiltered = Boolean(searchQuery || selectedDept || selectedLoc || selectedType);
+
   return (
     <div className="w-full flex flex-col md:flex-row gap-4 items-center justify-between font-sans">
       
-      {/* Search Input Bar (Spans wide on left) */}
+      {/* Search Input Bar */}
       <div className="relative w-full md:flex-1">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-teal-600 dark:text-teal-400" />
         <input
           type="text"
           placeholder="Search by job title, department, or keyword..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-card border border-border/80 rounded-2xl pl-11 pr-4 py-3.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium shadow-sm"
+          className="w-full bg-card border border-border/60 hover:border-teal-500/30 rounded-2xl pl-11 pr-4 py-3.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-600 transition-all font-medium shadow-sm"
         />
       </div>
 
-      {/* Select Dropdowns (Horizontal on desktop, stack on mobile) */}
+      {/* Select Dropdowns */}
       <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
         
         {/* Department Filter */}
@@ -51,7 +53,7 @@ export const JobFilters: React.FC<JobFiltersProps> = ({
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full bg-card border border-border/80 rounded-2xl pl-4 pr-10 py-3.5 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-teal-600 appearance-none font-medium shadow-sm cursor-pointer"
+            className="w-full bg-card border border-border/60 hover:border-teal-500/30 rounded-2xl pl-4 pr-10 py-3.5 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/40 appearance-none font-medium shadow-sm cursor-pointer"
           >
             <option value="">All Departments</option>
             {departments.map((dept) => (
@@ -68,7 +70,7 @@ export const JobFilters: React.FC<JobFiltersProps> = ({
           <select
             value={selectedLoc}
             onChange={(e) => setSelectedLoc(e.target.value)}
-            className="w-full bg-card border border-border/80 rounded-2xl pl-4 pr-10 py-3.5 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-teal-600 appearance-none font-medium shadow-sm cursor-pointer"
+            className="w-full bg-card border border-border/60 hover:border-teal-500/30 rounded-2xl pl-4 pr-10 py-3.5 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/40 appearance-none font-medium shadow-sm cursor-pointer"
           >
             <option value="">All Locations</option>
             {locations.map((loc) => (
@@ -85,7 +87,7 @@ export const JobFilters: React.FC<JobFiltersProps> = ({
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="w-full bg-card border border-border/80 rounded-2xl pl-4 pr-10 py-3.5 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-teal-600 appearance-none font-medium shadow-sm cursor-pointer"
+            className="w-full bg-card border border-border/60 hover:border-teal-500/30 rounded-2xl pl-4 pr-10 py-3.5 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/40 appearance-none font-medium shadow-sm cursor-pointer"
           >
             <option value="">All Types</option>
             {types.map((t) => (
@@ -98,28 +100,23 @@ export const JobFilters: React.FC<JobFiltersProps> = ({
         </div>
 
         {/* Reset Filters Button */}
-        {(searchQuery || selectedDept || selectedLoc || selectedType) ? (
-          <button
-            onClick={() => {
-              setSearchQuery("");
-              setSelectedDept("");
-              setSelectedLoc("");
-              setSelectedType("");
-            }}
-            className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-3.5 bg-card hover:bg-muted border border-border/80 hover:border-teal-600/30 text-teal-700 dark:text-teal-400 font-bold rounded-2xl text-xs sm:text-sm shadow-sm transition-all duration-150 whitespace-nowrap"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            Reset Filters
-          </button>
-        ) : (
-          <button
-            disabled
-            className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-3.5 bg-card/50 border border-border/40 text-muted-foreground font-bold rounded-2xl text-xs sm:text-sm shadow-sm opacity-50 whitespace-nowrap cursor-not-allowed"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            Reset Filters
-          </button>
-        )}
+        <button
+          onClick={() => {
+            setSearchQuery("");
+            setSelectedDept("");
+            setSelectedLoc("");
+            setSelectedType("");
+          }}
+          disabled={!isFiltered}
+          className={`w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-3.5 border rounded-2xl text-xs sm:text-sm font-bold shadow-sm transition-all duration-150 whitespace-nowrap ${
+            isFiltered
+              ? "bg-card hover:bg-muted border-teal-600/30 text-teal-700 dark:text-teal-400 cursor-pointer"
+              : "bg-card/50 border-border/40 text-muted-foreground opacity-50 cursor-not-allowed"
+          }`}
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+          Reset Filters
+        </button>
 
       </div>
     </div>

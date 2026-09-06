@@ -49,6 +49,12 @@ export const config = {
 
   // ── Logging ────────────────────────────────────────────────────────────────
   logLevel: optionalEnv('LOG_LEVEL', 'debug'),
+
+  // ── Cloudinary (Backend only — API secret NEVER exposed to frontend) ────────
+  // Values come from backend/.env — never hardcoded, never logged, never returned in API responses.
+  cloudinaryCloudName: requireEnv('CLOUDINARY_CLOUD_NAME'),
+  cloudinaryApiKey:    requireEnv('CLOUDINARY_API_KEY'),
+  cloudinaryApiSecret: requireEnv('CLOUDINARY_API_SECRET'),
 } as const;
 
 export type Config = typeof config;

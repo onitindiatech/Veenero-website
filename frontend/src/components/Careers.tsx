@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Briefcase, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPublicHome, HomeCareers } from "@/services/home.service";
@@ -59,10 +60,15 @@ export const Careers = () => {
     <section id="careers" className="py-16 md:py-20 bg-background relative">
       <div className="container mx-auto px-6">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <p className="text-primary font-medium mb-4 tracking-wider uppercase text-sm">
-            {homeCareers.eyebrow}
-          </p>
+        <div className="max-w-3xl mx-auto text-center mb-12 reveal-on-scroll">
+          {homeCareers.eyebrow && (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 mb-4 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping inline-block" />
+              <span className="text-teal-700 dark:text-teal-300 font-bold uppercase tracking-widest text-[10px] md:text-xs">
+                {homeCareers.eyebrow}
+              </span>
+            </div>
+          )}
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             {homeCareers.title}
           </h2>
@@ -71,7 +77,7 @@ export const Careers = () => {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto reveal-on-scroll reveal-delay-100">
           {/* Careers List */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-6">
@@ -83,30 +89,33 @@ export const Careers = () => {
               </h3>
             </div>
             <div className="space-y-4">
-              {displayPositions.map((position) => (
-                <a
-                  key={position.id}
-                  href={position.slug ? `/careers/${position.slug}` : "#contact"}
-                  className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-card rounded-xl border border-border hover:border-primary/30 hover:shadow-soft transition-all duration-300"
-                >
-                  <div className="flex-grow">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {position.title}
-                      </h4>
-                      {position.isNew && (
-                        <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs font-medium rounded-full">
-                          Featured
-                        </span>
-                      )}
+              {displayPositions.map((position) => {
+                const destination = position.slug ? `/careers/${position.slug}` : "/contact";
+                return (
+                  <Link
+                    key={position.id}
+                    to={destination}
+                    className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-card rounded-2xl border border-border/60 hover:border-teal-500/50 shadow-xs hover:shadow-card hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden"
+                  >
+                    <div className="flex-grow">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="font-semibold text-foreground group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                          {position.title}
+                        </h4>
+                        {position.isNew && (
+                          <span className="px-2.5 py-0.5 bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-600/20 text-xs font-semibold rounded-full">
+                            Featured
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {position.department} · {position.location}
+                      </p>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {position.department} · {position.location}
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                </a>
-              ))}
+                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
+                  </Link>
+                );
+              })}
             </div>
           </div>
 

@@ -15,7 +15,11 @@ export const authenticate = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const token = req.cookies?.token;
+    let token = req.cookies?.token;
+
+    if (!token && req.headers.authorization?.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7);
+    }
 
     if (!token) {
       throw new ApiError(401, 'Authentication required');

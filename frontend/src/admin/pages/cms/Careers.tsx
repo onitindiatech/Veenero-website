@@ -13,6 +13,10 @@ export const Careers: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Filter & Search states
+  const [mainTab, setMainTab] = useState<'openings' | 'page-content'>('openings');
+  const [pageSettings, setPageSettings] = useState<any>(null);
+  const [pageSettingsLoading, setPageSettingsLoading] = useState(false);
+  const [pageSettingsSaving, setPageSettingsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deptFilter, setDeptFilter] = useState<string>('all');
@@ -85,8 +89,35 @@ export const Careers: React.FC = () => {
     }
   };
 
+  const loadPageSettings = async () => {
+    try {
+      setPageSettingsLoading(true);
+      const data = await careerService.getPageSettings();
+      setPageSettings(data);
+    } catch (err: any) {
+      toast.error('Failed to load Career page settings', { description: err.message });
+    } finally {
+      setPageSettingsLoading(false);
+    }
+  };
+
+  const handleSavePageSettings = async () => {
+    if (!pageSettings) return;
+    try {
+      setPageSettingsSaving(true);
+      const updated = await careerService.updatePageSettings(pageSettings);
+      setPageSettings(updated);
+      toast.success('Career page content saved successfully!');
+    } catch (err: any) {
+      toast.error('Failed to save Career page content', { description: err.message });
+    } finally {
+      setPageSettingsSaving(false);
+    }
+  };
+
   useEffect(() => {
     loadCareers();
+    loadPageSettings();
   }, []);
 
   // ── Auto-generate Slug ──
@@ -404,6 +435,34 @@ export const Careers: React.FC = () => {
         </div>
       </div>
 
+      {/* ── Main CMS Tabs ── */}
+      <div className="flex border-b border-border/60 gap-6">
+        <button
+          type="button"
+          onClick={() => setMainTab('openings')}
+          className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            mainTab === 'openings'
+              ? 'border-teal-600 text-teal-600 dark:text-teal-400'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Job Openings ({careers.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setMainTab('page-content')}
+          className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            mainTab === 'page-content'
+              ? 'border-teal-600 text-teal-600 dark:text-teal-400'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Page Content &amp; Hero
+        </button>
+      </div>
+
+      {mainTab === 'openings' ? (
+        <>
       {/* ── Stats Panels ── */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
@@ -645,6 +704,225 @@ export const Careers: React.FC = () => {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+      </>
+      ) : (
+        /* ── Page Content & Hero Editor ── */
+        <div className="space-y-6">
+          <div className="flex items-center justify-between p-4 bg-card rounded-2xl border border-border/70 shadow-xs">
+            <div>
+              <h2 className="text-base font-bold text-foreground">Careers Page Header &amp; Content</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Controls the hero title, hiring process timeline, and final CTA on /careers
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleSavePageSettings}
+              disabled={pageSettingsSaving}
+              className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
+            >
+              {pageSettingsSaving ? 'Saving...' : 'Save Page Content'}
+            </button>
+          </div>
+
+          {pageSettingsLoading ? (
+            <div className="p-12 text-center text-xs text-muted-foreground">Loading settings...</div>
+          ) : !pageSettings ? (
+            <div className="p-12 text-center text-xs text-rose-500">Failed to load career page settings.</div>
+          ) : (
+            <div className="space-y-6">
+              {/* 1. HERO */}
+              <div className="bg-card p-6 rounded-2xl border border-border/70 shadow-xs space-y-4">
+                <span className="text-xs font-mono font-bold uppercase text-teal-600 block">01 — Hero Section</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">Eyebrow</label>
+                    <input
+                      type="text"
+                      value={pageSettings.hero?.eyebrow || ''}
+                      onChange={(e) =>
+                        setPageSettings({
+                          ...pageSettings,
+                          hero: { ...pageSettings.hero, eyebrow: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">Title</label>
+                    <input
+                      type="text"
+                      value={pageSettings.hero?.title || ''}
+                      onChange={(e) =>
+                        setPageSettings({
+                          ...pageSettings,
+                          hero: { ...pageSettings.hero, title: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">Hero Description</label>
+                  <textarea
+                    rows={2}
+                    value={pageSettings.hero?.description || ''}
+                    onChange={(e) =>
+                      setPageSettings({
+                        ...pageSettings,
+                        hero: { ...pageSettings.hero, description: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">Primary CTA Button</label>
+                    <input
+                      type="text"
+                      value={pageSettings.hero?.primaryCtaText || ''}
+                      onChange={(e) =>
+                        setPageSettings({
+                          ...pageSettings,
+                          hero: { ...pageSettings.hero, primaryCtaText: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">Secondary CTA Button</label>
+                    <input
+                      type="text"
+                      value={pageSettings.hero?.secondaryCtaText || ''}
+                      onChange={(e) =>
+                        setPageSettings({
+                          ...pageSettings,
+                          hero: { ...pageSettings.hero, secondaryCtaText: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. HIRING PROCESS */}
+              <div className="bg-card p-6 rounded-2xl border border-border/70 shadow-xs space-y-4">
+                <span className="text-xs font-mono font-bold uppercase text-teal-600 block">02 — Hiring Process Steps</span>
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">Section Title</label>
+                  <input
+                    type="text"
+                    value={pageSettings.hiringProcess?.title || ''}
+                    onChange={(e) =>
+                      setPageSettings({
+                        ...pageSettings,
+                        hiringProcess: { ...pageSettings.hiringProcess, title: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  {pageSettings.hiringProcess?.steps?.map((step: any, sIdx: number) => (
+                    <div key={sIdx} className="p-4 rounded-xl border border-border/60 bg-muted/10 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono font-bold text-teal-600">Step {step.num || sIdx + 1}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          value={step.title}
+                          placeholder="Title"
+                          onChange={(e) => {
+                            const next = [...pageSettings.hiringProcess.steps];
+                            next[sIdx].title = e.target.value;
+                            setPageSettings({
+                              ...pageSettings,
+                              hiringProcess: { ...pageSettings.hiringProcess, steps: next },
+                            });
+                          }}
+                          className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                        />
+                        <input
+                          type="text"
+                          value={step.subtitle}
+                          placeholder="Subtitle"
+                          onChange={(e) => {
+                            const next = [...pageSettings.hiringProcess.steps];
+                            next[sIdx].subtitle = e.target.value;
+                            setPageSettings({
+                              ...pageSettings,
+                              hiringProcess: { ...pageSettings.hiringProcess, steps: next },
+                            });
+                          }}
+                          className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                        />
+                      </div>
+                      <textarea
+                        rows={2}
+                        value={step.description}
+                        placeholder="Description"
+                        onChange={(e) => {
+                          const next = [...pageSettings.hiringProcess.steps];
+                          next[sIdx].description = e.target.value;
+                          setPageSettings({
+                            ...pageSettings,
+                            hiringProcess: { ...pageSettings.hiringProcess, steps: next },
+                          });
+                        }}
+                        className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 3. CTA */}
+              <div className="bg-card p-6 rounded-2xl border border-border/70 shadow-xs space-y-4">
+                <span className="text-xs font-mono font-bold uppercase text-teal-600 block">03 — Careers Closing CTA</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">CTA Heading</label>
+                    <input
+                      type="text"
+                      value={pageSettings.cta?.title || ''}
+                      onChange={(e) =>
+                        setPageSettings({
+                          ...pageSettings,
+                          cta: { ...pageSettings.cta, title: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase mb-1">Contact Email</label>
+                    <input
+                      type="text"
+                      value={pageSettings.cta?.email || ''}
+                      onChange={(e) =>
+                        setPageSettings({
+                          ...pageSettings,
+                          cta: { ...pageSettings.cta, email: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 text-xs bg-background border border-border/70 rounded-xl"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

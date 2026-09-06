@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
 import { ApiError } from '../middleware/errorHandler';
 import { config } from '../config/env';
+import { resetLoginAttempts } from '../middleware/rateLimit.middleware';
 
 // ─── POST /api/auth/login ────────────────────────────────────────────────────
 export const login = async (
@@ -32,19 +33,38 @@ export const login = async (
       throw new ApiError(401, 'Invalid email or password');
     }
 
+    // Reset rate limiter failed count for this IP + account upon successful login
+    resetLoginAttempts(req);
+
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       config.jwtSecret,
       { expiresIn: config.jwtExpiresIn as any }
     );
 
-    // Cookie configuration
+    // ── Cookie configuration ──────────────────────────────────────────────────
+    // sameSite:'strict' prevents the cookie from being sent on any cross-site
+    // request, closing the CSRF window that 'lax' leaves open for POST requests.
+    // maxAge is derived from JWT_EXPIRES_IN so the cookie and token expire together.
     const isProduction = config.nodeEnv === 'production';
+
+    // Parse "8h" / "7d" / "3600" → milliseconds for cookie maxAge
+    const parseExpiresMs = (val: string): number => {
+      const n = parseInt(val, 10);
+      if (isNaN(n)) return 8 * 60 * 60 * 1000; // fallback: 8 h
+      if (val.endsWith('d')) return n * 24 * 60 * 60 * 1000;
+      if (val.endsWith('h')) return n * 60 * 60 * 1000;
+      if (val.endsWith('m')) return n * 60 * 1000;
+      return n * 1000; // bare number → seconds
+    };
+
+    const cookieMaxAge = parseExpiresMs(String(config.jwtExpiresIn));
+
     const cookieOptions = {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days matching JWT_EXPIRES_IN
+      httpOnly: true,              // Not accessible to JS — mitigates XSS token theft
+      secure: isProduction,        // HTTPS-only in production
+      sameSite: 'strict' as const, // Blocks cross-site requests entirely
+      maxAge: cookieMaxAge,
     };
 
     res.cookie('token', token, cookieOptions);
@@ -63,6 +83,7 @@ export const login = async (
 
     res.status(200).json({
       success: true,
+      token,
       user: safeUser,
     });
   } catch (error) {
@@ -76,7 +97,7 @@ export const logout = (_req: Request, res: Response): void => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax' as const,
+    sameSite: 'strict' as const,
   });
   res.status(200).json({
     success: true,
