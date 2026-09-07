@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Environment variables — NEVER commit .env files with real secrets
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +29,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Development-only debug/scratch files
+backend/fix-cms.ts
+backend/phase1_test_results.json
+frontend/fix_syntax.py
+brain/

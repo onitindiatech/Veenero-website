@@ -17,11 +17,9 @@ export interface PublicMediaAsset {
   slot?: string;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL
-  ? (import.meta.env.VITE_API_URL.endsWith('/api')
-      ? import.meta.env.VITE_API_URL
-      : `${import.meta.env.VITE_API_URL}/api`)
-  : 'http://localhost:4000/api';
+import { API_BASE_URL } from '@/config/api';
+
+const API_BASE = `${API_BASE_URL}/api`;
 
 /**
  * Fetches the active (non-deleted) Media Library asset for a given slot.

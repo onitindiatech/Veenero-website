@@ -1,8 +1,7 @@
 import { CmsPage, CmsPageFormValues } from '../types/cms.types';
+import { API_BASE_URL as GLOBAL_API_BASE_URL } from '@/config/api';
 
-const API_BASE = import.meta.env.VITE_API_URL
-  ? (import.meta.env.VITE_API_URL.endsWith('/api') ? import.meta.env.VITE_API_URL : `${import.meta.env.VITE_API_URL}/api`)
-  : 'http://localhost:4000/api';
+const API_BASE = `${GLOBAL_API_BASE_URL}/api`;
 
 const API_BASE_URL = `${API_BASE}/cms/pages`;
 

@@ -178,11 +178,9 @@ export interface SolutionsPageSettings {
   updatedAt?: string;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL
-  ? (import.meta.env.VITE_API_URL.endsWith('/api')
-      ? import.meta.env.VITE_API_URL
-      : `${import.meta.env.VITE_API_URL}/api`)
-  : 'http://localhost:4000/api';
+import { API_BASE_URL } from '@/config/api';
+
+const API_BASE = `${API_BASE_URL}/api`;
 
 async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');

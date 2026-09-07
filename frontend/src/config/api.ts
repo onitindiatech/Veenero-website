@@ -8,12 +8,26 @@
  */
 
 // ── Base URL ──────────────────────────────────────────────────────────────────
-// Reads from VITE_API_URL in .env / .env.local.
-// Falls back to localhost:4000 for safety (never put this in production builds
-// without setting the env var in your CI/CD pipeline).
-export const API_BASE_URL: string =
-  (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ??
-  'http://localhost:4000';
+// Reads from VITE_API_URL in .env / .env.local (local dev) or
+// from Vercel environment variables (production).
+// Normalizes the value so that whether VITE_API_URL is configured as:
+//   https://veenero-website.onrender.com
+//   https://veenero-website.onrender.com/
+//   https://veenero-website.onrender.com/api
+// API_BASE_URL is always the clean backend origin (no trailing slash, no /api).
+const _rawApiUrl = (import.meta.env.VITE_API_URL as string | undefined)?.trim().replace(/\/+$/, '');
+const _cleanBaseUrl = _rawApiUrl ? _rawApiUrl.replace(/\/api$/, '') : undefined;
+
+if (!_cleanBaseUrl && import.meta.env.PROD) {
+  console.error(
+    '[Veenero] VITE_API_URL is not set. ' +
+    'Set it to your Render backend URL in Vercel project environment variables. ' +
+    'Example: https://veenero-website.onrender.com'
+  );
+}
+
+export const API_BASE_URL: string = _cleanBaseUrl ?? 'http://localhost:4000';
+export const API_URL: string = `${API_BASE_URL}/api`;
 
 // ── Global 401 callback ───────────────────────────────────────────────────────
 // Registered by AuthProvider so any service can trigger a session-expiry logout.
