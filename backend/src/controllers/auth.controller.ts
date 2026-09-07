@@ -63,7 +63,7 @@ export const login = async (
     const cookieOptions = {
       httpOnly: true,              // Not accessible to JS — mitigates XSS token theft
       secure: isProduction,        // HTTPS-only in production
-      sameSite: 'strict' as const, // Blocks cross-site requests entirely
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // 'none' allows cross-site requests (Vercel -> Render)
       maxAge: cookieMaxAge,
     };
 
@@ -97,7 +97,7 @@ export const logout = (_req: Request, res: Response): void => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'strict' as const,
+    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
   });
   res.status(200).json({
     success: true,

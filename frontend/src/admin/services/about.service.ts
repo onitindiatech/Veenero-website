@@ -226,10 +226,17 @@ import { API_BASE_URL } from '@/config/api';
 const API_BASE = `${API_BASE_URL}/api`;
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...((options?.headers as Record<string, string>) || {}),
+  };
+
   const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
     ...options,
+    headers,
+    credentials: 'include',
   });
   const json = await res.json();
   if (!res.ok) {

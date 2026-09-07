@@ -10,6 +10,8 @@ import {
   apiFetch,
   registerUnauthorizedCallback,
   clearUnauthorizedCallback,
+  setStoredToken,
+  clearStoredToken,
 } from '@/config/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -75,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // ── Session-expiry handler ────────────────────────────────────────────────
   const handleApiUnauthorized = useCallback(() => {
+    clearStoredToken();
     setUser(null);
     // loading stays false — ProtectedRoute will redirect to /admin/login
   }, []);
@@ -92,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch {
       // Ignore network errors on logout — clear local state regardless
     } finally {
+      clearStoredToken();
       setUser(null);
     }
   }, []);
@@ -196,6 +200,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           ? 'Too many login attempts. Please try again in 15 minutes.'
           : data?.error?.message ?? 'Authentication failed. Please try again.';
       throw Object.assign(new Error(msg), { status: response.status });
+    }
+
+    if (data.token) {
+      setStoredToken(data.token);
     }
 
     setUser(data.user as AdminUser);

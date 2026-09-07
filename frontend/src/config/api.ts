@@ -29,6 +29,39 @@ if (!_cleanBaseUrl && import.meta.env.PROD) {
 export const API_BASE_URL: string = _cleanBaseUrl ?? 'http://localhost:4000';
 export const API_URL: string = `${API_BASE_URL}/api`;
 
+// ── Token Management ──────────────────────────────────────────────────────────
+export const TOKEN_STORAGE_KEY = 'token';
+
+export function getStoredToken(): string | null {
+  try {
+    return localStorage.getItem(TOKEN_STORAGE_KEY) || sessionStorage.getItem(TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredToken(token: string): void {
+  try {
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  } catch {}
+}
+
+export function clearStoredToken(): void {
+  try {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+  } catch {}
+}
+
+export function getAuthHeaders(extraHeaders: Record<string, string> = {}): Record<string, string> {
+  const token = getStoredToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...extraHeaders,
+  };
+}
+
 // ── Global 401 callback ───────────────────────────────────────────────────────
 // Registered by AuthProvider so any service can trigger a session-expiry logout.
 type UnauthorizedCallback = () => void;
@@ -46,31 +79,36 @@ export function clearUnauthorizedCallback(): void {
 /**
  * Thin wrapper around `fetch` that:
  *  - Prepends API_BASE_URL to relative paths (e.g. `/api/auth/me`)
- *  - Always sends credentials (HttpOnly cookie)
+ *  - Always sends credentials (HttpOnly cookie for browsers allowing cross-site cookies)
+ *  - Attaches Authorization: Bearer <token> from localStorage (for browsers blocking cross-site cookies)
  *  - Calls the registered 401 callback on session expiry
- *
- * Usage:
- *   const res = await apiFetch('/api/auth/me');
- *   const data = await apiFetch('/api/admin/careers', { method: 'POST', body: ... });
  */
 export async function apiFetch(
   path: string,
   init: RequestInit = {}
 ): Promise<Response> {
   const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+  const token = getStoredToken();
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(init.headers as Record<string, string> ?? {}),
+  };
+
+  if (token && !headers['Authorization']) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await fetch(url, {
     ...init,
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init.headers ?? {}),
-    },
+    headers,
   });
 
   // Global session-expiry handler: any 401 from the API clears auth state
   // and redirects to login (unless it's from the login endpoint itself).
   if (response.status === 401 && !path.includes('/auth/login')) {
+    clearStoredToken();
     _onUnauthorized?.();
   }
 
