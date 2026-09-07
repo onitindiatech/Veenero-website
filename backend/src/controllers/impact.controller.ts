@@ -203,28 +203,28 @@ export async function getOrCreateImpactSettings(): Promise<IImpactPageSettings> 
   let modified = false;
   if (!doc.ecosystem?.domains || doc.ecosystem.domains.length === 0) {
     doc.ecosystem = {
-      ...doc.ecosystem?.toObject?.() || {},
+      ...(doc.ecosystem ? (doc.ecosystem as unknown as Record<string, unknown>) : {}),
       ...defaultImpactData.ecosystem,
     };
     modified = true;
   }
   if (!doc.outcomes?.pillars || doc.outcomes.pillars.length === 0) {
     doc.outcomes = {
-      ...doc.outcomes?.toObject?.() || {},
+      ...(doc.outcomes ? (doc.outcomes as unknown as Record<string, unknown>) : {}),
       ...defaultImpactData.outcomes,
     };
     modified = true;
   }
   if (!doc.storyline?.steps || doc.storyline.steps.length === 0) {
     doc.storyline = {
-      ...doc.storyline?.toObject?.() || {},
+      ...(doc.storyline ? (doc.storyline as unknown as Record<string, unknown>) : {}),
       ...defaultImpactData.storyline,
     };
     modified = true;
   }
   if (!doc.sustainability?.pillars || doc.sustainability.pillars.length === 0) {
     doc.sustainability = {
-      ...doc.sustainability?.toObject?.() || {},
+      ...(doc.sustainability ? (doc.sustainability as unknown as Record<string, unknown>) : {}),
       ...defaultImpactData.sustainability,
     };
     modified = true;
