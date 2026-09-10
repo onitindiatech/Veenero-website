@@ -113,12 +113,18 @@ export const SolutionsCategories: React.FC<SolutionsCategoriesProps> = ({
                 {headerEyebrow}
               </span>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.6rem] font-bold leading-[1.18] tracking-tight text-slate-900 dark:text-white">
-              <span>Modular Solutions for</span>
-              <br />
-              <span className="text-[#136873] dark:text-teal-400">
-                Every Water Challenge
-              </span>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.65rem] font-bold leading-[1.24] sm:leading-[1.26] tracking-tight text-slate-900 dark:text-white">
+              {gridHeader?.title ? (
+                gridHeader.title
+              ) : (
+                <>
+                  <span>Modular Solutions for</span>
+                  <br />
+                  <span className="text-[#136873] dark:text-teal-400">
+                    Every Water Challenge
+                  </span>
+                </>
+              )}
             </h2>
           </div>
 

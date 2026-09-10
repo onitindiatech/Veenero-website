@@ -13,12 +13,15 @@ import {
   createSolutionItem,
   updateSolutionItem,
   deleteSolutionItem,
+  getPublicSolutionBySlug,
 } from '../controllers/solutions.controller';
 
 // ─── Public Router ────────────────────────────────────────────────────────────
 export const publicSolutionsRouter = Router();
 
 publicSolutionsRouter.get('/', getPublicSolutions);
+publicSolutionsRouter.get('/detail/:slug', getPublicSolutionBySlug);
+publicSolutionsRouter.get('/:slug', getPublicSolutionBySlug);
 
 // ─── Admin Router ─────────────────────────────────────────────────────────────
 export const adminSolutionsRouter = Router();

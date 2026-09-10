@@ -29,7 +29,10 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
     }
   };
 
-  const heroBg = data?.image || defaultHeroBackground;
+  const heroBg =
+    data?.image && (data.image.startsWith("http://") || data.image.startsWith("https://"))
+      ? data.image
+      : defaultHeroBackground;
   const eyebrow = data?.eyebrow || "SUSTAINABLE SOLUTIONS";
   const titlePart1 = data?.title || "Intelligent Water Infrastructure";
   const titlePart2 = data?.highlightedText || "Built for a Better Tomorrow.";
@@ -38,7 +41,7 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
     "Modular solutions to solve real-world water challenges with data, intelligence, and lasting impact.";
 
   return (
-    <section className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[420px] lg:h-[52vh] lg:min-h-[460px] lg:max-h-[560px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30">
+    <section className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[420px] lg:h-[52vh] lg:min-h-[460px] lg:max-h-[540px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30">
       {/* Background Hero Image Composition — Full width seamless water environment with uncropped droplet */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
@@ -66,7 +69,7 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
       </div>
 
       {/* Floating Right Accents matching design mockup */}
-      <div className="hidden lg:block absolute top-24 right-10 sm:right-16 text-right pointer-events-none select-none z-10">
+      <div className="hidden lg:block absolute top-20 right-10 sm:right-16 text-right pointer-events-none select-none z-10">
         <div className="text-[10px] tracking-[0.25em] font-bold text-slate-700 dark:text-slate-200 uppercase leading-[1.4] opacity-85">
           <span>SOLVING</span>
           <br />
@@ -80,8 +83,8 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
         </div>
       </div>
 
-      <div className="hidden lg:block absolute bottom-10 right-10 sm:right-16 pointer-events-none select-none z-10">
-        <div className="px-5 py-3 rounded-2xl bg-white/45 dark:bg-slate-900/50 backdrop-blur-md border border-white/60 dark:border-white/15 shadow-sm">
+      <div className="hidden lg:block absolute bottom-8 right-10 sm:right-16 pointer-events-none select-none z-10">
+        <div className="px-5 py-2.5 rounded-2xl bg-white/45 dark:bg-slate-900/50 backdrop-blur-md border border-white/60 dark:border-white/15 shadow-sm">
           <span className="text-xs font-bold tracking-wider text-slate-900 dark:text-white block uppercase leading-snug">
             CLEANER
             <br />
@@ -106,18 +109,18 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
             </span>
           </div>
 
-          {/* H1 Headline */}
-          <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold leading-[1.16] tracking-tight mb-3">
+          {/* H1 Headline — Balanced line height preventing any letter collisions */}
+          <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold leading-[1.18] tracking-tight mb-3">
             <span className="text-slate-950 dark:text-white block">
               {titlePart1}
             </span>
-            <span className="text-[#136873] dark:text-teal-400 block font-bold">
+            <span className="text-[#136873] dark:text-teal-400 block font-bold mt-1">
               {titlePart2}
             </span>
           </h1>
 
           {/* Supporting Description */}
-          <p className="reveal-on-scroll reveal-delay-200 text-xs sm:text-sm text-slate-700 dark:text-slate-200/90 leading-relaxed max-w-lg mb-5 font-sans">
+          <p className="reveal-on-scroll reveal-delay-200 text-xs sm:text-sm text-slate-700 dark:text-slate-200/90 leading-relaxed max-w-xl mb-5 font-sans">
             {description}
           </p>
 

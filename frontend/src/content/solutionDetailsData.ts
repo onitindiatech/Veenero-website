@@ -823,7 +823,7 @@ export const solutionDetailsMap: Record<string, SolutionDetailData> = {
       line3: "Absolute Balance.",
     },
     heroDescription:
-      "Establish absolute water balance and accountability across districts, industrial facilities, and multi-tenant assets with precision sub-metering, DMA balancing, and tamper-evident accounting.",
+      "End unaccounted water loss and billing disputes with a connected view of your water network. Veenero brings metering, reconciliation and cost visibility together — so every litre can be traced, verified and governed.",
     heroPills: ["DMA Balancing", "Tenant Sub-Metering", "Audit-Ready Logs"],
     heroImage: waterAccountImg,
     heroMetrics: [
@@ -1799,15 +1799,47 @@ export const solutionDetailsMap: Record<string, SolutionDetailData> = {
  * Helper to resolve solution data by slug with automatic fallback
  */
 export function getSolutionBySlug(slug?: string): SolutionDetailData {
-  if (!slug) return solutionDetailsMap["water-visibility"];
+  if (!slug) return solutionDetailsMap["water-accountability"] || solutionDetailsMap["water-visibility"];
   const normalized = slug.toLowerCase().trim();
 
-  // Handle module id aliases
+  // Authentic Veenero source slugs
+  if (normalized === "aqua-saver") {
+    const base = solutionDetailsMap["water-accountability"];
+    return {
+      ...base,
+      title: "Aqua Saver",
+      badge: "CORE SOLUTION: HARDWARE & SOFTWARE",
+      heroDescription: "Aqua Saver and the Aqua Saver 3D-Module provide water conservative devices and software to eliminate water waste from leaks in overhead tanks, pipelines, and taps.",
+    };
+  }
+  if (normalized === "water-quality-assessment" || normalized === "water-verification") {
+    return solutionDetailsMap["water-verification"];
+  }
+  if (normalized === "water-pumping-automation" || normalized === "operational-intelligence") {
+    return solutionDetailsMap["operational-intelligence"];
+  }
+  if (normalized === "water-tracking-informatics" || normalized === "water-visibility") {
+    return solutionDetailsMap["water-visibility"];
+  }
+  if (normalized === "water-credits") {
+    const base = solutionDetailsMap["water-accountability"];
+    return {
+      ...base,
+      title: "Water Credits",
+      badge: "APPLICATION FEATURE CONCEPT",
+      heroDescription: "An application concept where users earn coins based on how much water they consume, prescribed under conservation guidelines. (Currently in development).",
+    };
+  }
+  if (normalized === "leak-identification" || normalized === "analytics-insights") {
+    return solutionDetailsMap["analytics-insights"];
+  }
+
+  // Legacy module id aliases
   if (normalized === "sense") return solutionDetailsMap["water-visibility"];
   if (normalized === "intelligence") return solutionDetailsMap["operational-intelligence"];
   if (normalized === "insights") return solutionDetailsMap["water-accountability"];
   if (normalized === "verification") return solutionDetailsMap["water-verification"];
   if (normalized === "platform" || normalized === "risk") return solutionDetailsMap["analytics-insights"];
 
-  return solutionDetailsMap[normalized] || solutionDetailsMap["water-visibility"];
+  return solutionDetailsMap[normalized] || solutionDetailsMap["water-accountability"] || solutionDetailsMap["water-visibility"];
 }

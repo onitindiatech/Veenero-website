@@ -4,8 +4,22 @@ import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
 
-export const ContactCTA: React.FC = () => {
+export interface ContactCTAProps {
+  data?: {
+    visible?: boolean;
+    title?: string;
+    description?: string;
+    primaryButtonText?: string;
+    primaryButtonLink?: string;
+    secondaryButtonText?: string;
+    secondaryButtonLink?: string;
+  };
+}
+
+export const ContactCTA: React.FC<ContactCTAProps> = ({ data }) => {
   useScrollReveal([]);
+
+  if (data?.visible === false) return null;
 
   const scrollToForm = () => {
     const el = document.getElementById("inquiry-form");
@@ -13,6 +27,14 @@ export const ContactCTA: React.FC = () => {
       el.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const title = data?.title || "Let's Work Together";
+  const description =
+    data?.description ||
+    "From smarter water systems to stronger communities — we're always open to meaningful conversations.";
+  const primaryButtonText = data?.primaryButtonText || "Get in Touch";
+  const secondaryButtonText = data?.secondaryButtonText || "Explore Solutions";
+  const secondaryButtonLink = data?.secondaryButtonLink || "/solutions";
 
   return (
     <section
@@ -58,15 +80,21 @@ export const ContactCTA: React.FC = () => {
 
             {/* H2 Title */}
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-snug">
-              Let's Work{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-teal-400 to-cyan-300">
-                Together
-              </span>
+              {data?.title ? (
+                title
+              ) : (
+                <>
+                  Let's Work{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-teal-400 to-cyan-300">
+                    Together
+                  </span>
+                </>
+              )}
             </h2>
 
             {/* Description */}
             <p className="text-sm md:text-[15px] text-slate-300/90 leading-relaxed">
-              From smarter water systems to stronger communities — we're always open to meaningful conversations.
+              {description}
             </p>
 
             {/* CTA Buttons */}
@@ -75,15 +103,15 @@ export const ContactCTA: React.FC = () => {
                 onClick={scrollToForm}
                 className="px-7 py-3.5 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-full font-bold shadow-md hover:shadow-lg transition-all duration-200 text-sm flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>Get in Touch</span>
+                <span>{primaryButtonText}</span>
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
               <Link
-                to="/solutions"
+                to={secondaryButtonLink}
                 className="px-7 py-3.5 bg-white/5 hover:bg-white/10 text-white border border-white/25 hover:border-white/40 rounded-full font-semibold transition-all duration-200 text-sm flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Explore Solutions</span>
+                <span>{secondaryButtonText}</span>
               </Link>
             </div>
 

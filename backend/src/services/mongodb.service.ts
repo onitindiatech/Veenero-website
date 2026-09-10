@@ -52,7 +52,10 @@ export async function connectDatabase(): Promise<void> {
   });
 
   mongoose.connection.on('disconnected', () => {
-    console.warn('[MongoDB] Connection lost');
+    console.warn('[MongoDB] Connection lost. Attempting reconnection in 3 seconds...');
+    setTimeout(() => {
+      connectDatabase().catch((e) => console.warn('[MongoDB] Reconnection attempt failed:', (e as Error).message));
+    }, 3000);
   });
 
   await mongoose.connect(config.mongodbUri, {

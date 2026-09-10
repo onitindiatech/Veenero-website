@@ -190,3 +190,18 @@ export const getPublicSolutionsContent = async (): Promise<PublicSolutionsData> 
   }
   return json.data;
 };
+
+export const getPublicSolutionDetail = async (slug: string): Promise<any> => {
+  try {
+    const res = await fetch(`${API_BASE}/solutions/detail/${slug}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json.success && json.data) {
+      return json.data.detail || json.data;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+

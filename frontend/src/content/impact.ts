@@ -79,103 +79,112 @@ export interface ImpactContent {
 
 export const impactPageContent: ImpactContent = {
   hero: {
-    eyebrow: "MEASURING WHAT MATTERS",
-    title: "Turning Water Intelligence Into Measurable Impact",
+    eyebrow: "THE REAL WATER PROBLEM",
+    title: "Addressing 49 Billion Liters of Daily Water Waste",
     description:
-      "Water Visibility creates Water Accountability. Veenero helps organizations measure, monitor, optimize, benchmark, and verify water usage—transforming unmetered blindspots into evidence-based sustainability and verifiable compliance.",
-    primaryCtaText: "Explore Impact",
-    secondaryCtaText: "View Metrics",
+      "India wastes 49 billion liters of water daily while 600 million people face severe water crisis. Veenero provides practical devices and software to eliminate leaks and build water security.",
+    primaryCtaText: "Our Impact",
+    secondaryCtaText: "View Statistics",
   },
   outcomes: {
-    eyebrow: "IMPACT METRICS",
-    title: "Quantified Performance Across 4 Core Areas",
+    eyebrow: "SUPPORTED WATER STATISTICS",
+    title: "Quantified Reality Across the Water Crisis",
     description:
-      "Our water intelligence infrastructure delivers measurable value across water visibility, waste reduction, operational efficiency, and ESG verification.",
+      "Authentic research figures documenting the urgent necessity of water conservation devices and leakage management.",
     pillars: [
       {
-        value: "100%",
-        label: "Water Visibility",
+        value: "49B L",
+        label: "Daily Water Wasted in India",
         description:
-          "Real-time continuous measurement across assets, sites, and operational systems—eliminating unmetered blindspots.",
-        icon: "Eye",
-        tag: "Water Visibility",
-      },
-      {
-        value: "40%",
-        label: "Waste Reduction",
-        description:
-          "Targeted interventions, instant micro-leak alerts, and pressure optimization to curb non-revenue water losses.",
+          "Equivalent to 48.42 billion 1-liter bottles wasted every day across India due to leaks and lack of usage rules. (Neerain)",
         icon: "TrendingDown",
-        tag: "Waste Reduction",
+        tag: "India Crisis",
       },
       {
-        value: "25%+",
-        label: "Operational Efficiency",
+        value: "30%",
+        label: "Global Supply Lost",
         description:
-          "Automated pumping schedule optimization, energy savings, and cross-site efficiency benchmarking.",
-        icon: "TrendingUp",
-        tag: "Operational Efficiency",
+          "Lost each year due to leaks and inefficient usage, equating to around 2.1 trillion gallons of water wasted. (Gitnux)",
+        icon: "Globe",
+        tag: "Global Reality",
       },
       {
-        value: "Audit-Ready",
-        label: "Accountability & Verification",
+        value: "600M",
+        label: "Facing Water Crisis",
         description:
-          "Verification-ready data layers with traceable audit trails for ESG governance and regulatory compliance.",
-        icon: "ShieldCheck",
-        tag: "Accountability & Verification",
+          "Hundreds of millions experiencing severe water scarcity while billions of liters are lost to unaddressed leaks.",
+        icon: "Users",
+        tag: "Human Impact",
+      },
+      {
+        value: "297k",
+        label: "Child Deaths Annually",
+        description:
+          "Children under five dying every year from diarrheal diseases due to poor sanitation and unsafe water. (WHO/UNICEF)",
+        icon: "ShieldAlert",
+        tag: "Health & Sanitation",
       },
     ],
   },
   storyline: {
-    eyebrow: "IMPACT JOURNEY",
-    title: "Measure → Understand → Optimize → Verify → Improve",
+    eyebrow: "WORKING MODULE ROADMAP",
+    title: "From Identification to Resolution",
     description:
-      "A structured 5-step visual roadmap guiding organizations from physical flow telemetry to continuous boardroom governance.",
+      "Our structured 6-step conservation process.",
     steps: [
       {
         number: "01",
-        stage: "Measure",
-        title: "Telemetry & Edge Sensing",
+        stage: "Setup",
+        title: "Setting up the Aqua Saver",
         description:
-          "Deploy rugged edge sensors across pipes, pumps, tanks, and treatment facilities to measure every drop in real time.",
-        outcome: "100% telemetry coverage with zero blindspots.",
-        icon: "Radio",
+          "Deploying the Aqua Saver conservative device and 3D-Module across tanks, pumps, and pipe networks.",
+        outcome: "Device active and measuring flow.",
+        icon: "Cpu",
       },
       {
         number: "02",
-        stage: "Understand",
-        title: "Baseline & Anomaly Analysis",
+        stage: "Monitor",
+        title: "Monitoring the System",
         description:
-          "AI analytics establish consumption baselines, detect pressure drops, and analyze usage patterns across connected assets.",
-        outcome: "Contextual understanding of network health.",
-        icon: "Search",
+          "Surveillance of overhead tanks, pipelines, and motor pumps to observe continuous operation.",
+        outcome: "Active flow vigilance.",
+        icon: "Activity",
       },
       {
         number: "03",
-        stage: "Optimize",
-        title: "Targeted Interventions",
+        stage: "Collect",
+        title: "Collection of Data",
         description:
-          "Execute instant leak resolution, pressure zone balancing, and automated pumping schedules to eliminate wasteful loss.",
-        outcome: "Immediate reduction in unmetered water loss.",
-        icon: "Sliders",
+          "Feeding telemetry and distribution data directly into the water application software.",
+        outcome: "Usage informatics compiled.",
+        icon: "Database",
       },
       {
         number: "04",
-        stage: "Verify",
-        title: "Audit-Grade Assurance",
+        stage: "Detect",
+        title: "Identification of Leakage",
         description:
-          "Generate tamper-evident provenance logs and traceable audit trails for third-party ESG governance and compliance.",
-        outcome: "100% audit-ready reporting confidence.",
-        icon: "FileCheck2",
+          "Pinpointing tap leaks, seepage, pipeline breaks, and overhead tank overflows promptly.",
+        outcome: "Anomalies isolated.",
+        icon: "Search",
       },
       {
         number: "05",
-        stage: "Improve",
-        title: "Long-Term Water Resilience",
+        stage: "Evaluate",
+        title: "Identifying Characteristics",
         description:
-          "Continuously refine conservation targets, benchmark multi-site assets, and build a water-positive future.",
-        outcome: "Sustainable, resilient infrastructure.",
-        icon: "Sparkles",
+          "Assessing leak flow rate, pressure loss, and severity characteristics for swift action.",
+        outcome: "Severity ranked and diagnosed.",
+        icon: "Layers",
+      },
+      {
+        number: "06",
+        stage: "Resolve",
+        title: "Resolving the Leak Problem",
+        description:
+          "Guiding maintenance, automating motor controls, and verifying water conserved.",
+        outcome: "Water saved & network secured.",
+        icon: "CheckCircle2",
       },
     ],
   },
@@ -231,32 +240,32 @@ export const impactPageContent: ImpactContent = {
       },
     ],
     quote: {
-      text: "Veenero gave us Water Visibility we could finally trust. With benchmarked intelligence and verification-ready reporting, our teams moved from estimates to evidence—faster decisions, stronger accountability.",
-      author: "Sarah Chen",
-      role: "Sustainability & Water Lead",
-      organization: "Enterprise Infrastructure Partner",
+      text: "Water is at the core of sustainable development and critical for socio-economic development, healthy ecosystems and human survival itself. We began working on water conservation to eliminate the leaks we observed and build lasting water security.",
+      author: "Veenero Sustainable Solutions",
+      role: "Core Team",
+      organization: "Adilabad, Telangana",
     },
   },
   sustainability: {
-    eyebrow: "RESPONSIBLE INFRASTRUCTURE",
-    title: "Connecting Water Intelligence to Long-Term Sustainability",
+    eyebrow: "VERIFIED RECOGNITION & GOALS",
+    title: "Committed to Measurable Conservation & Security",
     description:
-      "Water security is the foundation of economic resilience. Veenero bridges the gap between physical water management and ESG governance.",
+      "Our work on water management and conservation is supported by state-level incubators and grassroots innovation honors.",
     pillars: [
       {
-        title: "Audit-Ready ESG Disclosure",
+        title: "We Hub POC Certification",
         description:
-          "Generate verifiable, tamper-evident data trails designed to satisfy rigorous BRSR, GRI, and CDP sustainability reporting frameworks.",
+          "Received Proof of Concept (POC) certification from We Hub, Government of Telangana for our innovative water conservation methodology.",
       },
       {
-        title: "Resource Efficiency & Decarbonization",
+        title: "Intinta Innovator Award",
         description:
-          "Optimizing water pumping schedules reduces energy consumption and operational carbon emissions across municipal and industrial assets.",
+          "Aqua Saver honored with the prestigious Intinta Innovator Award for two consecutive years at the district level.",
       },
       {
-        title: "Aquifer & Watershed Preservation",
+        title: "National Innovation Challenge",
         description:
-          "Preventing excessive groundwater extraction safeguards regional aquifers and secures water availability for local communities.",
+          "Selected participant at the National Innovation Challenge held at PIET College, Haryana.",
       },
     ],
   },

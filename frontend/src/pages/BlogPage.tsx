@@ -207,6 +207,14 @@ export const BlogPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
               </div>
+            ) : posts.length === 0 ? (
+              <div className="py-20 text-center space-y-4 bg-card border border-border/40 rounded-3xl max-w-lg mx-auto shadow-xs p-8">
+                <Compass className="h-12 w-12 text-teal-600/60 mx-auto" />
+                <h3 className="text-lg font-bold text-foreground">Insights & Research Coming Soon</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  We are currently preparing authentic research publications, water conservation case studies, and field notes. New articles will be posted here as they are released.
+                </p>
+              </div>
             ) : isFilteringActive ? (
               filteredArticles.length === 0 ? (
                 <div className="py-20 text-center space-y-3 bg-card border border-border/40 rounded-3xl max-w-md mx-auto shadow-xs">

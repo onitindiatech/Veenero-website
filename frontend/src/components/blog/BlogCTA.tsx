@@ -12,14 +12,17 @@ interface BlogCTAProps {
 export const BlogCTA: React.FC<BlogCTAProps> = ({ settings }) => {
   useScrollReveal([]);
 
+  if (settings?.cta?.visible === false) return null;
+
   const eyebrow = settings?.cta?.eyebrow || "COLLABORATE & SHARE";
-  const title = "Have an Idea";
-  const highlightedText = "Worth Sharing?";
+  const title = settings?.cta?.title || "Have an Idea";
+  const highlightedText = settings?.cta?.title ? "" : "Worth Sharing?";
   const description =
     settings?.cta?.description ||
     "We are always looking for perspectives on sustainability, measurement, and water infrastructure. Connect with our engineering and research team.";
 
   const buttonText = settings?.cta?.buttonText || "Connect With Us";
+  const buttonLink = settings?.cta?.buttonLink || "/contact";
 
   return (
     <section
@@ -78,7 +81,7 @@ export const BlogCTA: React.FC<BlogCTAProps> = ({ settings }) => {
             {/* CTA Buttons */}
             <div className="pt-2 flex flex-wrap items-center gap-3.5">
               <Link
-                to="/contact"
+                to={buttonLink}
                 className="px-7 py-3.5 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-full font-bold shadow-md hover:shadow-lg transition-all duration-200 text-sm flex items-center justify-center gap-2 group"
               >
                 <span>{buttonText}</span>

@@ -57,7 +57,7 @@ export const SolutionsImpact: React.FC = () => {
               </span>
             </div>
 
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.6rem] font-bold text-white leading-[1.18] tracking-tight">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.65rem] font-bold text-white leading-[1.24] sm:leading-[1.26] tracking-tight">
               Trusted by Utilities, Industries
               <br />
               and Communities

@@ -33,6 +33,7 @@ export interface ISolutionItem {
     value: string;
     label: string;
   };
+  detail?: any;
   order: number;
   isActive: boolean;
 }
@@ -212,6 +213,7 @@ const SolutionItemSchema = new Schema<ISolutionItem>(
       value: { type: String, default: '' },
       label: { type: String, default: '' },
     },
+    detail: { type: Schema.Types.Mixed, default: null },
     order: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
   },

@@ -2,28 +2,59 @@ import { HomePartners } from "@/services/home.service";
 import partnerImage from "@/assets/partner.png";
 import partner2Image from "@/assets/partner2.jpg";
 import part3Image from "@/assets/part3.png";
+import iiitDelhiImage from "@/assets/iiitdelhi_logo.jpg";
+import stpiImage from "@/assets/STPI_LOGO.png";
+import meityImage from "@/assets/Ministry_of_electronics_information_technology.png";
+import stpiNextImage from "@/assets/STPINEXT_LOGO.png";
+import iesaImage from "@/assets/iesa_logo.jpg";
 
 // Foundation: Static Partners Content (Fallback)
 export const partnersContent: HomePartners = {
   visible: true,
-  eyebrow: "Water Intelligence Network",
-  title: "Collaborating to Make Water Visible Across India",
-  description: "We partner with research institutions, industry ecosystems, and infrastructure stakeholders to build Water Intelligence, strengthen Water Verification, and accelerate network-scale benchmarking.",
+  eyebrow: "ACHIEVEMENTS & RECOGNITION",
+  title: "Validated by Leading Innovation Platforms",
+  description: "Our water conservation devices and methodology have been evaluated and recognized across state and national forums.",
   list: [
     {
-      name: "IIT ROPAR",
+      name: "WE Hub, Government of Telangana",
       logo: partnerImage,
-      description: "Research collaboration for Water Intelligence and evidence-driven infrastructure.",
+      description: "Proof-of-Concept (POC) certification from WE Hub, Government of Telangana.",
     },
     {
-      name: "ELECTROPRENEUR PARK",
+      name: "Intinta Innovator Award",
       logo: partner2Image,
-      description: "Ecosystem partner supporting the Water Data Platform and network growth.",
+      description: "Aqua Saver awarded Intinta Innovator Award for two consecutive years at district level.",
     },
     {
-      name: "VISHNU TBI",
+      name: "National Innovation Challenge",
       logo: part3Image,
-      description: "Innovation partner advancing Water Verification and real-time analytics.",
+      description: "Participated in the National Innovation Challenge held at PIET College, Haryana.",
+    },
+    {
+      name: "IIIT Delhi",
+      logo: iiitDelhiImage,
+      description: "Recognized for our innovation in sustainable water solutions and technology-driven impact.",
+    },
+    {
+      name: "STPI (Software Technology Parks of India)",
+      logo: stpiImage,
+      description: "Supported under STPI for innovation and technology development.",
+    },
+    {
+      name: "Ministry of Electronics & Information Technology",
+      logo: meityImage,
+      description: "Recognized for contribution towards technology-led solutions for a sustainable future.",
+    },
+    {
+      name: "STPINEXT Initiatives",
+      logo: stpiNextImage,
+      description: "Featured under STPINEXT for supporting emerging tech startups and innovative solutions.",
+    },
+    {
+      name: "IESA (India Electronics & Semiconductor Association)",
+      logo: iesaImage,
+      description: "Recognized under IESA for innovation and technology development in sustainable solutions.",
     },
   ],
 };
+

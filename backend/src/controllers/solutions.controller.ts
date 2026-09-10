@@ -470,3 +470,31 @@ export const deleteSolutionItem = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
+
+/**
+ * GET /api/solutions/detail/:slug
+ * Returns dynamic solution details for a specific slug from MongoDB.
+ */
+export const getPublicSolutionBySlug = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const slug = String(req.params.slug || '').trim().toLowerCase();
+    const settings = await getOrCreateSolutionsSettings();
+    const solution = settings.solutions.find((s: any) => s.slug?.toLowerCase() === slug && s.isActive !== false);
+
+    if (!solution) {
+      res.status(404).json({
+        success: false,
+        error: { message: `Solution with slug '${slug}' not found.` },
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      data: solution,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

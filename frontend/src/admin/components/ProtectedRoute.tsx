@@ -77,11 +77,12 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   // Session check done — user is not authenticated.
   // Preserve the originally requested path so login can redirect back.
   if (!user) {
-    const returnTo = location.pathname + location.search;
-    const isAdminLogin = returnTo === '/admin/login' || returnTo === '/admin';
-    const loginUrl = isAdminLogin
+    const rawPath = location.pathname;
+    const cleanPath = rawPath.replace(/\/+$/, '');
+    const isRootAdmin = cleanPath === '/admin' || cleanPath === '' || cleanPath === '/admin/login';
+    const loginUrl = isRootAdmin
       ? '/admin/login'
-      : `/admin/login?returnTo=${encodeURIComponent(returnTo)}`;
+      : `/admin/login?returnTo=${encodeURIComponent(rawPath + location.search)}`;
     return <Navigate to={loginUrl} replace />;
   }
 

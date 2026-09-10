@@ -35,6 +35,7 @@ import ApproachCms from "./admin/pages/cms/Approach";
 import ImpactCms from "./admin/pages/cms/Impact";
 import ContactCms from "./admin/pages/cms/Contact";
 import LeadsAdmin from "./admin/pages/cms/Leads";
+import JobApplications from "./admin/pages/cms/JobApplications";
 import FooterCms from "./admin/pages/cms/Footer";
 import MediaLibrary from "./admin/pages/cms/MediaLibrary";
 
@@ -93,7 +94,8 @@ const AnimatedRoutes = () => {
           <Route path="footer" element={<FooterCms />} />
           <Route path="seo" element={<Placeholder />} />
           <Route path="global-settings" element={<Placeholder />} />
-          <Route path="job-applications" element={<Placeholder />} />
+          <Route path="job-applications" element={<JobApplications />} />
+          <Route path="applications" element={<JobApplications />} />
           <Route path="activity-logs" element={<Placeholder />} />
           <Route path="blog" element={<Blog />} />
           <Route path="blog/settings" element={<BlogSettingsPage />} />
@@ -110,6 +112,24 @@ const AnimatedRoutes = () => {
           <Route path="settings" element={<Placeholder />} />
           <Route path="audit" element={<Placeholder />} />
           <Route path="health" element={<Placeholder />} />
+
+          {/* CMS Sub-routes & Aliases */}
+          <Route path="cms" element={<Navigate to="/admin/pages" replace />} />
+          <Route path="cms/home" element={<HomeCms />} />
+          <Route path="cms/about" element={<AboutCms />} />
+          <Route path="cms/solutions" element={<SolutionsCms />} />
+          <Route path="cms/approach" element={<ApproachCms />} />
+          <Route path="cms/careers" element={<Careers />} />
+          <Route path="cms/impact" element={<ImpactCms />} />
+          <Route path="cms/contact" element={<ContactCms />} />
+          <Route path="cms/footer" element={<FooterCms />} />
+          <Route path="cms/pages" element={<CmsPages />} />
+          <Route path="cms/blog" element={<Blog />} />
+          <Route path="cms/blog/settings" element={<BlogSettingsPage />} />
+          <Route path="cms/media" element={<MediaLibrary />} />
+          <Route path="cms/leads" element={<LeadsAdmin />} />
+          <Route path="cms/job-applications" element={<JobApplications />} />
+
           <Route path="*" element={<Placeholder />} />
         </Route>
 

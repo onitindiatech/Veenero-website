@@ -1,12 +1,17 @@
 import bcrypt from 'bcrypt';
 import { CmsPageModel } from '../models/CmsPage';
 import { UserModel } from '../models/User';
-import { CareerModel } from '../models/Career';
 import { BlogPostModel } from '../models/BlogPost';
 import { BlogLandingSettingsModel } from '../models/BlogLandingSettings';
 import { HomePageSettingsModel } from '../models/HomePageSettings';
 import { AboutPageSettingsModel } from '../models/AboutPageSettings';
+import { SolutionsPageSettings } from '../models/SolutionsPageSettings';
+import { ImpactPageSettingsModel } from '../models/ImpactPageSettings';
+import { ContactPageSettingsModel } from '../models/ContactPageSettings';
+import { FooterSettingsModel } from '../models/FooterSettings';
 import { MediaModel } from '../models/Media';
+import { CareerModel } from '../models/Career';
+import { CareerPageSettingsModel } from '../models/CareerPageSettings';
 
 const mockPages = [
   {
@@ -15,12 +20,12 @@ const mockPages = [
     slug: '/',
     status: 'published',
     featuredImage: null,
-    seoMetaTitle: 'Veenero | Intelligent Water Management Platform',
+    seoMetaTitle: 'Veenero Sustainable Solutions | Water Management & Conservation',
     seoMetaDescription:
-      'Veenero is a smart water intelligence platform helping enterprises monitor, optimise, and reduce water consumption across global facilities.',
+      'Veenero Sustainable Solutions Pvt Ltd provides water conservative devices and software including Aqua Saver to reduce water waste and ensure water security.',
     seoStatus: 'good',
-    lastUpdated: '2026-08-14T10:30:00Z',
-    updatedBy: 'Aditya Choubey',
+    lastUpdated: new Date().toISOString(),
+    updatedBy: 'Veenero Team',
     isCoreSystemPage: true,
     sections: [
       { id: 's-hero', name: 'Hero', type: 'hero', visible: true },
@@ -36,18 +41,17 @@ const mockPages = [
     slug: '/about',
     status: 'published',
     featuredImage: null,
-    seoMetaTitle: 'About Veenero | Our Mission & Vision',
+    seoMetaTitle: 'About Us | Veenero Sustainable Solutions',
     seoMetaDescription:
-      "Learn about Veenero's mission to transform water management through AI-driven intelligence and sustainable technology solutions.",
+      'Learn about Veenero origin, our village roots, and our mission to enforce water management, eliminate leaks, and build future water security.',
     seoStatus: 'good',
-    lastUpdated: '2026-08-13T14:20:00Z',
-    updatedBy: 'Aditya Choubey',
+    lastUpdated: new Date().toISOString(),
+    updatedBy: 'Veenero Team',
     isCoreSystemPage: true,
     sections: [
       { id: 's-about-hero', name: 'About Hero', type: 'hero', visible: true },
       { id: 's-mission', name: 'Mission & Vision', type: 'content', visible: true },
       { id: 's-team', name: 'Leadership Team', type: 'gallery', visible: true },
-      { id: 's-timeline', name: 'Company Timeline', type: 'content', visible: false },
     ],
   },
   {
@@ -56,59 +60,17 @@ const mockPages = [
     slug: '/solutions',
     status: 'published',
     featuredImage: null,
-    seoMetaTitle: 'Water Intelligence Solutions | Veenero',
+    seoMetaTitle: 'Solutions | Aqua Saver & Water Conservative Software',
     seoMetaDescription:
-      "Explore Veenero's suite of water management solutions: real-time monitoring, AI analytics, risk management, and efficiency reporting.",
+      'Discover Aqua Saver, Aqua Saver 3D-Module, Water Quality Assessment, Pumping Automation, Water Tracking, and Leak Identification.',
     seoStatus: 'good',
-    lastUpdated: '2026-08-12T09:45:00Z',
-    updatedBy: 'Aditya Choubey',
+    lastUpdated: new Date().toISOString(),
+    updatedBy: 'Veenero Team',
     isCoreSystemPage: true,
     sections: [
       { id: 's-solutions-hero', name: 'Solutions Hero', type: 'hero', visible: true },
-      { id: 's-monitoring', name: 'Real-Time Monitoring', type: 'content', visible: true },
-      { id: 's-analytics', name: 'AI Analytics', type: 'content', visible: true },
-      { id: 's-risk', name: 'Risk Management', type: 'content', visible: true },
-      { id: 's-reports', name: 'Reports & Exports', type: 'content', visible: true },
-    ],
-  },
-  {
-    _id: 'page-industries',
-    name: 'Industries',
-    slug: '/industries',
-    status: 'published',
-    featuredImage: null,
-    seoMetaTitle: 'Industries We Serve | Veenero Water Intelligence',
-    seoMetaDescription:
-      'Veenero serves enterprise clients across manufacturing, hospitality, healthcare, data centres, and municipal sectors.',
-    seoStatus: 'needs-work',
-    lastUpdated: '2026-08-10T16:00:00Z',
-    updatedBy: 'Aditya Choubey',
-    isCoreSystemPage: true,
-    sections: [
-      { id: 's-industries-hero', name: 'Industries Hero', type: 'hero', visible: true },
-      { id: 's-manufacturing', name: 'Manufacturing', type: 'content', visible: true },
-      { id: 's-hospitality', name: 'Hospitality', type: 'content', visible: true },
-      { id: 's-healthcare', name: 'Healthcare', type: 'content', visible: true },
-      { id: 's-datacenter', name: 'Data Centres', type: 'content', visible: false },
-    ],
-  },
-  {
-    _id: 'page-approach',
-    name: 'Approach',
-    slug: '/approach',
-    status: 'published',
-    featuredImage: null,
-    seoMetaTitle: 'Our Approach | Veenero Methodology',
-    seoMetaDescription:
-      "Discover how Veenero's proven four-step methodology helps organisations achieve measurable water efficiency improvements.",
-    seoStatus: 'good',
-    lastUpdated: '2026-08-11T11:15:00Z',
-    updatedBy: 'Aditya Choubey',
-    isCoreSystemPage: true,
-    sections: [
-      { id: 's-approach-hero', name: 'Approach Hero', type: 'hero', visible: true },
-      { id: 's-methodology', name: 'Four-Step Methodology', type: 'content', visible: true },
-      { id: 's-process', name: 'Our Process', type: 'content', visible: true },
+      { id: 's-categories', name: 'Solution Categories', type: 'content', visible: true },
+      { id: 's-cta', name: 'Solutions CTA', type: 'cta', visible: true },
     ],
   },
   {
@@ -117,75 +79,16 @@ const mockPages = [
     slug: '/impact',
     status: 'published',
     featuredImage: null,
-    seoMetaTitle: 'Real World Impact | Veenero Results',
+    seoMetaTitle: 'Impact & Achievements | Veenero Sustainable Solutions',
     seoMetaDescription:
-      'See how Veenero has helped clients save millions of litres of water and reduce operational costs through intelligent monitoring.',
-    seoStatus: 'needs-work',
-    lastUpdated: '2026-08-08T13:45:00Z',
-    updatedBy: 'Aditya Choubey',
+      'Addressing India 49 billion liter daily water waste crisis. WE Hub POC certified and Intinta Innovator Award winner.',
+    seoStatus: 'good',
+    lastUpdated: new Date().toISOString(),
+    updatedBy: 'Veenero Team',
     isCoreSystemPage: true,
     sections: [
       { id: 's-impact-hero', name: 'Impact Hero', type: 'hero', visible: true },
       { id: 's-stats', name: 'Key Statistics', type: 'content', visible: true },
-      { id: 's-case-highlights', name: 'Case Study Highlights', type: 'content', visible: true },
-      { id: 's-testimonials', name: 'Client Testimonials', type: 'testimonials', visible: false },
-    ],
-  },
-  {
-    _id: 'page-partners',
-    name: 'Partners',
-    slug: '/partners',
-    status: 'published',
-    featuredImage: null,
-    seoMetaTitle: 'Our Partners | Veenero Ecosystem',
-    seoMetaDescription:
-      'Veenero partners with leading technology, sustainability, and infrastructure organisations to deliver best-in-class water intelligence.',
-    seoStatus: 'poor',
-    lastUpdated: '2026-08-06T10:00:00Z',
-    updatedBy: 'Aditya Choubey',
-    isCoreSystemPage: true,
-    sections: [
-      { id: 's-partners-hero', name: 'Partners Hero', type: 'hero', visible: true },
-      { id: 's-partner-grid', name: 'Partner Logos Grid', type: 'gallery', visible: true },
-      { id: 's-partner-cta', name: 'Become a Partner CTA', type: 'cta', visible: true },
-    ],
-  },
-  {
-    _id: 'page-careers',
-    name: 'Careers',
-    slug: '/careers',
-    status: 'draft',
-    featuredImage: null,
-    seoMetaTitle: 'Careers at Veenero | Join Our Team',
-    seoMetaDescription:
-      'Join Veenero and help shape the future of water intelligence. View open positions across engineering, sales, and operations.',
-    seoStatus: 'good',
-    lastUpdated: '2026-08-07T09:30:00Z',
-    updatedBy: 'Aditya Choubey',
-    isCoreSystemPage: false,
-    sections: [
-      { id: 's-careers-hero', name: 'Careers Hero', type: 'hero', visible: true },
-      { id: 's-openings', name: 'Open Positions', type: 'content', visible: true },
-      { id: 's-culture', name: 'Our Culture', type: 'content', visible: false },
-    ],
-  },
-  {
-    _id: 'page-insights',
-    name: 'Insights',
-    slug: '/insights',
-    status: 'draft',
-    featuredImage: null,
-    seoMetaTitle: 'Water Intelligence Insights & Articles | Veenero',
-    seoMetaDescription:
-      'Read the latest insights, research, and thought leadership on water management, sustainability, and smart infrastructure from Veenero.',
-    seoStatus: 'needs-work',
-    lastUpdated: '2026-08-09T15:00:00Z',
-    updatedBy: 'Aditya Choubey',
-    isCoreSystemPage: false,
-    sections: [
-      { id: 's-insights-hero', name: 'Insights Hero', type: 'hero', visible: true },
-      { id: 's-featured', name: 'Featured Article', type: 'content', visible: true },
-      { id: 's-article-grid', name: 'Article Grid', type: 'custom', visible: true },
     ],
   },
   {
@@ -194,32 +97,31 @@ const mockPages = [
     slug: '/contact',
     status: 'published',
     featuredImage: null,
-    seoMetaTitle: 'Contact Veenero | Get in Touch',
+    seoMetaTitle: 'Contact Us | Veenero Sustainable Solutions',
     seoMetaDescription:
-      'Contact the Veenero team to request a demo, ask questions, or discuss how we can help your organisation manage water intelligently.',
+      'Get in touch with Veenero Sustainable Solutions Pvt Ltd. Email info@veenerosolutions.com or udaygedam@veenerosolutions.com.',
     seoStatus: 'good',
-    lastUpdated: '2026-08-14T08:00:00Z',
-    updatedBy: 'Aditya Choubey',
+    lastUpdated: new Date().toISOString(),
+    updatedBy: 'Veenero Team',
     isCoreSystemPage: true,
     sections: [
       { id: 's-contact-hero', name: 'Contact Hero', type: 'hero', visible: true },
       { id: 's-contact-form', name: 'Contact Form', type: 'content', visible: true },
-      { id: 's-offices', name: 'Office Locations', type: 'content', visible: true },
     ],
   },
 ];
 
 export async function seedDatabase(): Promise<void> {
   try {
-    // 1. Seed Pages
-    const count = await CmsPageModel.countDocuments();
-    if (count === 0) {
-      console.log('[Seed] Database is empty. Seeding 10 core pages...');
-      await CmsPageModel.insertMany(mockPages);
-      console.log('[Seed] Database seeded successfully.');
-    } else {
-      console.log('[Seed] Database already populated. Skipping page seed.');
+    // 1. Seed/Update Core Pages
+    for (const p of mockPages) {
+      await CmsPageModel.findOneAndUpdate(
+        { slug: p.slug },
+        { $set: p },
+        { upsert: true, new: true }
+      );
     }
+    console.log('[Seed] Core CMS pages verified.');
 
     // 2. Seed Super Admin
     const adminEmail = process.env.ADMIN_EMAIL;
@@ -239,889 +141,1526 @@ export async function seedDatabase(): Promise<void> {
           isActive: true,
         });
         console.log('[Seed] Super Admin seeded successfully.');
-      } else {
-        console.log('[Seed] Super Admin already exists. Skipping user seed.');
       }
-    } else {
-      console.warn('[Seed] Warning: ADMIN_EMAIL or ADMIN_PASSWORD not configured. Skipping Super Admin seeding.');
     }
 
-    // 3. Seed Careers
-    const careerCount = await CareerModel.countDocuments();
-    if (careerCount === 0) {
-      console.log('[Seed] Careers database is empty. Seeding 3 realistic careers...');
-      const seedCareers = [
-        {
-          title: "Full Stack Developer",
-          slug: "full-stack-developer",
-          department: "Engineering",
-          location: "Bengaluru, India",
-          employmentType: "Full-time",
-          experience: "2+ Years",
-          shortDescription: "Build scalable web applications and intelligent systems that drive real-world impact.",
-          description: "We are seeking a Full Stack Developer to join our team in Bengaluru. You will design, build, and optimize backend microservices and responsive web client interfaces that enable real-time telemetry analytics and resource monitoring.",
-          responsibilities: [
-            "Design and build robust, high-performance APIs and frontend applications using React and Node.js.",
-            "Optimize data visualization controls to display heavy real-time telemetry metrics.",
-            "Implement clean, reusable UI components adhering strictly to our visual guidelines.",
-            "Collaborate with product and design layers to ship client-facing dashboard portals."
-          ],
-          requirements: [
-            "B.Tech/M.Tech in Computer Science, engineering, or related field.",
-            "2+ years of professional full-stack development experience using TypeScript, React, and Node.js.",
-            "Familiarity with data viz tools, web performance metrics, and database scaling.",
-            "Self-starter mindset with strong attention to layout alignment and details."
-          ],
-          niceToHave: [
-            "Experience with cloud infrastructure (AWS/GCP).",
-            "Familiarity with charting libraries like Recharts or D3.js."
-          ],
-          skills: ["React", "Node.js", "TypeScript", "TailwindCSS", "PostgreSQL"],
-          status: "PUBLISHED",
-          isFeatured: true,
-          sortOrder: 1,
-          createdBy: "System Seed",
-          updatedBy: "System Seed"
-        },
-        {
-          title: "Data Engineer",
-          slug: "data-engineer",
-          department: "Engineering",
-          location: "Remote",
-          employmentType: "Full-time",
-          experience: "3+ Years",
-          shortDescription: "Design and build robust data pipelines to power our water intelligence platform.",
-          description: "We are looking for a Data Engineer to develop and scale our telemetry data processing pipelines. You will optimize the storage, ingestion, and analytical query layers that process millions of flow data points daily.",
-          responsibilities: [
-            "Design and implement scalable ingestion and ETL pipelines for high-throughput sensor telemetry.",
-            "Optimize database schemas and analytical indexing layers for fast dashboard queries.",
-            "Collaborate with hardware and DevOps engineers on telemetry serialization formats (Protobuf, MQTT).",
-            "Ensure data integrity, uptime monitoring, and quality metrics across ingestion layers."
-          ],
-          requirements: [
-            "3+ years of experience engineering data pipelines or analytics databases.",
-            "Expert level knowledge of Python, SQL, and distributed frameworks (e.g. Spark, Kafka).",
-            "Experience scaling analytical datastores (e.g. ClickHouse, PostgreSQL, MongoDB).",
-            "Strong understanding of message queues and time-series telemetry pipelines."
-          ],
-          niceToHave: [
-            "Experience with Docker and Kubernetes.",
-            "Familiarity with IoT messaging protocols."
-          ],
-          skills: ["Python", "SQL", "Kafka", "ClickHouse", "MongoDB", "ETL"],
-          status: "PUBLISHED",
-          isFeatured: false,
-          sortOrder: 2,
-          createdBy: "System Seed",
-          updatedBy: "System Seed"
-        },
-        {
-          title: "GIS & Remote Sensing Specialist",
-          slug: "gis-remote-sensing-specialist",
-          department: "Technology",
-          location: "Hyderabad, India",
-          employmentType: "Full-time",
-          experience: "3+ Years",
-          shortDescription: "Use geospatial insights to solve complex water challenges at scale.",
-          description: "We are seeking a GIS and Remote Sensing Specialist to lead our geospatial intelligence layer. You will process satellite imagery, analyze hydrological features, and integrate geographic telemetry data to optimize water resource monitoring maps.",
-          responsibilities: [
-            "Process, index, and analyze multi-spectral satellite imagery and spatial data layers.",
-            "Build interactive GIS visualization layers for client dashboards and insights portals.",
-            "Collaborate with software engineers to integrate geospatial APIs (ArcGIS, Mapbox, Leaflet).",
-            "Research and validate remote-sensing models to predict hydrological trends."
-          ],
-          requirements: [
-            "Degree in Geoinformatics, GIS, Remote Sensing, or related environmental science fields.",
-            "3+ years of experience working with GIS software (QGIS, ArcGIS) and spatial database extensions.",
-            "Proficiency programming in Python for spatial data analysis (using GDAL, rasterio, shapely).",
-            "Experience working with remote sensing datasets (Sentinel, Landsat) and satellite APIs."
-          ],
-          niceToHave: [
-            "Knowledge of machine learning for land cover classification.",
-            "Familiarity with cloud GIS databases."
-          ],
-          skills: ["QGIS", "ArcGIS", "Python", "GDAL", "Mapbox", "Remote Sensing"],
-          status: "PUBLISHED",
-          isFeatured: false,
-          sortOrder: 3,
-          createdBy: "System Seed",
-          updatedBy: "System Seed"
-        }
-      ];
-      await CareerModel.insertMany(seedCareers);
-      console.log('[Seed] Careers seeded successfully.');
-    } else {
-      console.log('[Seed] Careers already populated. Skipping career seed.');
+    // 3. Clean up fake blog posts to keep blog genuinely CMS-driven
+    const fakeAuthors = ['Veenero Insights', 'Tech & Engineering Layer', 'Sustainability Board', 'Governance & Auditing', 'Veenero Leadership'];
+    const deleteResult = await BlogPostModel.deleteMany({ author: { $in: fakeAuthors } });
+    if (deleteResult.deletedCount > 0) {
+      console.log(`[Seed] Cleaned up ${deleteResult.deletedCount} fabricated blog posts. Blog is ready for authentic CMS articles.`);
     }
 
-    // 4. Seed Blog Posts
-    const blogCount = await BlogPostModel.countDocuments();
-    if (blogCount === 0) {
-      console.log('[Seed] Blog posts database is empty. Seeding blog posts...');
-      const seedPosts = [
-        {
-          title: 'Making Every Litre Visible: The Rise of Water Intelligence',
-          slug: 'making-every-litre-visible-the-rise-of-water-intelligence',
-          category: 'Water Intelligence',
-          excerpt: 'How real-time telemetry, data verification, and cloud platforms are changing the way cities and industries manage water.',
-          featuredImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1200&auto=format&fit=crop',
-          featuredImageAlt: 'Aerial view of pristine mountain lake representing water intelligence',
-          author: 'Veenero Insights',
-          readingTime: '6 min read',
-          status: 'PUBLISHED',
-          featured: true,
-          sortOrder: 1,
-          publishedAt: new Date('2026-08-17'),
-          content: `Water is our most critical resource, yet it is often the least measured. In an era where carbon emissions are tracked in real-time and supply chains are optimized down to the millisecond, our management of water has lagged behind. Today, a new paradigm is emerging: Water Intelligence.
-
-By combining IoT sensors, real-time telemetry, and advanced verification algorithms, organizations can now transition from estimation to absolute visibility.
-
-## The Cost of Water Invisibility
-
-Historically, water consumption has been measured through monthly or quarterly billing cycles. While this shows overall volume, it hides critical operational details:
-
-- Undetected Leaks: Small pipe ruptures can leak thousands of litres daily before showing visible signs.
-- Consumption Surges: Without real-time tracking, identifying high-demand peaks or anomalous usage is nearly impossible.
-- Zero Accountability: In industrial settings, local managers lack the granularity required to enforce efficiency benchmarks.
-
-## The Pillars of Water Intelligence
-
-Water Intelligence goes beyond simple metering. It relies on a continuous loop of data collection, validation, and analytics:
-
-1. IoT Telemetry: Ultrasonic and electromagnetic flow sensors capture volume, velocity, and pressure at source, distribution, and consumption points.
-2. Cloud Serialization: Sensor telemetry is serialized via MQTT and securely transmitted to cloud processing nodes.
-3. Data Verification: Algorithmic validation filters telemetry anomalies, ensuring that sensor drifts or transient outages do not skew analytics.
-
-## Shifting from Measurement to Action
-
-The ultimate goal of Water Intelligence is action. Real-time dashboards enable operations teams to isolate water loss within minutes rather than weeks. In industrial sectors, this translates directly to carbon footprint reduction and true sustainability compliance.
-
-As climate volatility shifts regional water tables, making every litre visible is no longer just an environmental goal — it is an operational necessity.`,
-          seo: { metaTitle: 'Water Intelligence: Making Every Litre Visible | Veenero', metaDescription: 'Discover how IoT telemetry and real-time data verification are transforming water management globally.' },
-        },
-        {
-          title: 'Why Water Visibility Matters for Modern Infrastructure',
-          slug: 'why-water-visibility-matters-for-modern-infrastructure',
-          category: 'Water Intelligence',
-          excerpt: 'Smart cities and buildings require high-fidelity telemetry to prevent water loss and optimize complex distribution networks.',
-          featuredImage: 'https://images.unsplash.com/photo-1444927714506-8492d94b4e3d?q=80&w=800&auto=format&fit=crop',
-          featuredImageAlt: 'Water flowing through modern urban infrastructure pipelines',
-          author: 'Veenero Insights',
-          readingTime: '4 min read',
-          status: 'PUBLISHED',
-          featured: false,
-          sortOrder: 2,
-          publishedAt: new Date('2026-08-15'),
-          content: `Modern municipal infrastructure is facing unprecedented stress. High density urbanization, aging pipe systems, and shifting hydrological profiles make water delivery highly complex.
-
-## The Infrastructure Blindspot
-
-Most distribution networks lose up to 30% of their treated water before it reaches consumer taps. This is known as Non-Revenue Water (NRW).
-
-- Pressure Variations: Excess pressure leads to pipe leaks; inadequate pressure limits distribution.
-- Dynamic Demand: Traditional planning cannot handle the hourly spikes of mega-cities.
-
-## Implementing Visibility
-
-By introducing inline telemetry nodes, infrastructure managers can partition distribution networks into District Metered Areas (DMAs). By comparing net inlet volumes against total consumer outlets within the DMA, managers can pinpoint leakage zones immediately.`,
-          seo: { metaTitle: 'Water Visibility in Modern Infrastructure | Veenero', metaDescription: 'Learn how smart telemetry enables cities to eliminate Non-Revenue Water and optimize distribution.' },
-        },
-        {
-          title: 'From Measurement to Action: Building Smarter Water Systems',
-          slug: 'from-measurement-to-action-building-smarter-water-systems',
-          category: 'Technology',
-          excerpt: 'Exploring the technical stack behind real-time telemetry pipelines, from edge sensors to cloud analytics.',
-          featuredImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
-          featuredImageAlt: 'High-tech industrial sensors and monitoring equipment',
-          author: 'Tech & Engineering Layer',
-          readingTime: '5 min read',
-          status: 'PUBLISHED',
-          featured: false,
-          sortOrder: 3,
-          publishedAt: new Date('2026-08-10'),
-          content: `Building an automated water intelligence platform requires a specialized technology stack. Sensors must endure harsh field conditions, consume minimal battery power, and transmit telemetry securely across cellular bands.
-
-## The Hardware Layer
-
-Veenero uses electromagnetic and ultrasonic sensors because they lack moving parts, eliminating wear and drift over time.
-
-- Modbus/RS485 Interfaces: These protocols transmit sensor data directly to custom IoT transmission nodes.
-- NB-IoT & LTE-M: Narrowband communication ensures that nodes buried underground retain network links.
-
-## The Telemetry Data Pipeline
-
-Once telemetry is broadcast from the field, it passes through an ingestion server to serialization microservices:
-
-1. Ingestion Engine: Handlers parse packet payloads and validate checksum integrity.
-2. Time-Series Datastore: Telemetry is indexed in high-performance databases suited for quick data visualizations.
-3. API & Visualization: React clients render telemetry charts, tracking flow rates and pressure metrics in real-time.`,
-          seo: { metaTitle: 'Building Smarter Water Systems with Telemetry | Veenero', metaDescription: 'A technical deep-dive into the IoT stack powering modern water intelligence platforms.' },
-        },
-        {
-          title: 'How Data Can Help Reduce Industrial Water Loss',
-          slug: 'how-data-can-help-reduce-industrial-water-loss',
-          category: 'Sustainability',
-          excerpt: 'Industries consume massive amounts of water. See how tracking process water yields dramatic conservation improvements.',
-          featuredImage: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop',
-          featuredImageAlt: 'Sustainable industrial landscape with water conservation systems',
-          author: 'Sustainability Board',
-          readingTime: '7 min read',
-          status: 'PUBLISHED',
-          featured: false,
-          sortOrder: 4,
-          publishedAt: new Date('2026-08-05'),
-          content: `Industrial processes account for a major portion of global freshwater consumption. Yet, few industrial sites can trace water consumption down to individual machinery.
-
-## Mapping Process Water
-
-To save water, factories must map their entire manufacturing blueprint:
-
-- Boiler Feed: Tracking steam losses and condensate returns.
-- Cooling Towers: Measuring evaporation and blowdown metrics.
-- Product Integration: Verifying water used directly in final products.
-
-## The Conservation Yield
-
-When factories deploy dedicated inline telemetry on these loops, they discover critical anomalies. Fixing these issues reduces industrial water bills and aligns corporations with ESG compliance guidelines.`,
-          seo: { metaTitle: 'Reducing Industrial Water Loss with Data | Veenero', metaDescription: 'How telemetry and process mapping help industries achieve dramatic water conservation.' },
-        },
-        {
-          title: 'The Role of Verification in Responsible Water Management',
-          slug: 'the-role-of-verification-in-responsible-water-management',
-          category: 'Water Verification',
-          excerpt: 'Why unverified water data is a liability, and how cryptographic proof secures sustainability reporting.',
-          featuredImage: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=800&auto=format&fit=crop',
-          featuredImageAlt: 'Crystal clear mountain water stream symbolizing verified data integrity',
-          author: 'Governance & Auditing',
-          readingTime: '5 min read',
-          status: 'PUBLISHED',
-          featured: false,
-          sortOrder: 5,
-          publishedAt: new Date('2026-07-28'),
-          content: `Greenwashing is a growing challenge in ESG disclosures. Assertions like "Water Neutrality" or "30% Water Saved" are often calculated using loose spreadsheets without audit trails.
-
-## The Spread of Sensor Errors
-
-Flow meters in the field face issues like signal drifts, mineral scaling, and power failures. If raw data is copied directly to corporate reports without verification, anomalies skew calculations.
-
-## Building Proof-of-Concept Verification
-
-To guarantee data trust, we need independent verification:
-
-- Telemetry Checks: Comparing inflow parameters against outflow metrics to flag anomalies.
-- Cryptographic Logging: Writing verified logs to secure ledgers to create tamper-proof data records.
-- Third-Party Integrations: Allowing auditors to trace dashboard data directly to source sensors.`,
-          seo: { metaTitle: 'Water Verification for ESG Compliance | Veenero', metaDescription: 'Why cryptographic verification is essential for trustworthy water sustainability reporting.' },
-        },
-        {
-          title: 'Building a Data-Driven Water Future for India',
-          slug: 'building-a-data-driven-water-future-for-india',
-          category: 'Industry',
-          excerpt: 'Addressing national water supply challenges through data standards, open hardware, and shared intelligence.',
-          featuredImage: 'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?q=80&w=800&auto=format&fit=crop',
-          featuredImageAlt: 'Indian water infrastructure and rural water management systems',
-          author: 'Veenero Leadership',
-          readingTime: '6 min read',
-          status: 'PUBLISHED',
-          featured: false,
-          sortOrder: 6,
-          publishedAt: new Date('2026-07-20'),
-          content: `India faces one of the world's most acute water challenges. Ground water levels are falling, monsoon patterns are shifting, and water distribution is highly uneven.
-
-## Setting Data Standards
-
-Water management is currently fragmented across multiple regional departments, water boards, and private agencies. Each uses different, incompatible data systems.
-
-- Unified Schemas: Setting standard formats for flow rate, pressure, and quality parameters.
-- Open APIs: Allowing developers to build water-saving apps using public telemetry datasets.
-
-## The Path Forward
-
-By deploying smart telemetry networks and making the datasets public, we can empower communities, farmers, and municipal leaders to make data-driven decisions that ensure a sustainable water future.`,
-          seo: { metaTitle: 'Data-Driven Water Future for India | Veenero', metaDescription: 'How open data standards and telemetry networks can solve India\'s water crisis.' },
-        },
-      ];
-      await BlogPostModel.insertMany(seedPosts);
-      console.log('[Seed] Blog posts seeded successfully.');
-    } else {
-      console.log('[Seed] Blog posts already populated. Skipping blog seed.');
-    }
-
-    // 5. Seed Blog Landing Settings
-    const settingsCount = await BlogLandingSettingsModel.countDocuments();
-    if (settingsCount === 0) {
-      console.log('[Seed] Blog landing settings not found. Seeding default settings...');
-      await BlogLandingSettingsModel.create({
+    // 4. Seed Blog Landing Settings (Empty state ready)
+    await BlogLandingSettingsModel.findOneAndUpdate(
+      {},
+      {
         hero: {
-          eyebrow: 'VEENERO INSIGHTS',
-          title: 'Water Intelligence & Innovation',
-          description: 'Insights, research and perspectives on smart water management, sustainability and real-time telemetry from the Veenero team.',
-          image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1600&auto=format&fit=crop',
-          imageAlt: 'Aerial view of pristine lake representing water intelligence',
+          eyebrow: 'VEENERO RESEARCH & UPDATES',
+          title: 'Insights on Water Conservation',
+          description: 'Perspectives, field research, and technology updates on water management and conservation from the Veenero team.',
+          image: '/src/assets/hero-water.jpg',
+          imageAlt: 'Veenero water conservation insights',
         },
         featuredSection: {
-          eyebrow: 'COVER STORY',
-          title: 'Featured Insight',
-          description: 'Our editorial team\'s most important and relevant article this month.',
+          eyebrow: 'LATEST DEVELOPMENTS',
+          title: 'Field Research & Technology',
+          description: 'Follow our ongoing developments in water conservative devices and software.',
         },
         insightStats: [
-          { value: '100%', label: 'Water Visibility', description: 'End-to-end telemetry coverage across every monitored facility' },
-          { value: '24/7', label: 'Monitoring', description: 'Continuous real-time data streams from field sensors' },
-          { value: 'Real-Time', label: 'Intelligence', description: 'Instant anomaly detection and automated alert escalation' },
+          { value: '49B L', label: 'India Daily Waste', description: 'Daily water waste addressed by conservation' },
+          { value: '30%', label: 'Global Loss', description: 'Average water supply lost to leaks' },
+          { value: 'Zero', label: 'Compromise', description: 'Focus on leak detection and water security' },
         ],
         editorialQuote: {
-          eyebrow: 'OUR MISSION',
-          title: 'Every drop of water deserves to be measured, verified and understood.',
-          description: 'At Veenero, we believe that data transparency is the foundation of sustainable water stewardship for the next generation.',
+          eyebrow: 'OUR CONVICTION',
+          title: 'Every litre of water saved strengthens future water security.',
+          description: 'At Veenero, we believe that practical devices and appropriate management rules can eliminate avoidable water waste.',
         },
         cta: {
-          eyebrow: 'CONTRIBUTE',
-          title: 'Have an idea worth sharing?',
-          description: 'We are always looking for perspectives on sustainability, measurement, and water infrastructure from industry leaders.',
-          buttonText: 'Explore Veenero',
-          buttonLink: '/#contact',
+          eyebrow: 'GET INVOLVED',
+          title: 'Interested in our field research?',
+          description: 'Connect with our team to learn more about our upcoming deployments and application testing.',
+          buttonText: 'Contact Us',
+          buttonLink: '/contact',
         },
         seo: {
-          metaTitle: 'Water Intelligence Insights & Articles | Veenero',
-          metaDescription: 'Read the latest insights, research, and thought leadership on water management, sustainability, and smart infrastructure from Veenero.',
+          metaTitle: 'Blog & Insights | Veenero Sustainable Solutions',
+          metaDescription: 'Research, technology updates, and perspectives on water conservation from Veenero Sustainable Solutions Pvt Ltd.',
         },
         isPublished: true,
-      });
-      console.log('[Seed] Blog landing settings seeded successfully.');
-    } else {
-      console.log('[Seed] Blog landing settings already populated. Skipping settings seed.');
-    }
+      },
+      { upsert: true, new: true }
+    );
 
-    // 6. Seed Home Page Settings
-    const homeSettingsCount = await HomePageSettingsModel.countDocuments();
-    if (homeSettingsCount === 0) {
-      console.log('[Seed] Home page settings not found. Seeding default settings...');
-      await HomePageSettingsModel.create({
-        hero: {
-          visible: true,
-          eyebrow: 'India’s Water Intelligence Platform',
-          title: "India's Water Intelligence Platform",
-          description: 'Measure. Monitor. Optimize. Verify.',
-          primaryCtaText: 'Explore the Platform',
-          primaryCtaLink: '/#solutions',
-          secondaryCtaText: 'Watch How Water Visibility Works',
-          secondaryCtaLink: '#',
-          image: '/src/assets/hero-water.jpg',
-          imageAlt: 'Abstract water waves representing sustainable water management',
-          bottomText: 'Making Every Litre Visible.',
-        },
-        about: {
-          visible: true,
-          eyebrow: 'About Veenero',
-          title: "Building India's Water Intelligence Network",
-          description: 'Veenero is not a leak detection company, not a hardware provider, and not a single device approach. We are the future digital infrastructure layer for water management—helping organizations create Water Visibility, Water Accountability, and Water Verification through real-time analytics and a shared water data platform.',
-          values: [
-            { iconName: 'Target', title: 'Water Intelligence', description: 'We help organizations measure, monitor, optimize, benchmark, and verify water usage—turning fragmented data into actionable accountability.' },
-            { iconName: 'Heart', title: 'Water Visibility', description: 'Making every litre measurable across assets, sites, and systems—so decisions are data-driven, timely, and transparent.' },
-            { iconName: 'Users', title: 'Water Accountability', description: 'A verification-ready water data layer that supports reporting, governance, and performance improvement over time.' }
-          ],
-          stats: [
-            { value: '24/7', label: 'Water Monitoring Coverage' },
-            { value: 'Multi-site', label: 'Benchmarking & Comparison' },
-            { value: 'Audit-ready', label: 'Verification-First Reporting' },
-            { value: 'India', label: 'Network Growth Focus' }
-          ]
-        },
-        solutions: {
-          visible: true,
-          eyebrow: 'Product Suite',
-          title: 'India’s Water Intelligence Platform',
-          description: 'Veenero is building a shared water data infrastructure to help organizations measure, monitor, optimize, benchmark, and verify water usage—so every litre becomes visible and accountable.',
-          list: [
-            { iconName: 'Search', imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80', title: 'Veenero Sense', description: 'Capture water data and create Water Visibility—integrating measurements across sites, assets, and operational contexts.', features: ['Real-time water data capture', 'Multi-source integration', 'Data integrity checks'] },
-            { iconName: 'BarChart3', imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80', title: 'Veenero Intelligence', description: 'Turn signals into decisions with Water Intelligence—analytics that measure usage, identify patterns, benchmark performance, and optimize performance.', features: ['Optimization insights', 'Benchmarking reports', 'Water Efficiency tracking'] },
-            { iconName: 'Waves', imageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=400&q=80', title: 'Veenero Insights', description: 'Communicate outcomes with Water Verification-ready reporting—auditable analytics designed for accountability across teams and stakeholders.', features: ['Audit-ready dashboards', 'Verification workflows', 'Actionable accountability'] },
-            { iconName: 'Shield', imageUrl: 'https://images.unsplash.com/photo-1617155093730-a8bf47be792d?auto=format&fit=crop&w=400&q=80', title: 'Water Verification', description: 'A verification-first approach that helps organizations demonstrate measurement validity, governance, and ongoing monitoring quality.', features: ['Verification trails', 'Compliance-ready exports', 'Change & assurance history'] },
-            { iconName: 'Cloud', imageUrl: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=400&q=80', title: 'Water Data Platform', description: 'The infrastructure layer that unifies water data across organizations—enabling benchmarking, governance, and future network-scale intelligence.', features: ['Network-ready architecture', 'Role-based governance', 'Benchmark datasets'] },
-            { iconName: 'Leaf', imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80', title: 'Water Risk & Accountability', description: 'Assess Water Risk and drive Water Accountability—so organizations can prioritize interventions based on evidence, not assumptions.', features: ['Risk scoring', 'Operational accountability', 'Verified performance outcomes'] }
-          ]
-        },
-        approach: {
-          visible: true,
-          eyebrow: 'Our Approach',
-          title: 'A Proven Path to Water Sustainability',
-          description: 'Our methodical four-step process ensures successful outcomes for every project, from initial assessment to long-term optimization.',
-          steps: [
-            { number: '01', title: 'Sense: Measure Every Litre', description: 'Onboard your water data sources to build Water Visibility—so usage is measurable across sites, assets, and operations.', points: ['Data capture mapping', 'Baseline measurement', 'Integrity & validation checks'] },
-            { number: '02', title: 'Intelligence: Monitor & Benchmark', description: 'Use real-time analytics to track performance, compare across peers, and surface Water Risk early.', points: ['Real-time analytics', 'Benchmarking', 'Operational anomaly signals'] },
-            { number: '03', title: 'Optimize: Act with Evidence', description: 'Transform insights into interventions—improving Water Efficiency through quantified recommendations and measurable outcomes.', points: ['Optimization scenarios', 'Efficiency tracking', 'Actionable workflows'] },
-            { number: '04', title: 'Verify: Prove Accountability', description: 'Verification-ready reporting and audit trails help teams demonstrate Water Accountability with confidence.', points: ['Verification trails', 'Audit-ready dashboards', 'Ongoing assurance'] }
-          ]
-        },
-        impact: {
-          visible: true,
-          eyebrow: 'Benefits & Outcomes',
-          title: 'Making Every Litre Visible',
-          description: 'Water Visibility creates Water Accountability. Veenero helps organizations measure, monitor, optimize, benchmark, and verify water usage—so decisions are evidence-based and reporting is audit-ready.',
-          impacts: [
-            { iconName: 'Droplets', value: '100%+', label: 'Visibility Coverage', description: 'Real-time measurement coverage across sites and systems' },
-            { iconName: 'TrendingUp', value: 'Optimized', label: 'Water Efficiency Gains', description: 'Actionable recommendations backed by verified analytics' },
-            { iconName: 'Globe', value: 'India-wide', label: 'Network Benchmarking', description: 'Comparative insights that help prioritize Water Risk' },
-            { iconName: 'Award', value: 'Audit-ready', label: 'Verified Reporting', description: 'Water Accountability with traceable data and governance' }
-          ],
-          testimonial: {
-            quote: 'Veenero gave us Water Visibility we could finally trust. With benchmarked intelligence and verification-ready reporting, our teams moved from estimates to evidence—faster decisions, stronger accountability.',
-            author: 'Sarah Chen',
-            role: 'Sustainability & Water Lead',
-            company: 'Metro Water District'
-          }
-        },
-        partners: {
-          visible: true,
-          eyebrow: 'Water Intelligence Network',
-          title: 'Collaborating to Make Water Visible Across India',
-          description: 'We partner with research institutions, industry ecosystems, and infrastructure stakeholders to build Water Intelligence, strengthen Water Verification, and accelerate network-scale benchmarking.',
-          list: [
-            { name: 'IIT ROPAR', logo: '/src/assets/partner.png', description: 'Research collaboration for Water Intelligence and evidence-driven infrastructure.' },
-            { name: 'ELECTROPRENEUR PARK', logo: '/src/assets/partner2.jpg', description: 'Ecosystem partner supporting the Water Data Platform and network growth.' },
-            { name: 'VISHNU TBI', logo: '/src/assets/part3.png', description: 'Innovation partner advancing Water Verification and real-time analytics.' }
-          ]
-        },
-        careers: {
-          visible: true,
-          eyebrow: 'Join Our Team',
-          title: 'Help Build India’s Water Intelligence Network',
-          description: "We’re looking for builders who care about data integrity, real-time analytics, and sustainable infrastructure. Join a team creating the future water data platform—so organizations can measure, monitor, optimize, benchmark, and verify every litre.",
-          openingsTitle: 'Open Positions',
-          list: [
-            { title: 'IoT Hardware Engineer', location: 'Remote / On-site', department: 'Engineering', isNew: true },
-            { title: 'Mobile Application Developer', location: 'Remote / On-site', department: 'Software Development', isNew: true },
-            { title: 'UI/UX Designer', location: 'Remote / On-site', department: 'Design', isNew: true }
-          ],
-          generalAppText: "Don't see a perfect fit? We're always open to meeting talented people.",
-          generalAppButtonText: 'Send General Application'
-        },
-        contact: {
-          visible: true,
-          eyebrow: 'Get In Touch',
-          title: 'Let’s Build Water Visibility Together',
-          description: 'Want to measure, monitor, optimize, benchmark, and verify water usage? Book a demo of Veenero’s water data platform and start making every litre visible.',
-          infoTitle: 'Contact Information',
-          infoList: [
-            { iconName: 'MapPin', label: 'Visit Us', value: 'H-no 3-294/1/A/1 Tailors Colony Adilabad 504001' },
-            { iconName: 'Phone', label: 'Call Us', value: '9346517202' },
-            { iconName: 'Mail', label: 'Email Us', value: 'udaygedam@veenerosolutions.com' }
-          ],
-          demoTitle: 'Schedule a Platform Demo',
-          demoDescription: 'Experience Veenero Sense, Intelligence, and Insights—built to deliver Water Verification-ready reporting and real-time analytics for water accountability.',
-          demoButtonText: 'Book Demo',
-          formTitle: 'Send Us a Message'
-        },
-        footer: {
-          description: 'Building India’s Water Intelligence Network—making every litre visible through a real-time water data platform.',
-          address: 'H-no 3-294/1/A/1 Tailors Colony Adilabad 504001',
-          mobile: '9346517202',
-          links: {
-            solutions: [
-              { label: 'Veenero Sense', href: '/#solutions' },
-              { label: 'Veenero Intelligence', href: '/#solutions' },
-              { label: 'Veenero Insights', href: '/#solutions' },
-              { label: 'Water Verification', href: '/#solutions' }
-            ],
-            company: [
-              { label: 'About Veenero', href: '/#about' },
-              { label: 'How the Platform Works', href: '/#approach' },
-              { label: 'Benefits & Outcomes', href: '/#impact' },
-              { label: 'Careers', href: '/careers' }
-            ],
-            resources: [
-              { label: 'Case Studies', href: '#' },
-              { label: 'Blog', href: '/blog' },
-              { label: 'White Papers', href: '#' },
-              { label: 'FAQ', href: '#' }
-            ]
-          },
-          socialLinks: [
-            { iconName: 'Linkedin', href: '#', label: 'LinkedIn' },
-            { iconName: 'Twitter', href: '#', label: 'Twitter' },
-            { iconName: 'Youtube', href: '#', label: 'YouTube' },
-            { iconName: 'Mail', href: 'mailto:udaygedam@veenerosolutions.com', label: 'Email' }
-          ]
-        }
-      });
-      console.log('[Seed] Home page settings seeded successfully.');
-    } else {
-      console.log('[Seed] Home page settings already populated. Skipping home seed.');
-    }
-
-    // ─────────────────────────────────────────────────────────────────────
-    // ABOUT PAGE MEDIA SEED
-    // Each entry is keyed by seedKey (PAGE|SECTION|SLOT) for idempotency.
-    // Local assets bundled by Vite are registered as 'local' entries.
-    // Running multiple times will NOT create duplicates.
-    // ─────────────────────────────────────────────────────────────────────
+    // 5. Seed Media Assets
     await seedAboutMedia();
 
-    // ─────────────────────────────────────────────────────────────────────
-    // 7. ABOUT PAGE CMS SETTINGS SEED
-    // ─────────────────────────────────────────────────────────────────────
-    await seedAboutPageSettings();
+    // 6. Synchronize Authentic Veenero Source Content across all CMS collections
+    await syncVeeneroSourceContent();
+
+    // 7. Seed & Synchronize Careers and Job Openings (Idempotent)
+    await seedCareers();
 
   } catch (error) {
     console.error('[Seed] Error during seeding:', (error as Error).message);
   }
 }
 
-async function seedAboutPageSettings(): Promise<void> {
-  const count = await AboutPageSettingsModel.countDocuments();
-  if (count > 0) {
-    console.log('[Seed] About page settings already populated. Skipping about seed.');
-    return;
-  }
+/**
+ * Synchronizes authentic Veenero Sustainable Solutions company content across MongoDB collections.
+ * Idempotent: safe to run on every startup.
+ */
+export async function syncVeeneroSourceContent(): Promise<void> {
+  console.log('[Seed] Synchronizing authentic Veenero source content to database...');
 
-  console.log('[Seed] About page settings not found. Seeding default About CMS settings from current content...');
+  // ── 1. HOME PAGE SETTINGS ──────────────────────────────────────────────────
+  await HomePageSettingsModel.findOneAndUpdate(
+    {},
+    {
+      $set: {
+        hero: {
+          visible: true,
+          eyebrow: 'VEENERO SUSTAINABLE SOLUTIONS PVT LTD',
+          title: 'Water Management & Conservation Infrastructure',
+          description: 'Enforcing appropriate water management, reducing water waste, and ensuring water security through device-based solutions and intelligent software.',
+          primaryCtaText: 'Explore Aqua Saver',
+          primaryCtaLink: '/solutions',
+          secondaryCtaText: 'Our Story',
+          secondaryCtaLink: '/about',
+          image: '/src/assets/hero-water.jpg',
+          imageAlt: 'Veenero Sustainable Solutions — Water conservation and management',
+          bottomText: 'Aqua Saver · 3D-Module · Conservation & Security',
+        },
+        about: {
+          visible: true,
+          eyebrow: 'ABOUT VEENERO',
+          title: 'From Village Roots to Water Security',
+          description: 'We are from a village background, and we have seen precisely how many liters of water are wasted every day as a result of leaks in overhead tanks, pipelines, and taps. After conducting a thorough analysis of the issue, we discovered that there are no appropriate water management systems or water usage rules. We began working on water management and conservation after studying the use and distribution of water across multiple sectors.',
+          values: [
+            {
+              iconName: 'Target',
+              title: 'Enforce Water Management',
+              description: 'Establish appropriate water management systems and clear usage rules across societies, communities, and government sectors.',
+            },
+            {
+              iconName: 'TrendingDown',
+              title: 'Reduce Water Waste',
+              description: 'Target and eliminate leaks across taps, seepages, pipelines, and overhead tanks to prevent catastrophic water loss.',
+            },
+            {
+              iconName: 'ShieldCheck',
+              title: 'Ensure Water Security',
+              description: 'Conserve every drop to safeguard socio-economic development, food and energy production, and healthy ecosystems.',
+            },
+          ],
+          stats: [
+            { value: '49 Billion L', label: 'Wasted Daily in India (Neerain)' },
+            { value: '30%', label: 'Global Supply Lost (Gitnux)' },
+            { value: '600 Million', label: 'People Facing Water Crisis' },
+            { value: 'Core Focus', label: 'Devices & Software Solutions' },
+          ],
+        },
+        solutions: {
+          visible: true,
+          eyebrow: 'OUR SOLUTIONS',
+          title: 'Water Conservative Devices & Software',
+          description: 'Veenero works on water management and conservation through a combination of hardware/device-based solutions and intelligent software.',
+          list: [
+            {
+              iconName: 'Cpu',
+              imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80',
+              title: 'Aqua Saver (Core Solution)',
+              description: 'Our core water conservative device and 3D-Module, engineered to monitor flow, identify leakages, and enforce water management.',
+              features: ['Aqua Saver Device', 'Aqua Saver 3D-Module', 'Hardware + Software Integration'],
+            },
+            {
+              iconName: 'Search',
+              imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80',
+              title: 'Leak Identification & Reporting',
+              description: 'Pinpoint leakage points across taps, pipelines, seepages, and overhead storage tanks before severe loss occurs.',
+              features: ['Tap & pipe leak detection', 'Seepage & tank monitoring', 'Actionable leak reports'],
+            },
+            {
+              iconName: 'Activity',
+              imageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=400&q=80',
+              title: 'Water Tracking & Informatics',
+              description: 'Analyze how much water is used and wasted across various fields, communities, and industries with detailed reports.',
+              features: ['Usage & waste analysis', 'Distribution mapping', 'Informatics reporting'],
+            },
+            {
+              iconName: 'Sliders',
+              imageUrl: 'https://images.unsplash.com/photo-1617155093730-a8bf47be792d?auto=format&fit=crop&w=400&q=80',
+              title: 'Water Pumping Automation',
+              description: 'Resolve the recurring burden of turning motor systems on and off on a regular basis through smart automation.',
+              features: ['Automated motor scheduling', 'Tank level automation', 'Dry-run protection'],
+            },
+            {
+              iconName: 'Droplets',
+              imageUrl: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=400&q=80',
+              title: 'Water Quality Assessment',
+              description: 'Evaluate water quality parameters to ensure safe, usable supplies for drinking, sanitation, and operations.',
+              features: ['Quality evaluation', 'Contamination alerts', 'Safety compliance'],
+            },
+            {
+              iconName: 'Award',
+              imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80',
+              title: 'Water Credits (In Development)',
+              description: 'An application concept where users earn reward coins based on water conserved under prescribed guidelines.',
+              features: ['Incentive coin model', 'Consumption guidelines', 'Conservation rewards'],
+            },
+          ],
+        },
+        approach: {
+          visible: true,
+          eyebrow: 'PROCESS & WORKING',
+          title: 'Systematic 6-Step Conservation Process',
+          description: 'From setting up the Aqua Saver to resolving leaks through structured hardware and software algorithm approaches.',
+          steps: [
+            {
+              number: '01',
+              title: 'Setting up the Aqua Saver',
+              description: 'Structural planning, network overview, and deploying the Aqua Saver device and 3D-Module across supply lines.',
+              points: ['Structural planning', 'Network overview', 'Device setup'],
+            },
+            {
+              number: '02',
+              title: 'Monitoring the System',
+              description: 'Continuous operational surveillance of pipelines, storage tanks, and pumping equipment.',
+              points: ['Real-time surveillance', 'Line pressure & flow', 'Motor state tracking'],
+            },
+            {
+              number: '03',
+              title: 'Collection of Data',
+              description: 'Streaming telemetry into the water application software to track utilized quantity and quality.',
+              points: ['Data into application', 'Quantity utilized', 'Quality utilized'],
+            },
+            {
+              number: '04',
+              title: 'Identification of Leakage',
+              description: 'Algorithm-driven detection of anomalous loss across taps, seepages, pipes, and overhead tanks.',
+              points: ['Anomaly detection', 'Loss localized', 'Immediate notification'],
+            },
+            {
+              number: '05',
+              title: 'Identifying Characteristics',
+              description: 'Evaluating leak severity, estimated volumetric loss, and physical dynamics.',
+              points: ['Volume severity analysis', 'Leak pattern assessment', 'Priority ranking'],
+            },
+            {
+              number: '06',
+              title: 'Resolving the Leak Problem',
+              description: 'Guided repair procedures and automated controls to stop leakage and verify conservation.',
+              points: ['Leak resolution', 'Conservation steps', 'Verification reporting'],
+            },
+          ],
+        },
+        impact: {
+          visible: true,
+          eyebrow: 'REAL-WORLD CHALLENGE & IMPACT',
+          title: "Addressing India's Daily Water Crisis",
+          description: 'India wastes 49 billion liters of water daily while 600 million people face severe water crisis. Veenero tackles the root causes of leakage and unmanaged water usage.',
+          impacts: [
+            {
+              iconName: 'Droplets',
+              value: '49 Billion L',
+              label: 'Daily Waste in India',
+              description: 'Equivalent to 48.42 billion one-liter bottles lost every day (Ref: Neerain)',
+            },
+            {
+              iconName: 'Globe',
+              value: '30%',
+              label: 'Global Supply Lost',
+              description: 'Around 2.1 trillion gallons lost yearly due to leaks and inefficiency (Ref: Gitnux)',
+            },
+            {
+              iconName: 'AlertTriangle',
+              value: '297,000',
+              label: 'Under-5 Child Deaths',
+              description: 'Annual deaths globally from diarrheal diseases due to poor sanitation and unsafe water (WHO/UNICEF 2019)',
+            },
+            {
+              iconName: 'ShieldCheck',
+              value: '4 Critical Areas',
+              label: 'Target Problem Areas',
+              description: 'Comprehensive solutions for Tap Leaks, Seepages, Pipe Leaks, and Tank Leaks',
+            },
+          ],
+          testimonial: {
+            quote: 'Veenero received official POC certification from WE Hub, Government of Telangana, and the Aqua Saver solution was honored with the Intinta Innovator Award for two consecutive years at the district level.',
+            author: 'Veenero Sustainable Solutions',
+            role: 'Recognized Innovation',
+            company: 'WE Hub & State Government of Telangana',
+          },
+        },
+        partners: {
+          visible: true,
+          eyebrow: 'ACHIEVEMENTS & RECOGNITION',
+          title: 'Validated by Leading Innovation Platforms',
+          description: 'Our water conservation devices and methodology have been evaluated and recognized across state and national forums.',
+          list: [
+            {
+              name: 'WE Hub, Government of Telangana',
+              logo: '/src/assets/partner.png',
+              description: 'Proof-of-Concept (POC) certification from WE Hub, Government of Telangana.',
+            },
+            {
+              name: 'Intinta Innovator Award',
+              logo: '/src/assets/partner2.jpg',
+              description: 'Aqua Saver awarded Intinta Innovator Award for two consecutive years at district level.',
+            },
+            {
+              name: 'National Innovation Challenge',
+              logo: '/src/assets/part3.png',
+              description: 'Participated in the National Innovation Challenge held at PIET College, Haryana.',
+            },
+            {
+              name: 'IIIT Delhi',
+              logo: '/src/assets/iiitdelhi_logo.jpg',
+              description: 'Recognized for our innovation in sustainable water solutions and technology-driven impact.',
+            },
+            {
+              name: 'STPI (Software Technology Parks of India)',
+              logo: '/src/assets/STPI_LOGO.png',
+              description: 'Supported under STPI for innovation and technology development.',
+            },
+            {
+              name: 'Ministry of Electronics & Information Technology',
+              logo: '/src/assets/Ministry_of_electronics_information_technology.png',
+              description: 'Recognized for contribution towards technology-led solutions for a sustainable future.',
+            },
+            {
+              name: 'STPINEXT Initiatives',
+              logo: '/src/assets/STPINEXT_LOGO.png',
+              description: 'Featured under STPINEXT for supporting emerging tech startups and innovative solutions.',
+            },
+            {
+              name: 'IESA (India Electronics & Semiconductor Association)',
+              logo: '/src/assets/iesa_logo.jpg',
+              description: 'Recognized under IESA for innovation and technology development in sustainable solutions.',
+            },
+          ],
+        },
+        contact: {
+          visible: true,
+          eyebrow: 'GET IN TOUCH',
+          title: 'Partner With Veenero',
+          description: "Whether you represent a government department, a residential society, or an institution, let's work together to eliminate water waste and ensure water security.",
+          infoTitle: 'Company Contact',
+          infoList: [
+            { iconName: 'Mail', label: 'Official Email', value: 'info@veenerosolutions.com' },
+            { iconName: 'Mail', label: 'Founder Email', value: 'udaygedam@veenerosolutions.com' },
+            { iconName: 'Globe', label: 'Website', value: 'www.veenerosolutions.com' },
+          ],
+          demoTitle: 'Request a Demo of Aqua Saver',
+          demoDescription: 'Experience how the Aqua Saver device and software help monitor usage, automate pumping, and stop leakages.',
+          demoButtonText: 'Request Demo',
+          formTitle: 'Send an Inquiry',
+        },
+        footer: {
+          description: 'Veenero Sustainable Solutions Pvt Ltd — Dedicated to appropriate water management, waste reduction, and future water security.',
+          address: 'Veenero Sustainable Solutions Pvt Ltd, Adilabad, Telangana',
+          mobile: '+91 9346517202',
+          links: {
+            solutions: [
+              { label: 'Aqua Saver', href: '/solutions/aqua-saver' },
+              { label: 'Water Quality Assessment', href: '/solutions/water-quality-assessment' },
+              { label: 'Water Pumping Automation', href: '/solutions/water-pumping-automation' },
+              { label: 'Water Tracking & Informatics', href: '/solutions/water-tracking-informatics' },
+              { label: 'Water Credits', href: '/solutions/water-credits' },
+              { label: 'Leak Identification', href: '/solutions/leak-identification' },
+            ],
+            company: [
+              { label: 'About Veenero', href: '/about' },
+              { label: 'Process & Working', href: '/approach' },
+              { label: 'Impact & Achievements', href: '/impact' },
+              { label: 'Contact', href: '/contact' },
+            ],
+            resources: [
+              { label: 'WE Hub Telangana POC', href: '/impact' },
+              { label: 'Intinta Innovator Award', href: '/impact' },
+              { label: 'Blog & Insights', href: '/blog' },
+            ],
+          },
+          socialLinks: [
+            { iconName: 'Mail', href: 'mailto:info@veenerosolutions.com', label: 'Email Info' },
+            { iconName: 'Mail', href: 'mailto:udaygedam@veenerosolutions.com', label: 'Email Founder' },
+            { iconName: 'Globe', href: 'https://www.veenerosolutions.com', label: 'Website' },
+          ],
+        },
+      },
+    },
+    { upsert: true, new: true }
+  );
 
-  // Helper to find media URL by seedKey
-  const mediaMap = new Map<string, { secureUrl: string; publicId: string }>();
-  const mediaDocs = await MediaModel.find({ page: 'about', deletedAt: null });
-  for (const doc of mediaDocs) {
-    if (doc.seedKey) {
-      mediaMap.set(doc.seedKey, { secureUrl: doc.secureUrl, publicId: doc.publicId });
-    }
-  }
+  // ── 2. ABOUT PAGE SETTINGS ─────────────────────────────────────────────────
+  await AboutPageSettingsModel.findOneAndUpdate(
+    {},
+    {
+      $set: {
+        hero: {
+          visible: true,
+          eyebrow: 'ABOUT VEENERO',
+          title: 'Veenero Sustainable',
+          highlightedText: 'Solutions Pvt Ltd',
+          description: 'Water is at the core of sustainable development, climate adaptation, and human survival. We engineer conservative devices and intelligent software to enforce water management, reduce waste, and ensure water security.',
+          primaryCtaText: 'Our Story',
+          primaryCtaLink: '#our-story',
+          secondaryCtaText: 'Our Goals',
+          secondaryCtaLink: '#our-goals',
+          image: '/src/assets/about/about-hero-water-infrastructure.png',
+          imageAlt: 'Veenero Sustainable Solutions water infrastructure',
+        },
+        ourStory: {
+          visible: true,
+          eyebrow: 'OUR STORY & ORIGIN',
+          title: 'From Village Roots to Water Security',
+          paragraphs: [
+            'Water is at the core of sustainable development and is critical for socio-economic development, energy and food production, healthy ecosystems and for human survival itself. Water is also at the heart of adaptation to climate change, serving as the crucial link between society and the environment.',
+            'We are from a village background, and we have seen precisely how many liters of water are wasted every day as a result of leaks in overhead tanks, pipelines, and taps. After conducting a thorough analysis of the issue, we discovered that there are no appropriate water management systems or water usage rules.',
+            'We began working on water management and conservation after conducting an extensive study on the use and distribution of water across multiple sectors. Our primary goals are to enforce appropriate water management, reduce water waste, and ensure future water security.',
+          ],
+          badgePillars: ['Enforce Water Management', 'Reduce Water Waste', 'Ensure Water Security'],
+          video: '/src/assets/about/about-story-water-infrastructure.mp4',
+          videoPoster: '/src/assets/about/about-hero-water-infrastructure.png',
+        },
+        impactStats: {
+          visible: true,
+          eyebrow: 'THE WATER CRISIS IN NUMBERS',
+          title: 'Facts That Demand Action',
+          description: 'Supported by independent global and national water research.',
+          list: [
+            {
+              value: '49 Billion L',
+              label: 'Daily Waste in India',
+              sublabel: 'Equivalent to 48.42B 1L bottles (Neerain)',
+              icon: 'Droplets',
+              order: 1,
+              isActive: true,
+            },
+            {
+              value: '30%',
+              label: 'Global Water Loss',
+              sublabel: '2.1 trillion gallons lost yearly (Gitnux)',
+              icon: 'Globe',
+              order: 2,
+              isActive: true,
+            },
+            {
+              value: '297,000',
+              label: 'Child Deaths Yearly',
+              sublabel: 'From diarrheal diseases under-5 (WHO/UNICEF)',
+              icon: 'AlertTriangle',
+              order: 3,
+              isActive: true,
+            },
+            {
+              value: '600 Million',
+              label: 'People in Water Crisis',
+              sublabel: 'Facing severe water scarcity across India',
+              icon: 'Users',
+              order: 4,
+              isActive: true,
+            },
+          ],
+        },
+        purposeDirection: {
+          visible: true,
+          eyebrow: 'PURPOSE & DIRECTION',
+          title: 'A Disciplined Approach to Conservation',
+          description: 'Guiding our device engineering and software development toward measurable water conservation.',
+          vision: {
+            badge: 'Water Security',
+            title: 'Our Vision',
+            description: 'A water-secure world where zero water is lost to unaddressed leaks, driven by appropriate water management systems and proactive conservation rules.',
+            isActive: true,
+          },
+          mission: {
+            badge: 'Conservative Solutions',
+            title: 'Our Mission',
+            description: 'To deliver effective water conservative devices (Aqua Saver) and software solutions that analyze usage, stop leakages, and protect precious water resources across societies and government sectors.',
+            isActive: true,
+          },
+        },
+        pillars: {
+          visible: true,
+          eyebrow: 'CORE FOCUS AREAS',
+          title: 'Our Guiding Principles',
+          description: 'The foundational pillars that guide Veenero technology and community operations.',
+          list: [
+            {
+              title: 'Enforce Water Management',
+              description: 'Establishing appropriate management systems and rules to govern water distribution and consumption responsibly.',
+              image: '/src/assets/about/about-pillar-purpose.webp',
+              order: 1,
+              isActive: true,
+            },
+            {
+              title: 'Reduce Water Waste',
+              description: 'Zero tolerance for unaddressed leaks across taps, pipes, overhead tanks, and underground seepages.',
+              image: '/src/assets/about/about-pillar-integrity.webp',
+              order: 2,
+              isActive: true,
+            },
+            {
+              title: 'Ensure Water Security',
+              description: 'Preserving precious freshwater supplies to support communities, agriculture, and future generations.',
+              image: '/src/assets/about/about-pillar-impact.webp',
+              order: 3,
+              isActive: true,
+            },
+            {
+              title: 'Grounded Innovation',
+              description: 'Practical, reliable device engineering born from real-world village observations and sectoral studies.',
+              image: '/src/assets/about/about-pillar-innovation.webp',
+              order: 4,
+              isActive: true,
+            },
+            {
+              title: 'Stronger Together',
+              description: 'Collaborating with local societies, government bodies, and communities to protect every drop.',
+              image: '/src/assets/about/about-pillar-together.webp',
+              order: 5,
+              isActive: true,
+            },
+          ],
+        },
+        ourJourney: {
+          visible: true,
+          eyebrow: 'RECOGNITIONS & MILESTONES',
+          title: 'Verified Achievements',
+          description: 'Recognition and evaluation by state innovation bodies and national challenges.',
+          journeyImage: '/src/assets/about/about-journey-water-infrastructure.webp',
+          journeyCaption: 'Developing and deploying water conservative devices and software from grassroots to institutions.',
+          milestones: [
+            {
+              year: 'Telangana Govt',
+              title: 'WE Hub POC Certification',
+              description: 'Received official Proof-of-Concept certification from WE Hub, Government of Telangana.',
+              iconType: 'prototype',
+              order: 1,
+              isActive: true,
+            },
+            {
+              year: 'District Innovation',
+              title: 'Intinta Innovator Award',
+              description: 'Aqua Saver awarded the prestigious Intinta Innovator Award for two consecutive years at district level.',
+              iconType: 'scale',
+              order: 2,
+              isActive: true,
+            },
+            {
+              year: 'Haryana',
+              title: 'National Innovation Challenge',
+              description: 'Participated in the National Innovation Challenge held at PIET College, Haryana.',
+              iconType: 'adoption',
+              order: 3,
+              isActive: true,
+            },
+            {
+              year: 'Recognition',
+              title: 'State Leadership Acknowledgment',
+              description: 'Gratitude and recognition mention involving Sir Ashok Gehlot, Chief Minister of Rajasthan.',
+              iconType: 'future',
+              order: 4,
+              isActive: true,
+            },
+          ],
+        },
+        whyChoose: {
+          visible: true,
+          eyebrow: 'WHY VEENERO',
+          title: 'Positioned Around Leakage & Conservation',
+          description: 'While other companies handle treatment of contaminated water, Veenero specifically tackles leakage-related problems and unmanaged waste.',
+          bottomTrustText: 'Aqua Saver · Device + Software Integration · Less Competition in Market',
+          list: [
+            {
+              title: 'Aqua Saver 3D-Module',
+              description: 'Unique technology and conservation methods utilized in the product manufacturing, resulting in less competition in the market.',
+              icon: 'Cpu',
+              image: '/src/assets/about/about-infrastructure-sensor.webp',
+              order: 1,
+              isActive: true,
+            },
+            {
+              title: 'Leakage-Focused Approach',
+              description: 'Specifically engineered to solve tap leaks, pipe leaks, seepage, and overhead tank overflows where 30% of supply is lost.',
+              icon: 'Search',
+              image: '/src/assets/about/about-field-verification.webp',
+              order: 2,
+              isActive: true,
+            },
+            {
+              title: 'Detailed Utilization Reports',
+              description: 'Intended to analyze precisely how much water is used and wasted across various fields and industries and provide detailed reports.',
+              icon: 'Activity',
+              image: '/src/assets/about/about-real-time-analytics.webp',
+              order: 3,
+              isActive: true,
+            },
+            {
+              title: 'Government & Society Focus',
+              description: 'Tailored for government water bodies, multi-family societies, and institutional campuses seeking recurring water security.',
+              icon: 'Building2',
+              image: '/src/assets/about/about-industrial-water-system.webp',
+              order: 4,
+              isActive: true,
+            },
+          ],
+        },
+        leadership: {
+          visible: true,
+          eyebrow: 'OUR CORE TEAM',
+          title: 'Dedicated to Water Management & Conservation',
+          description: 'A multidisciplinary team combining device hardware engineering, software development, and community impact.',
+          team: [
+            {
+              name: 'Founding Team',
+              role: 'Leadership & Strategy',
+              bio: 'From village roots to national innovation, driving Veenero mission to enforce water management and stop water waste.',
+              icon: 'Users2',
+              image: '/src/assets/about/about-team-leadership.webp',
+              order: 1,
+              isActive: true,
+            },
+            {
+              name: 'Device & Hardware Engineering',
+              role: 'Aqua Saver 3D-Module',
+              bio: 'Engineering the physical Aqua Saver hardware, flow sensors, and motor automation systems for robust field operation.',
+              icon: 'Cpu',
+              image: '/src/assets/about/about-field-verification.webp',
+              order: 2,
+              isActive: true,
+            },
+            {
+              name: 'Software & Analytics Layer',
+              role: 'Water Application & Informatics',
+              bio: 'Developing the water management application, consumption tracking, and water credits reward features.',
+              icon: 'LineChart',
+              image: '/src/assets/about/about-real-time-analytics.webp',
+              order: 3,
+              isActive: true,
+            },
+          ],
+        },
+        cta: {
+          visible: true,
+          eyebrow: 'JOIN OUR MISSION',
+          title: 'Help us conserve water for a sustainable tomorrow.',
+          description: 'Whether you represent a government department, a residential society, or an institution, partner with Veenero to secure our water future.',
+          primaryButtonText: 'Get in Touch',
+          primaryButtonLink: '/contact',
+        },
+        seo: {
+          metaTitle: 'About Us | Veenero Sustainable Solutions Pvt Ltd',
+          metaDescription: 'Learn about Veenero village origin, our Aqua Saver device, and our mission to reduce water waste and ensure water security.',
+        },
+        isPublished: true,
+      },
+    },
+    { upsert: true, new: true }
+  );
 
-  const getMedia = (key: string, fallback: string = '') => {
-    const item = mediaMap.get(key);
-    return {
-      url: item?.secureUrl || fallback,
-      publicId: item?.publicId || '',
-    };
+  // ── 3. SOLUTIONS PAGE SETTINGS ─────────────────────────────────────────────
+  const categoriesData = [
+    {
+      key: 'Aqua Saver',
+      displayLabel: 'Aqua Saver (Core Solution)',
+      slug: 'aqua-saver',
+      description: 'Water conservative device and 3D-Module engineered to monitor flow, identify leakages, and enforce water management.',
+      icon: 'Cpu',
+      image: '/src/assets/about/about-field-verification.webp',
+      order: 1,
+      isActive: true,
+      pillarKeys: [],
+    },
+    {
+      key: 'Water Quality',
+      displayLabel: 'Water Quality Assessment',
+      slug: 'water-quality-assessment',
+      description: 'Evaluate water quality parameters across storage tanks and supply lines to ensure safety and compliance.',
+      icon: 'Droplets',
+      image: '/src/assets/about/about-vision-water-infrastructure.webp',
+      order: 2,
+      isActive: true,
+      pillarKeys: [],
+    },
+    {
+      key: 'Pumping Automation',
+      displayLabel: 'Water Pumping Automation',
+      slug: 'water-pumping-automation',
+      description: 'Intelligent automation to resolve the daily burden of turning motor systems on and off on a regular basis.',
+      icon: 'Sliders',
+      image: '/src/assets/about/about-infrastructure-sensor.webp',
+      order: 3,
+      isActive: true,
+      pillarKeys: [],
+    },
+    {
+      key: 'Water Tracking',
+      displayLabel: 'Water Tracking & Informatics',
+      slug: 'water-tracking-informatics',
+      description: 'Analyze how much water is used and wasted across various fields, societies, and industrial facilities with detailed reports.',
+      icon: 'Activity',
+      image: '/src/assets/about/about-journey-water-infrastructure.webp',
+      order: 4,
+      isActive: true,
+      pillarKeys: [],
+    },
+    {
+      key: 'Water Credits',
+      displayLabel: 'Water Credits (In Development)',
+      slug: 'water-credits',
+      description: 'An application concept where users earn reward coins based on water consumed under prescribed guidelines.',
+      icon: 'Award',
+      image: '/src/assets/about/about-real-time-analytics.webp',
+      order: 5,
+      isActive: true,
+      pillarKeys: [],
+    },
+    {
+      key: 'Leak Identification',
+      displayLabel: 'Leak Identification & Reporting',
+      slug: 'leak-identification',
+      description: 'Detect and localize tap leaks, seepages, pipe leaks, and overhead tank overflows before severe losses occur.',
+      icon: 'Search',
+      image: '/src/assets/about/about-industrial-water-system.webp',
+      order: 6,
+      isActive: true,
+      pillarKeys: [],
+    },
+  ];
+
+  const solutionsData = [
+    {
+      id: 'sol-aqua-saver',
+      slug: 'aqua-saver',
+      title: 'Aqua Saver',
+      tagline: 'Water Conservative Device & 3D-Module',
+      description: 'Our core water conservation device and working 3D-Module, engineered to monitor water networks, detect leakages, and enforce appropriate water usage rules.',
+      categoryKey: 'Aqua Saver',
+      pillar: 'Core Solution',
+      icon: 'Cpu',
+      image: '/src/assets/about/about-field-verification.webp',
+      features: ['Aqua Saver Device', 'Aqua Saver 3D-Module', 'Hardware & Software Combination', 'Flow & Leakage Surveillance'],
+      order: 1,
+      isActive: true,
+      detail: {
+        badge: 'CORE CONSERVATION SOLUTION',
+        tagline: {
+          line1: 'Every Drop Measured.',
+          line2: 'Every Litre Accounted.',
+          line3: 'Absolute Balance.',
+        },
+        heroDescription: 'End unaccounted water loss and billing disputes with Aqua Saver. Veenero brings metering, reconciliation, and cost visibility together — so every litre can be traced, verified, and governed.',
+        heroPills: ['Aqua Saver 3D-Module', 'Hardware & Software', 'WE Hub POC Certified'],
+        heroImage: '/src/assets/about/about-field-verification.webp',
+        overview: {
+          eyebrow: 'OVERVIEW',
+          title: 'Complete Transparency.',
+          highlightTitle: 'Uncompromising Governance.',
+          description: 'Aqua Saver is our flagship water conservative device and 3D-Module. It combines precision hardware monitoring with intelligent software to identify leakages across taps, pipes, and tanks and ensure appropriate water management.',
+          blocks: [
+            { title: 'Flow Monitoring', description: 'Real-time telemetry measuring volumetric water movement.', icon: 'Activity' },
+            { title: 'Leak Detection', description: 'Immediate identification of tap leaks, seepages, and overflows.', icon: 'Search' },
+            { title: 'Usage Rules', description: 'Enforcing appropriate water management systems across networks.', icon: 'ShieldCheck' },
+            { title: 'Informatics Reporting', description: 'Comprehensive analysis of water utilized versus wasted.', icon: 'FileText' },
+          ],
+        },
+        capabilities: {
+          eyebrow: 'KEY CAPABILITIES',
+          title: 'Engineered for Water Security',
+          description: 'Key functions delivered by the Aqua Saver conservative device and working 3D-Module.',
+          items: [
+            { icon: 'Cpu', title: 'Aqua Saver 3D-Module', description: 'Unique device manufacturing method delivering specialized conservation with lower market competition.' },
+            { icon: 'Search', title: 'Active Leak Pinpointing', description: 'Rapidly detects tap leaks, pipe fissures, seepage, and overhead tank overflows.' },
+            { icon: 'SlidersHorizontal', title: 'Automated Controls', description: 'Integrates with motor systems to prevent overflows and dry-run pump damage.' },
+            { icon: 'BarChart3', title: 'Usage vs Waste Informatics', description: 'Produces clear reports detailing exactly how much water was utilized and wasted.' },
+          ],
+        },
+        useCases: {
+          eyebrow: 'DEPLOYMENT SCENARIOS',
+          title: 'Real-World Applications',
+          description: 'Where Aqua Saver delivers immediate water conservation and financial returns.',
+          items: [
+            { title: 'Government & Municipal Water Supply', description: 'Enforcing appropriate water distribution rules and reducing non-revenue water across district networks.', stats: 'Govt Sector', image: '/src/assets/about/about-journey-water-infrastructure.webp' },
+            { title: 'Residential Societies & Townships', description: 'Eliminating overhead tank overflows and resolving multi-tenant water consumption disputes.', stats: 'Societies', image: '/src/assets/about/about-industrial-water-system.webp' },
+            { title: 'Institutional Campuses & Hostels', description: 'Automating water pumping and monitoring high-volume tap usage across facilities.', stats: 'Institutions', image: '/src/assets/about/about-vision-water-infrastructure.webp' },
+            { title: 'Industrial Facilities & Processing Parks', description: 'Detailed process water tracking and leakage identification to prevent resource waste.', stats: 'Industrial', image: '/src/assets/about/about-real-time-analytics.webp' },
+          ],
+        },
+        finalCta: {
+          eyebrow: 'NEXT STEPS',
+          title: 'Deploy Aqua Saver in Your Network',
+          highlightTitle: 'Conserve Every Drop.',
+          description: 'Connect with our engineering team to schedule a live demonstration or pilot deployment of Aqua Saver.',
+          primaryCtaText: 'Request a Demo',
+          secondaryCtaText: 'Talk to an Expert',
+        },
+      },
+    },
+    {
+      id: 'sol-water-quality',
+      slug: 'water-quality-assessment',
+      title: 'Water Quality Assessment',
+      tagline: 'Evaluate Quality & Ensure Safety',
+      description: 'Continuous evaluation of water quality parameters across storage tanks and distribution lines to ensure safe water for human use and sanitation.',
+      categoryKey: 'Water Quality',
+      pillar: 'Safety & Standards',
+      icon: 'Droplets',
+      image: '/src/assets/about/about-vision-water-infrastructure.webp',
+      features: ['Quality parameter tracking', 'Tank contamination alerts', 'Health & sanitation compliance'],
+      order: 2,
+      isActive: true,
+      detail: {
+        badge: 'WATER QUALITY & SAFETY',
+        tagline: {
+          line1: 'Safe Water Verified.',
+          line2: 'Every Source Protected.',
+          line3: 'Clean & Sanitized.',
+        },
+        heroDescription: 'Evaluate water quality across distribution lines and storage tanks to safeguard health and eliminate contamination hazards.',
+        heroPills: ['Quality Evaluation', 'Sanitation Standards', 'Tank Surveillance'],
+        heroImage: '/src/assets/about/about-vision-water-infrastructure.webp',
+        overview: {
+          eyebrow: 'OVERVIEW',
+          title: 'Quality Assessment.',
+          highlightTitle: 'Verified Cleanliness.',
+          description: 'Unsafe water leads to severe health consequences. Our solution provides continuous water quality evaluation across overhead tanks and pipelines to ensure compliance with health standards.',
+          blocks: [
+            { title: 'Parameter Tracking', description: 'Monitoring key water quality indicators.', icon: 'Activity' },
+            { title: 'Contamination Alerts', description: 'Instant notification if quality falls below threshold.', icon: 'AlertTriangle' },
+            { title: 'Tank Cleanliness', description: 'Surveillance of overhead tanks and storage assets.', icon: 'ShieldCheck' },
+            { title: 'Compliance Logs', description: 'Audit-ready logs for societies and public facilities.', icon: 'FileText' },
+          ],
+        },
+        capabilities: {
+          eyebrow: 'KEY CAPABILITIES',
+          title: 'Ensuring Clean, Safe Supplies',
+          description: 'Core evaluation features engineered for water safety and sanitation.',
+          items: [
+            { icon: 'Droplets', title: 'Quality Evaluation', description: 'Assessing physical and chemical indicators across inlet and outlet points.' },
+            { icon: 'Shield', title: 'Contamination Safeguard', description: 'Identifies seepage and external contaminant ingress into pipelines.' },
+            { icon: 'Radio', title: 'Automated Alerts', description: 'Immediate notification when storage quality deviates from standards.' },
+            { icon: 'FileCheck', title: 'Sanitation Reporting', description: 'Clear reports to support community health and sanitation protocols.' },
+          ],
+        },
+        useCases: {
+          eyebrow: 'DEPLOYMENT SCENARIOS',
+          title: 'Target Environments',
+          description: 'Where water quality assessment provides vital public health protection.',
+          items: [
+            { title: 'Residential Societies', description: 'Ensuring overhead storage tanks remain clean and unpolluted for residents.', stats: 'Societies', image: '/src/assets/about/about-industrial-water-system.webp' },
+            { title: 'Educational Institutions & Hostels', description: 'Protecting students from waterborne illnesses caused by stagnant water.', stats: 'Campuses', image: '/src/assets/about/about-vision-water-infrastructure.webp' },
+            { title: 'Government Water Facilities', description: 'Regular quality checks across rural and semi-urban distribution pipelines.', stats: 'Govt Supply', image: '/src/assets/about/about-journey-water-infrastructure.webp' },
+            { title: 'Food & Commercial Parks', description: 'Maintaining process water cleanliness for food preparation and processing.', stats: 'Commercial', image: '/src/assets/about/about-real-time-analytics.webp' },
+          ],
+        },
+        finalCta: {
+          eyebrow: 'NEXT STEPS',
+          title: 'Ensure Clean Water Standards',
+          highlightTitle: 'Protect Your Community.',
+          description: 'Speak with our team to evaluate water quality assessment across your facilities.',
+          primaryCtaText: 'Request a Demo',
+          secondaryCtaText: 'Talk to an Expert',
+        },
+      },
+    },
+    {
+      id: 'sol-pumping-automation',
+      slug: 'water-pumping-automation',
+      title: 'Water Pumping Automation',
+      tagline: 'Automated Motor Control & Protection',
+      description: 'Intelligent automation to resolve the daily burden of turning motor systems on and off on a regular basis, preventing dry-run damage and tank overflows.',
+      categoryKey: 'Pumping Automation',
+      pillar: 'Automation',
+      icon: 'Sliders',
+      image: '/src/assets/about/about-infrastructure-sensor.webp',
+      features: ['Automated motor scheduling', 'Dry-run pump protection', 'Tank overflow prevention', 'Energy savings'],
+      order: 3,
+      isActive: true,
+      detail: {
+        badge: 'PUMPING AUTOMATION',
+        tagline: {
+          line1: 'Motors Automated.',
+          line2: 'Overflows Eliminated.',
+          line3: 'Effortless Control.',
+        },
+        heroDescription: 'Resolve the daily friction of turning pump motors on and off manually. Our smart automation prevents tank overflows and dry-run pump burnouts.',
+        heroPills: ['Motor Scheduling', 'Dry-Run Protection', 'Overflow Elimination'],
+        heroImage: '/src/assets/about/about-infrastructure-sensor.webp',
+        overview: {
+          eyebrow: 'OVERVIEW',
+          title: 'Intelligent Pumping.',
+          highlightTitle: 'Zero Overflows.',
+          description: 'Audience feedback highlighted turning on and off motor systems as a major operational pain point. Our automation schedules pumping based on tank water levels, ensuring reliable supply without waste.',
+          blocks: [
+            { title: 'Auto On/Off', description: 'Automated triggers based on high/low tank water levels.', icon: 'Sliders' },
+            { title: 'Dry-Run Safety', description: 'Cuts motor power immediately if source water is unavailable.', icon: 'ShieldCheck' },
+            { title: 'Zero Overflows', description: 'Prevents overhead tanks from spilling thousands of liters daily.', icon: 'Droplets' },
+            { title: 'Energy Efficiency', description: 'Optimizes running hours to reduce operational electricity bills.', icon: 'Zap' },
+          ],
+        },
+        capabilities: {
+          eyebrow: 'KEY CAPABILITIES',
+          title: 'Reliable Motor Intelligence',
+          description: 'Precision automation features engineered for pumps and overhead tanks.',
+          items: [
+            { icon: 'Sliders', title: 'Level-Based Switching', description: 'Automatic pump activation when supply drops below minimum threshold.' },
+            { icon: 'ShieldCheck', title: 'Dry-Run Protection', description: 'Protects pump motors from burning out when source lines run dry.' },
+            { icon: 'TrendingDown', title: 'Overflow Interception', description: 'Instantly stops pumping when overhead tanks reach maximum capacity.' },
+            { icon: 'Activity', title: 'Motor Health Monitoring', description: 'Tracks run-time hours and voltage anomalies to predict maintenance needs.' },
+          ],
+        },
+        useCases: {
+          eyebrow: 'DEPLOYMENT SCENARIOS',
+          title: 'Automation Use Cases',
+          description: 'Where pumping automation provides immediate labor and water savings.',
+          items: [
+            { title: 'Apartment Complexes & Societies', description: 'Completely removes the need for manual guard-operated motor switches.', stats: 'Societies', image: '/src/assets/about/about-industrial-water-system.webp' },
+            { title: 'Government Overhead Tanks', description: 'Automating municipal pump stations across village and urban water schemes.', stats: 'Govt Schemes', image: '/src/assets/about/about-journey-water-infrastructure.webp' },
+            { title: 'Hospitals & Campuses', description: 'Ensuring uninterrupted 24/7 water availability without human oversight.', stats: 'Institutions', image: '/src/assets/about/about-vision-water-infrastructure.webp' },
+            { title: 'Commercial Complexes', description: 'Optimizing pump operating schedules with building energy management.', stats: 'Commercial', image: '/src/assets/about/about-real-time-analytics.webp' },
+          ],
+        },
+        finalCta: {
+          eyebrow: 'NEXT STEPS',
+          title: 'Automate Your Pumping System',
+          highlightTitle: 'Save Water and Power.',
+          description: 'Contact our engineering team to implement water pumping automation across your assets.',
+          primaryCtaText: 'Request a Demo',
+          secondaryCtaText: 'Talk to an Expert',
+        },
+      },
+    },
+    {
+      id: 'sol-water-tracking',
+      slug: 'water-tracking-informatics',
+      title: 'Water Tracking & Informatics',
+      tagline: 'Comprehensive Usage & Waste Analytics',
+      description: 'Analyze precisely how much water is used and wasted across various fields, communities, and industrial facilities with detailed reports.',
+      categoryKey: 'Water Tracking',
+      pillar: 'Informatics',
+      icon: 'Activity',
+      image: '/src/assets/about/about-journey-water-infrastructure.webp',
+      features: ['Usage volume tracking', 'Wasted water informatics', 'Detailed reporting', 'Sectoral benchmarking'],
+      order: 4,
+      isActive: true,
+      detail: {
+        badge: 'USAGE & WASTE INFORMATICS',
+        tagline: {
+          line1: 'Usage Tracked.',
+          line2: 'Waste Quantified.',
+          line3: 'Decisions Informed.',
+        },
+        heroDescription: 'Analyze exactly how much water is used and wasted across various fields, industries, and societies with clear, actionable informatics reports.',
+        heroPills: ['Usage Analysis', 'Waste Quantification', 'Actionable Reports'],
+        heroImage: '/src/assets/about/about-journey-water-infrastructure.webp',
+        overview: {
+          eyebrow: 'OVERVIEW',
+          title: 'Detailed Informatics.',
+          highlightTitle: 'Evidence-Based Decisions.',
+          description: 'Without accurate tracking, organizations cannot manage what they consume. Our solution provides clear reports on water quantity utilized, wasted, and conserved across your network.',
+          blocks: [
+            { title: 'Quantity Utilized', description: 'Accurate measurement of water consumed by zone.', icon: 'Activity' },
+            { title: 'Quantity Wasted', description: 'Isolating unmetered loss and leakage volume.', icon: 'TrendingDown' },
+            { title: 'Conservation Steps', description: 'Actionable guidance on how to reduce consumption.', icon: 'ShieldCheck' },
+            { title: 'Detailed Reports', description: 'Structured summaries for governance and budgeting.', icon: 'FileText' },
+          ],
+        },
+        capabilities: {
+          eyebrow: 'KEY CAPABILITIES',
+          title: 'Turning Data Into Action',
+          description: 'Advanced informatics features that illuminate water utilization patterns.',
+          items: [
+            { icon: 'Activity', title: 'Real-Time Telemetry', description: 'Captures consumption data across distribution points and tanks.' },
+            { icon: 'TrendingDown', title: 'Waste Quantification', description: 'Calculates the volume and monetary cost of unmetered water losses.' },
+            { icon: 'FileText', title: 'Automated Reporting', description: 'Generates detailed reports for facility managers, societies, and boards.' },
+            { icon: 'Compass', title: 'Sectoral Analysis', description: 'Compares consumption against typical benchmarks across fields.' },
+          ],
+        },
+        useCases: {
+          eyebrow: 'DEPLOYMENT SCENARIOS',
+          title: 'Informatics in Action',
+          description: 'Where usage and waste tracking deliver immediate governance value.',
+          items: [
+            { title: 'Municipal Water Boards', description: 'Tracking bulk intake against distribution to identify district loss.', stats: 'Municipal', image: '/src/assets/about/about-journey-water-infrastructure.webp' },
+            { title: 'Multi-Tenant Commercial Real Estate', description: 'Attributing exact usage to each tenant or operational facility.', stats: 'Commercial', image: '/src/assets/about/about-industrial-water-system.webp' },
+            { title: 'Educational & Public Townships', description: 'Establishing water consumption baselines and tracking conservation progress.', stats: 'Townships', image: '/src/assets/about/about-vision-water-infrastructure.webp' },
+            { title: 'Agricultural & Industrial Sites', description: 'Analyzing water distribution across irrigation zones and processing lines.', stats: 'Industry', image: '/src/assets/about/about-real-time-analytics.webp' },
+          ],
+        },
+        finalCta: {
+          eyebrow: 'NEXT STEPS',
+          title: 'Gain Complete Water Visibility',
+          highlightTitle: 'Track Usage & Eliminate Waste.',
+          description: 'Request a demo to see how our water tracking informatics transform operations.',
+          primaryCtaText: 'Request a Demo',
+          secondaryCtaText: 'Talk to an Expert',
+        },
+      },
+    },
+    {
+      id: 'sol-water-credits',
+      slug: 'water-credits',
+      title: 'Water Credits',
+      tagline: 'Incentivizing Conservation (In Development)',
+      description: 'An innovative application feature concept where users earn reward coins based on how much water they consume, prescribed under conservation guidelines.',
+      categoryKey: 'Water Credits',
+      pillar: 'Incentives',
+      icon: 'Award',
+      image: '/src/assets/about/about-real-time-analytics.webp',
+      features: ['Conservation coin rewards', 'Prescribed usage guidelines', 'Community leaderboards', 'In development concept'],
+      order: 5,
+      isActive: true,
+      detail: {
+        badge: 'INCENTIVE MECHANISM · IN DEVELOPMENT',
+        tagline: {
+          line1: 'Conservation Rewarded.',
+          line2: 'Every Litre Valued.',
+          line3: 'Sustainable Habits.',
+        },
+        heroDescription: 'An application concept where users earn reward coins based on water conserved under prescribed guidelines. Note: This software feature is currently in development.',
+        heroPills: ['Water Credit Concept', 'Coin Rewards', 'In Development'],
+        heroImage: '/src/assets/about/about-real-time-analytics.webp',
+        overview: {
+          eyebrow: 'OVERVIEW',
+          title: 'Rewarding Conservation.',
+          highlightTitle: 'Behavioral Impact.',
+          description: 'The Aqua application concept includes a Water Credit feature where users earn coins by maintaining water consumption below prescribed guidelines. This feature is in active development to incentivize community conservation.',
+          blocks: [
+            { title: 'Prescribed Guidelines', description: 'Fair usage benchmarks tailored to family or facility size.', icon: 'Sliders' },
+            { title: 'Coin Rewards', description: 'Earn virtual water credits when conserving below targets.', icon: 'Award' },
+            { title: 'Community Awareness', description: 'Fostering conservation pride and friendly benchmarks.', icon: 'Users' },
+            { title: 'In Development', description: 'Software concept currently under engineering and testing.', icon: 'Clock' },
+          ],
+        },
+        capabilities: {
+          eyebrow: 'KEY CAPABILITIES',
+          title: 'Incentivizing Stewardship',
+          description: 'Core concepts powering the Water Credits application module.',
+          items: [
+            { icon: 'Award', title: 'Coin Allocation Engine', description: 'Calculates credits earned based on verified water meter data.' },
+            { icon: 'SlidersHorizontal', title: 'Dynamic Guidelines', description: 'Adapts conservation targets to seasonal and regional water availability.' },
+            { icon: 'Activity', title: 'Savings Visualization', description: 'Shows users their cumulative water savings translated into impact metrics.' },
+            { icon: 'Sparkles', title: 'Future Ecosystem', description: 'Envisioned integration with municipal rebates and utility benefits.' },
+          ],
+        },
+        useCases: {
+          eyebrow: 'DEPLOYMENT SCENARIOS',
+          title: 'Envisioned Environments',
+          description: 'Where water credits will foster community conservation culture.',
+          items: [
+            { title: 'Smart Residential Townships', description: 'Gamifying water conservation across apartments and society residents.', stats: 'Societies', image: '/src/assets/about/about-industrial-water-system.webp' },
+            { title: 'Colleges & University Campuses', description: 'Motivating students and campus departments to reduce daily water footprints.', stats: 'Campuses', image: '/src/assets/about/about-vision-water-infrastructure.webp' },
+            { title: 'Corporate Facilities', description: 'Incentivizing floor-level and department-level conservation participation.', stats: 'Corporate', image: '/src/assets/about/about-journey-water-infrastructure.webp' },
+            { title: 'Municipal Initiatives', description: 'Partnering with city water boards to reward water-conscious households.', stats: 'Municipal', image: '/src/assets/about/about-real-time-analytics.webp' },
+          ],
+        },
+        finalCta: {
+          eyebrow: 'NEXT STEPS',
+          title: 'Explore the Water Credits Concept',
+          highlightTitle: 'Join Our Pilot Testing.',
+          description: 'Connect with us if your organization is interested in piloting the water credits concept.',
+          primaryCtaText: 'Request a Demo',
+          secondaryCtaText: 'Talk to an Expert',
+        },
+      },
+    },
+    {
+      id: 'sol-leak-identification',
+      slug: 'leak-identification',
+      title: 'Leak Identification & Reporting',
+      tagline: 'Locate Tap, Pipe, Tank & Seepage Leaks',
+      description: 'Pinpoint leakage points across taps, pipelines, seepages, and overhead storage tanks, evaluate leak severity, and resolve water waste.',
+      categoryKey: 'Leak Identification',
+      pillar: 'Loss Prevention',
+      icon: 'Search',
+      image: '/src/assets/about/about-industrial-water-system.webp',
+      features: ['Tap leak detection', 'Seepage identification', 'Pipe break alerts', 'Tank overflow resolution'],
+      order: 6,
+      isActive: true,
+      detail: {
+        badge: 'LEAK IDENTIFICATION & RESOLUTION',
+        tagline: {
+          line1: 'Leaks Located.',
+          line2: 'Seepage Stopped.',
+          line3: 'Waste Prevented.',
+        },
+        heroDescription: 'Identify leak points, characterize volumetric loss, and resolve tap leaks, seepages, pipe breaks, and tank overflows with detailed actionable reports.',
+        heroPills: ['4 Common Leak Areas', 'Volume Characterization', 'Actionable Reports'],
+        heroImage: '/src/assets/about/about-industrial-water-system.webp',
+        overview: {
+          eyebrow: 'OVERVIEW',
+          title: 'Pinpoint Detection.',
+          highlightTitle: 'Fast Resolution.',
+          description: 'Around 30% of water is lost to leaks in overhead tanks, pipes, and taps. Our solution identifies leakage anomalies, characterizes severity, and delivers clear steps to resolve the leak immediately.',
+          blocks: [
+            { title: 'Tap Leaks', description: 'Detecting continuous minor tap drips and faulty fixtures.', icon: 'Droplets' },
+            { title: 'Seepage Detection', description: 'Isolating underground and structural moisture losses.', icon: 'Search' },
+            { title: 'Pipe Leaks', description: 'Pinpointing pressure drops and transmission line ruptures.', icon: 'AlertTriangle' },
+            { title: 'Tank Overflows', description: 'Preventing overhead reservoir spillage and float-valve failures.', icon: 'ShieldCheck' },
+          ],
+        },
+        capabilities: {
+          eyebrow: 'KEY CAPABILITIES',
+          title: 'Comprehensive Leak Surveillance',
+          description: 'Advanced capabilities designed to stop water waste at the source.',
+          items: [
+            { icon: 'Search', title: 'Pinpoint Identification', description: 'Algorithm flags abnormal flow patterns indicating hidden leaks.' },
+            { icon: 'Activity', title: 'Leak Characterization', description: 'Calculates the volume loss rate and severity of the identified leak.' },
+            { icon: 'FileText', title: 'Maintenance Reporting', description: 'Provides maintenance teams with precise location and repair instructions.' },
+            { icon: 'CheckCircle2', title: 'Post-Repair Verification', description: 'Confirms that the leak was fully resolved and flow restored to baseline.' },
+          ],
+        },
+        useCases: {
+          eyebrow: 'DEPLOYMENT SCENARIOS',
+          title: 'Stopping Leaks Everywhere',
+          description: 'Key environments where leak identification saves thousands of liters daily.',
+          items: [
+            { title: 'Overhead Tank Networks', description: 'Eliminating silent float valve failures and overflow spillage in societies.', stats: 'Tanks', image: '/src/assets/about/about-journey-water-infrastructure.webp' },
+            { title: 'Underground Supply Mains', description: 'Locating hidden seepages and pipe fractures before sinkholes develop.', stats: 'Pipes', image: '/src/assets/about/about-industrial-water-system.webp' },
+            { title: 'Commercial Restrooms & Facilities', description: 'Detecting running flush valves and dripping taps across large campuses.', stats: 'Fixtures', image: '/src/assets/about/about-vision-water-infrastructure.webp' },
+            { title: 'Industrial Coolant & Process Loops', description: 'Preventing chemical and process water loss in industrial parks.', stats: 'Industrial', image: '/src/assets/about/about-real-time-analytics.webp' },
+          ],
+        },
+        finalCta: {
+          eyebrow: 'NEXT STEPS',
+          title: 'Stop Avoidable Water Loss Today',
+          highlightTitle: 'Identify & Resolve Leaks.',
+          description: 'Contact Veenero to deploy leak identification and reporting across your network.',
+          primaryCtaText: 'Request a Demo',
+          secondaryCtaText: 'Talk to an Expert',
+        },
+      },
+    },
+  ];
+
+  // Also include compatibility aliases so previous URLs (water-accountability, water-visibility, etc.) continue to work
+  const aliasMap = {
+    'water-accountability': solutionsData[0], // Aqua Saver
+    'water-visibility': solutionsData[3], // Water Tracking
+    'operational-intelligence': solutionsData[2], // Pumping Automation
+    'water-verification': solutionsData[1], // Water Quality
+    'analytics-insights': solutionsData[5], // Leak Identification
   };
 
-  const heroMedia = getMedia('ABOUT|HERO|HERO_VISUAL', '');
-  const storyVideo = getMedia('ABOUT|OUR_STORY|STORY_VIDEO', '');
-  const storyPoster = getMedia('ABOUT|HERO|HERO_VISUAL', '');
-  const journeyMedia = getMedia('ABOUT|OUR_JOURNEY|JOURNEY_VISUAL', '');
+  const allSolutionsList = [...solutionsData];
+  for (const [aliasSlug, original] of Object.entries(aliasMap)) {
+    allSolutionsList.push({
+      ...original,
+      id: `sol-${aliasSlug}`,
+      slug: aliasSlug,
+    });
+  }
 
-  const pillar1 = getMedia('ABOUT|PILLARS|PURPOSE_FIRST', '');
-  const pillar2 = getMedia('ABOUT|PILLARS|INTEGRITY_ALWAYS', '');
-  const pillar3 = getMedia('ABOUT|PILLARS|IMPACT_AT_SCALE', '');
-  const pillar4 = getMedia('ABOUT|PILLARS|INNOVATION_RELENTLESS', '');
-  const pillar5 = getMedia('ABOUT|PILLARS|STRONGER_TOGETHER', '');
-
-  const why1 = getMedia('ABOUT|WHY_VEENERO|END_TO_END', '');
-  const why2 = getMedia('ABOUT|WHY_VEENERO|REAL_TIME', '');
-  const why3 = getMedia('ABOUT|WHY_VEENERO|VERIFICATION', '');
-  const why4 = getMedia('ABOUT|WHY_VEENERO|OPEN_ECOSYSTEM', '');
-
-  const team1 = getMedia('ABOUT|LEADERSHIP|FOUNDING_TEAM', '');
-  const team2 = getMedia('ABOUT|LEADERSHIP|EDGE_ENGINEERING', '');
-  const team3 = getMedia('ABOUT|LEADERSHIP|DATA_SCIENCE', '');
-
-  await AboutPageSettingsModel.create({
-    hero: {
-      visible: true,
-      eyebrow: 'ABOUT VEENERO',
-      title: "Building India's",
-      highlightedText: 'Water Intelligence',
-      description:
-        'We are the digital infrastructure layer for water management—creating Water Visibility, Water Accountability, and Water Verification through real-time telemetry and advanced analytics.',
-      primaryCtaText: 'Our Story',
-      primaryCtaLink: '#our-story',
-      secondaryCtaText: 'Core Values',
-      secondaryCtaLink: '#core-values',
-      image: heroMedia.url,
-      imageAlt: 'Veenero Water Intelligence Infrastructure, Telemetry Network, and Verification Platform',
-      mediaPublicId: heroMedia.publicId,
-    },
-    ourStory: {
-      visible: true,
-      eyebrow: 'OUR STORY & ORIGIN',
-      title: 'From Water Blindspots to Real-Time Intelligence',
-      paragraphs: [
-        'Veenero was founded with a singular conviction: organizations cannot manage or preserve what they cannot measure. Across municipal systems, industrial plants, and commercial facilities, billions of litres of water move unmonitored every single day.',
-        'Traditional approaches relied on static hardware or isolated leak detectors. Veenero is fundamentally different—we build the future digital infrastructure layer for water management.',
-        'By unifying rugged edge sensors, cloud telemetry, and AI-driven anomaly signals into a shared water data platform, we empower enterprise leaders and utilities to make every litre visible, accountable, and verifiable.',
-      ],
-      badgePillars: ['Water Visibility', 'Water Accountability', 'Water Verification'],
-      video: storyVideo.url,
-      videoPoster: storyPoster.url,
-      mediaPublicId: storyVideo.publicId,
-    },
-    impactStats: {
-      visible: true,
-      eyebrow: 'MEASURABLE IMPACT',
-      title: 'Numbers That Drive Accountability',
-      description: 'Delivering visibility and measurable water savings across India.',
-      list: [
-        {
-          value: 'Billions of Litres',
-          label: 'Monitored Every Day',
-          sublabel: 'Across municipal & enterprise networks',
-          icon: 'Droplets',
-          order: 1,
-          isActive: true,
+  await SolutionsPageSettings.findOneAndUpdate(
+    {},
+    {
+      $set: {
+        hero: {
+          visible: true,
+          eyebrow: 'VEENERO SOLUTION SUITE',
+          title: 'Water Conservative Devices & Software',
+          highlightedText: 'Aqua Saver',
+          description: 'Veenero Sustainable Solutions works on water management and conservation through a combination of hardware/device-based solutions and intelligent software.',
+          primaryCtaText: 'Request a Demo',
+          primaryCtaLink: '#solutions-grid',
+          secondaryCtaText: 'Talk to an Expert',
+          secondaryCtaLink: '/contact',
+          image: '/src/assets/solutions/solutions-hero-background.png',
+          imageAlt: 'Aqua Saver water conservation infrastructure',
+          badges: [
+            { icon: 'Cpu', label1: 'Aqua Saver', label2: '3D-Module' },
+            { icon: 'ShieldCheck', label1: 'Hardware & Software', label2: 'Conservation' },
+          ],
+          statsWidgets: {
+            flowRate: { title: 'Daily Waste Target', value: '49B L', unit: 'India Daily', trend: 'Priority' },
+            systemHealth: { title: 'Conservation Device', value: 'Aqua Saver', status: 'Active' },
+            activeAlerts: { title: 'Core Focus', count: 'Zero Leaks', ctaText: 'Explore', ctaLink: '#solutions-grid' },
+          },
         },
-        {
-          value: '10,000+',
-          label: 'Sensors Deployed',
-          sublabel: 'Active sub-second IoT edge nodes',
-          icon: 'Radio',
-          order: 2,
-          isActive: true,
+        intro: {
+          visible: true,
+          eyebrow: 'FOUNDATIONAL ARCHITECTURE',
+          title: 'Addressing the Root Causes of Water Waste',
+          highlightedText: 'With Devices & Software',
+          paragraphs: [
+            'We are from a village background, and we have seen precisely how many liters of water are wasted every day as a result of leaks in overhead tanks, pipelines, and taps.',
+            'After conducting a thorough analysis of the issue, we discovered that there are no appropriate water management systems or water usage rules.',
+            'Veenero provides water conservative devices (Aqua Saver) and software to enforce appropriate water management, reduce water waste, and ensure future water security across government and residential societies.',
+          ],
+          image: '/src/assets/about/about-journey-water-infrastructure.webp',
+          badges: [
+            { icon: 'CheckCircle2', label: 'WE Hub Telangana POC Certified' },
+            { icon: 'Award', label: 'Intinta Innovator Award Winner' },
+          ],
         },
-        {
-          value: '1M+',
-          label: 'Data Points Processed',
-          sublabel: 'Streamed daily to anomaly models',
-          icon: 'Activity',
-          order: 3,
-          isActive: true,
+        gridHeader: {
+          eyebrow: 'CORE PORTFOLIO',
+          title: 'Water Conservation Solutions',
+          description: 'Practical devices and intelligent software designed to solve real-world water management problems.',
+          calloutCard: {
+            title: 'Aqua Saver 3D-Module',
+            subtitle: 'Hardware & Software Integration',
+            description: 'Our working module analyzes how much water is used and wasted and delivers detailed actionable reports.',
+            ctaText: 'Inquire Now',
+            ctaLink: '/contact',
+            image: '/src/assets/about/about-industrial-water-system.webp',
+          },
         },
-        {
-          value: '100+',
-          label: 'Facilities & Cities',
-          sublabel: 'Nationwide water resilience',
-          icon: 'Building2',
-          order: 4,
-          isActive: true,
+        categories: categoriesData,
+        solutions: allSolutionsList,
+        featuredSolution: {
+          visible: true,
+          eyebrow: 'CORE SOLUTION',
+          title: 'Aqua Saver & 3D-Module',
+          highlightedText: 'Practical Water Conservation',
+          subtitle: 'Hardware-driven conservation backed by software algorithms',
+          description: 'The Aqua Saver device is positioned around solving leakage-related problems and analyzing water usage and waste across various fields and industries.',
+          ctaText: 'Request a Demo',
+          ctaLink: '/contact',
+          image: '/src/assets/about/about-field-verification.webp',
+          capabilities: [
+            { title: 'Leak Detection', desc: 'Pinpointing tap, seepage, pipe, and tank leaks' },
+            { title: 'Automated Control', desc: 'Pumping automation and motor control' },
+            { title: 'Usage Informatics', desc: 'Tracking utilization vs waste volume' },
+          ],
         },
-      ],
-    },
-    ourJourney: {
-      visible: true,
-      eyebrow: 'OUR JOURNEY',
-      title: 'Milestones That Flow Forward',
-      description: 'From our founding vision to nationwide water intelligence infrastructure across India.',
-      journeyImage: journeyMedia.url,
-      journeyCaption:
-        'Rugged edge sensors and IoT transmission units monitoring high-pressure water conduits, clarifiers, and urban distribution networks in real time.',
-      mediaPublicId: journeyMedia.publicId,
-      milestones: [
-        {
-          year: '2021',
-          title: 'The Idea',
-          description: 'Identified the water data gap in India',
-          iconType: 'idea',
-          order: 1,
-          isActive: true,
+        flow: {
+          visible: true,
+          eyebrow: 'PROCESS & WORKING',
+          title: '6-Step Working Module',
+          description: 'From setup to resolution with software algorithm integration.',
+          stages: [
+            { number: '01', icon: 'Cpu', title: 'Setting Up', description: 'Deploying the Aqua Saver device and 3D-Module.' },
+            { number: '02', icon: 'Activity', title: 'Monitoring', description: 'Continuous surveillance of pipeline network.' },
+            { number: '03', icon: 'Database', title: 'Collection', description: 'Data streaming into the water application.' },
+            { number: '04', icon: 'Search', title: 'Identification', description: 'Locating leaks in taps, pipes, and tanks.' },
+            { number: '05', icon: 'Layers', title: 'Characteristics', description: 'Evaluating leak severity and volume loss.' },
+            { number: '06', icon: 'CheckCircle2', title: 'Resolving', description: 'Actionable repair and conservation verification.' },
+          ],
+          layers: [
+            {
+              number: '01',
+              title: 'Device Layer',
+              subtitle: 'Aqua Saver & 3D-Module',
+              description: 'Physical water conservative devices deployed on supply lines and storage tanks.',
+              icon: 'Cpu',
+              capabilities: ['Flow sensing', 'Leak monitoring', 'Motor switching'],
+            },
+            {
+              number: '02',
+              title: 'Software Algorithm Layer',
+              subtitle: 'Data & Analytics',
+              description: 'Software algorithms that analyze quantity utilized, quality utilized, and generate reports.',
+              icon: 'Activity',
+              capabilities: ['Structural planning', 'Leak overview', 'Usage informatics', 'Water credits concept'],
+            },
+          ],
         },
-        {
-          year: '2022',
-          title: 'First Prototype',
-          description: 'Built our first IoT prototype for leak and flow monitoring',
-          iconType: 'prototype',
-          order: 2,
-          isActive: true,
+        cta: {
+          visible: true,
+          eyebrow: 'TAKE ACTION',
+          title: 'Start Conserving Water with Aqua Saver',
+          highlightedText: 'Contact Veenero Today',
+          description: 'Connect with our team to discuss pilot deployments, municipal partnerships, or society installations.',
+          primaryButtonText: 'Request a Demo',
+          primaryButtonLink: '/contact',
+          secondaryButtonText: 'Talk to an Expert',
+          secondaryButtonLink: '/contact',
         },
-        {
-          year: '2023',
-          title: 'Early Adoptions',
-          description: 'Piloted across municipal & industrial installations',
-          iconType: 'adoption',
-          order: 3,
-          isActive: true,
+        seo: {
+          metaTitle: 'Water Conservative Devices & Software | Veenero Solutions',
+          metaDescription: 'Explore Aqua Saver, 3D-Module, and Veenero software solutions for water management and conservation.',
         },
-        {
-          year: '2024',
-          title: 'Scaling Impact',
-          description: 'Expanded to multiple states with advanced analytics',
-          iconType: 'scale',
-          order: 4,
-          isActive: true,
-        },
-        {
-          year: '2025 & Beyond',
-          title: 'Building the Future',
-          description: 'AI, predictive intelligence & nationwide impact',
-          iconType: 'future',
-          order: 5,
-          isActive: true,
-        },
-      ],
-    },
-    purposeDirection: {
-      visible: true,
-      eyebrow: 'PURPOSE & DIRECTION',
-      title: 'Shaping a Water-Secure Future',
-      description:
-        'Guiding our engineering, partnerships, and operations toward verifiable water accountability across every level of infrastructure.',
-      vision: {
-        badge: 'Universal Visibility',
-        title: 'Our Vision',
-        description:
-          'A world where zero water goes unmeasured, unaccounted, or wasted. We envision sustainable, resilient ecosystems powered by universal water visibility and real-time intelligence.',
-        isActive: true,
-      },
-      mission: {
-        badge: 'Digital Infrastructure',
-        title: 'Our Mission',
-        description:
-          "To deliver India's most reliable and scalable telemetry infrastructure and water data platform, empowering organizations, utilities, and communities to secure their water future.",
-        isActive: true,
+        isPublished: true,
       },
     },
-    pillars: {
-      visible: true,
-      eyebrow: 'WHAT DRIVES US',
-      title: 'The Pillars of Veenero',
-      description:
-        'Our engineering, culture, and products are rooted in rigorous water accountability and sustainable impact.',
-      list: [
-        {
-          title: 'Purpose First',
-          description: 'We start with why—solving real water challenges.',
-          image: pillar1.url,
-          mediaPublicId: pillar1.publicId,
-          order: 1,
-          isActive: true,
-        },
-        {
-          title: 'Integrity Always',
-          description: 'We believe in transparency, trust & ethical innovation.',
-          image: pillar2.url,
-          mediaPublicId: pillar2.publicId,
-          order: 2,
-          isActive: true,
-        },
-        {
-          title: 'Impact at Scale',
-          description: 'We build solutions that create measurable, lasting impact.',
-          image: pillar3.url,
-          mediaPublicId: pillar3.publicId,
-          order: 3,
-          isActive: true,
-        },
-        {
-          title: 'Innovation Relentless',
-          description: 'We constantly push boundaries with technology.',
-          image: pillar4.url,
-          mediaPublicId: pillar4.publicId,
-          order: 4,
-          isActive: true,
-        },
-        {
-          title: 'Stronger Together',
-          description: 'We grow by empowering communities, partners & each other.',
-          image: pillar5.url,
-          mediaPublicId: pillar5.publicId,
-          order: 5,
-          isActive: true,
-        },
-      ],
-    },
-    whyChoose: {
-      visible: true,
-      eyebrow: 'WHY CHOOSE VEENERO',
-      title: 'What Sets',
-      highlightedText: 'Veenero Apart',
-      description:
-        'We do not provide single-point devices or surface-level charts. We deliver a complete digital infrastructure layer for enterprise water management.',
-      bottomTrustText: 'Built for reliability. Designed for scale. Driven by impact.',
-      list: [
-        {
-          title: 'End-to-End Infrastructure',
-          description:
-            'From edge telemetry sensors and gateway hardware to cloud intelligence and executive dashboards.',
-          icon: 'Layers',
-          image: why1.url,
-          mediaPublicId: why1.publicId,
-          order: 1,
-          isActive: true,
-        },
-        {
-          title: 'Real-Time Actionability',
-          description:
-            'Instant anomaly detection and threshold triggers so teams can intervene before losses compound.',
-          icon: 'Zap',
-          image: why2.url,
-          mediaPublicId: why2.publicId,
-          order: 2,
-          isActive: true,
-        },
-        {
-          title: 'Verification-Ready Auditing',
-          description:
-            'Tamper-resistant audit trails designed to meet stringent ESG compliance and regulatory requirements.',
-          icon: 'ShieldCheck',
-          image: why3.url,
-          mediaPublicId: why3.publicId,
-          order: 3,
-          isActive: true,
-        },
-        {
-          title: 'Open & Scalable Ecosystem',
-          description:
-            'Seamless API integrations with enterprise ERPs, SCADA systems, and facility management platforms.',
-          icon: 'Share2',
-          image: why4.url,
-          mediaPublicId: why4.publicId,
-          order: 4,
-          isActive: true,
-        },
-      ],
-    },
-    leadership: {
-      visible: true,
-      eyebrow: 'OUR TEAM',
-      title: 'Driven by Water & Technology Pioneers',
-      description:
-        'Our multidisciplinary team unites IoT systems engineers, data scientists, and water conservation advocates.',
-      team: [
-        {
-          name: 'Founding Team',
-          role: 'Leadership & Strategy',
-          bio: "Steering the mission to establish India's most comprehensive digital water intelligence network.",
-          icon: 'Users2',
-          image: team1.url,
-          mediaPublicId: team1.publicId,
-          order: 1,
-          isActive: true,
-        },
-        {
-          name: 'Telemetry & Edge Engineering',
-          role: 'Hardware & IoT Systems',
-          bio: 'Designing rugged, industrial-grade sensors and edge gateways for high-precision water metering.',
-          icon: 'Cpu',
-          image: team2.url,
-          mediaPublicId: team2.publicId,
-          order: 2,
-          isActive: true,
-        },
-        {
-          name: 'Data Science & Cloud Platform',
-          role: 'Water Analytics & AI',
-          bio: 'Developing predictive consumption models, anomaly detection algorithms, and verification pipelines.',
-          icon: 'LineChart',
-          image: team3.url,
-          mediaPublicId: team3.publicId,
-          order: 3,
-          isActive: true,
-        },
-      ],
-    },
-    cta: {
-      visible: true,
-      eyebrow: 'JOIN THE WATER REVOLUTION',
-      title: 'The future of water is intelligent, accountable, and sustainable.',
-      description:
-        'Join forward-thinking enterprises and utilities creating water visibility and verifiable sustainability with Veenero.',
-      primaryButtonText: 'Join Us in Our Mission',
-      primaryButtonLink: '/contact',
-    },
-    seo: {
-      metaTitle: "About Us | Veenero - Building India's Water Intelligence",
-      metaDescription:
-        "Learn about Veenero's mission to transform water management through AI-driven intelligence, IoT telemetry, and verifiable data infrastructure.",
-    },
-    isPublished: true,
-    lastUpdatedBy: 'System Seed',
-  });
+    { upsert: true, new: true }
+  );
 
-  console.log('[Seed] About page settings seeded successfully.');
+  // ── 4. IMPACT PAGE SETTINGS ────────────────────────────────────────────────
+  await ImpactPageSettingsModel.findOneAndUpdate(
+    {},
+    {
+      $set: {
+        hero: {
+          visible: true,
+          eyebrow: 'THE REAL WATER PROBLEM',
+          title: 'Addressing 49 Billion Liters of Daily Water Waste',
+          description: 'India wastes 49 billion liters of water daily while 600 million people face severe water crisis. Veenero provides practical devices and software to eliminate leaks and build water security.',
+          primaryCtaText: 'Our Impact',
+          secondaryCtaText: 'View Statistics',
+          image: '/src/assets/about/about-journey-water-infrastructure.webp',
+        },
+        outcomes: {
+          visible: true,
+          eyebrow: 'SUPPORTED FACTS & RESEARCH',
+          title: 'The Realities Driving Veenero',
+          description: 'Every figure below is supported by documented research and public references.',
+          pillars: [
+            {
+              value: '49B Liters',
+              label: 'Daily Waste in India',
+              description: 'Equivalent to 48.42 billion one-liter bottles lost daily. 600 million people face water crisis. (Ref: neerain.com)',
+              icon: 'Droplets',
+              tag: 'National Challenge',
+            },
+            {
+              value: '30%',
+              label: 'Global Supply Lost',
+              description: 'Around 2.1 trillion gallons of water wasted each year due to leaks and inefficient usage. (Ref: gitnux.org)',
+              icon: 'Globe',
+              tag: 'Global Loss',
+            },
+            {
+              value: '297,000',
+              label: 'Child Deaths Yearly',
+              sublabel: 'Under-five children dying from diarrheal disease from poor sanitation and unsafe water. (Ref: WHO/UNICEF 2019)',
+              description: 'Children under five dying annually from diarrheal diseases due to poor sanitation and unsafe drinking water. (Ref: WHO/UNICEF 2019)',
+              icon: 'AlertTriangle',
+              tag: 'Health Impact',
+            },
+            {
+              value: '4 Areas',
+              label: 'Common Problem Areas',
+              description: 'Targeted solutions for Tap Leaks, Seepage, Pipe Leaks, and Tank Overflows.',
+              icon: 'ShieldCheck',
+              tag: 'Target Focus',
+            },
+          ],
+        },
+        storyline: {
+          visible: true,
+          eyebrow: 'WORKING MODULE ROADMAP',
+          title: 'From Identification to Resolution',
+          description: 'Our structured 6-step conservation process.',
+          steps: [
+            { number: '01', stage: 'Setup', title: 'Setting up the Aqua Saver', description: 'Deploying the Aqua Saver device and 3D-Module.', outcome: 'Device Active', icon: 'Cpu' },
+            { number: '02', stage: 'Monitor', title: 'Monitoring the System', description: 'Surveillance of pipelines and pump motors.', outcome: 'Continuous Feed', icon: 'Activity' },
+            { number: '03', stage: 'Collect', title: 'Collection of Data', description: 'Feeding telemetry into the water application.', outcome: 'Usage Informatics', icon: 'Database' },
+            { number: '04', stage: 'Detect', title: 'Identification of Leakage', description: 'Pinpointing tap, seepage, pipe, and tank leaks.', outcome: 'Anomalies Isolated', icon: 'Search' },
+            { number: '05', stage: 'Evaluate', title: 'Identifying Characteristics', description: 'Assessing leak severity and flow rate.', outcome: 'Severity Ranked', icon: 'Layers' },
+            { number: '06', stage: 'Resolve', title: 'Resolving the Leak', description: 'Maintenance guidance and conservation verification.', outcome: 'Water Saved', icon: 'CheckCircle2' },
+          ],
+        },
+        ecosystem: {
+          visible: true,
+          eyebrow: 'RECOGNITIONS & ACHIEVEMENTS',
+          title: 'Validated Across State & National Forums',
+          description: 'Achievements and evaluations received by Veenero Sustainable Solutions.',
+          domains: [
+            {
+              title: 'WE Hub, Government of Telangana',
+              icon: 'Award',
+              description: 'Received official Proof-of-Concept (POC) certification from WE Hub, Government of Telangana.',
+              impactPoints: ['Official POC certification', 'Evaluated by state incubation body', 'Validated conservation methodology'],
+            },
+            {
+              title: 'Intinta Innovator Award',
+              icon: 'CheckCircle2',
+              description: 'Aqua Saver awarded the Intinta Innovator Award for two consecutive years at district level.',
+              impactPoints: ['Two consecutive years winner', 'District innovation leadership', 'Grassroots impact recognition'],
+            },
+            {
+              title: 'National Innovation Challenge',
+              icon: 'Globe',
+              description: 'Participated in the National Innovation Challenge held at PIET College, Haryana.',
+              impactPoints: ['National-level challenge', 'Engineering review', 'Multi-state exposure'],
+            },
+            {
+              title: 'Leadership Recognition',
+              icon: 'ShieldCheck',
+              description: 'Gratitude and recognition mention involving Sir Ashok Gehlot, Chief Minister of Rajasthan.',
+              impactPoints: ['State leadership acknowledgment', 'Focus on water conservation', 'Encouragement for deployment'],
+            },
+          ],
+          quote: {
+            text: 'Got POC certification from WE Hub, Government of Telangana. Aqua Saver got Intinta Innovator Award for two consecutive years at district level.',
+            author: 'Veenero Sustainable Solutions',
+            role: 'Official Achievements',
+            organization: 'WE Hub & District Administration',
+          },
+        },
+        sustainability: {
+          visible: true,
+          eyebrow: 'BUSINESS & CONSUMER MODEL',
+          title: 'Target Consumers & Engagement Model',
+          description: 'Delivering sustainable value to public institutions and community living.',
+          pillars: [
+            { title: 'Target Consumers', description: 'Serving Government bodies and residential Societies to eliminate water loss.' },
+            { title: 'Product Delivery', description: 'Direct delivery and installation of Aqua Saver devices and 3D-Modules.' },
+            { title: 'Recurring Payment & Service', description: 'Predictable service models and charges depending upon size and facility requirements.' },
+          ],
+        },
+        cta: {
+          visible: true,
+          title: 'Join Our Mission to Conserve India Water',
+          description: 'Contact Veenero Sustainable Solutions Pvt Ltd to partner with us or schedule a product demonstration.',
+          primaryButtonText: 'Request a Demo',
+          primaryButtonLink: '/contact',
+          secondaryButtonText: 'Talk to an Expert',
+          secondaryButtonLink: '/contact',
+        },
+        seo: {
+          metaTitle: 'Impact & Facts | Veenero Sustainable Solutions',
+          metaDescription: 'Addressing 49 billion liters of daily water waste in India. POC certified by WE Hub Telangana, Intinta Innovator Award winner.',
+        },
+      },
+    },
+    { upsert: true, new: true }
+  );
+
+  // ── 5. CONTACT PAGE SETTINGS ───────────────────────────────────────────────
+  await ContactPageSettingsModel.findOneAndUpdate(
+    {},
+    {
+      $set: {
+        hero: {
+          visible: true,
+          eyebrow: 'VEENERO SUSTAINABLE SOLUTIONS PVT LTD',
+          title: 'Get in Touch with Our Team',
+          description: 'Reach out to discuss Aqua Saver demonstrations, society installations, or municipal partnerships. We respond to every inquiry.',
+          primaryCtaText: 'Send an Inquiry',
+          secondaryCtaText: 'Call Us',
+        },
+        contactInfo: {
+          visible: true,
+          eyebrow: 'COMPANY CONTACT INFORMATION',
+          title: 'Direct Contact Details',
+          description: 'Official correspondence and inquiries for Veenero Sustainable Solutions Pvt Ltd.',
+          items: [
+            {
+              iconName: 'Mail',
+              label: 'General Inquiries',
+              value: 'info@veenerosolutions.com',
+              href: 'mailto:info@veenerosolutions.com',
+              note: 'Official company inbox',
+            },
+            {
+              iconName: 'Mail',
+              label: 'Founder & Leadership',
+              value: 'udaygedam@veenerosolutions.com',
+              href: 'mailto:udaygedam@veenerosolutions.com',
+              note: 'Direct leadership communication',
+            },
+            {
+              iconName: 'Globe',
+              label: 'Official Website',
+              value: 'www.veenerosolutions.com',
+              href: 'https://www.veenerosolutions.com',
+              note: 'Company online portal',
+            },
+            {
+              iconName: 'Phone',
+              label: 'Telephone Contact',
+              value: '+91 9346517202',
+              href: 'tel:+919346517202',
+              note: 'Direct phone support',
+            },
+            {
+              iconName: 'MapPin',
+              label: 'Registered Office',
+              value: 'Veenero Sustainable Solutions Pvt Ltd, Adilabad, Telangana 504001',
+              note: 'Headquarters',
+            },
+          ],
+        },
+        demoCard: {
+          visible: true,
+          badge: 'AQUA SAVER DEMO',
+          title: 'Request an Aqua Saver Demonstration',
+          description: 'Experience how our water conservative device and 3D-Module track water usage, automate pumping, and identify leaks.',
+          bulletPoints: [
+            'Live walkthrough of Aqua Saver conservative device',
+            'Discussion on tap, pipe, tank, and seepage leak identification',
+            'Review of automated water pumping and usage reports',
+          ],
+          buttonText: 'Request Demo',
+        },
+        form: {
+          visible: true,
+          title: 'Send Us a Message',
+          subtitle: 'Fill in your requirements below and our team will get back to you within 24 hours.',
+          inquiryTypes: [
+            { id: 'demo', label: 'Request a Demo of Aqua Saver' },
+            { id: 'partnership', label: 'Government / Society Partnership' },
+            { id: 'general', label: 'General Inquiry' },
+          ],
+          submitButtonText: 'Submit Inquiry',
+          successTitle: 'Inquiry Received',
+          successMessage: 'Thank you for reaching out to Veenero Sustainable Solutions. Our team will contact you shortly.',
+        },
+        cta: {
+          visible: true,
+          title: 'Let Work Together for Water Security',
+          description: 'Every drop conserved today protects communities and future generations.',
+          primaryButtonText: 'Request a Demo',
+          primaryButtonLink: '#contact-form',
+          secondaryButtonText: 'About Our Story',
+          secondaryButtonLink: '/about',
+        },
+        seo: {
+          metaTitle: 'Contact Us | Veenero Sustainable Solutions Pvt Ltd',
+          metaDescription: 'Get in touch with Veenero Sustainable Solutions Pvt Ltd. Email info@veenerosolutions.com or udaygedam@veenerosolutions.com.',
+        },
+      },
+    },
+    { upsert: true, new: true }
+  );
+
+  // ── 6. FOOTER SETTINGS ────────────────────────────────────────────────────
+  await FooterSettingsModel.findOneAndUpdate(
+    {},
+    {
+      $set: {
+        description: 'Veenero Sustainable Solutions Pvt Ltd — Dedicated to appropriate water management, reducing water waste, and ensuring future water security through conservative devices and intelligent software.',
+        address: 'Veenero Sustainable Solutions Pvt Ltd, Adilabad, Telangana 504001',
+        mobile: '+91 9346517202',
+        email: 'info@veenerosolutions.com',
+        copyrightText: '© {year} Veenero Sustainable Solutions Pvt Ltd. All rights reserved.',
+        googleRating: {
+          rating: 'POC Certified',
+          reviewsCount: 'WE Hub Telangana & Intinta Innovator Award Winner',
+          href: '/impact',
+        },
+        links: {
+          solutions: [
+            { label: 'Aqua Saver (Core)', href: '/solutions/aqua-saver' },
+            { label: 'Water Quality Assessment', href: '/solutions/water-quality-assessment' },
+            { label: 'Water Pumping Automation', href: '/solutions/water-pumping-automation' },
+            { label: 'Water Tracking & Informatics', href: '/solutions/water-tracking-informatics' },
+            { label: 'Water Credits (In Dev)', href: '/solutions/water-credits' },
+            { label: 'Leak Identification', href: '/solutions/leak-identification' },
+          ],
+          company: [
+            { label: 'About Veenero', href: '/about' },
+            { label: 'Our Village Origin', href: '/about#our-story' },
+            { label: 'Process & Working', href: '/approach' },
+            { label: 'Impact & Facts', href: '/impact' },
+            { label: 'Contact Us', href: '/contact' },
+          ],
+          resources: [
+            { label: 'WE Hub POC Certification', href: '/impact' },
+            { label: 'Intinta Innovator Award', href: '/impact' },
+            { label: 'National Innovation Challenge', href: '/impact' },
+            { label: 'Blog & Insights', href: '/blog' },
+          ],
+        },
+        socialLinks: [
+          { iconName: 'Mail', href: 'mailto:info@veenerosolutions.com', label: 'Email Info' },
+          { iconName: 'Mail', href: 'mailto:udaygedam@veenerosolutions.com', label: 'Email Founder' },
+          { iconName: 'Globe', href: 'https://www.veenerosolutions.com', label: 'Website' },
+        ],
+      },
+    },
+    { upsert: true, new: true }
+  );
+
+  console.log('[Seed] Veenero authentic source content synchronized successfully.');
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ABOUT PAGE MEDIA DEFINITIONS
-// Each record represents ONE real media asset referenced by the About page.
-// secureUrl for local assets is the Vite dev path — replace with Cloudinary URL
-// once the asset has been uploaded via the Media Library.
-// ─────────────────────────────────────────────────────────────────────────────
 const ABOUT_MEDIA_SEED: Array<{
   seedKey:          string;
   page:             string;
@@ -1440,4 +1979,156 @@ async function seedAboutMedia(): Promise<void> {
   }
 
   console.log(`[Seed] About media: ${inserted} inserted, ${skipped} already existed.`);
+}
+
+/**
+ * Seeds and synchronizes the authentic Veenero Full Stack Developer career opening
+ * and Careers page settings.
+ * Completely idempotent: updates existing record without creating duplicates.
+ */
+export async function seedCareers(): Promise<void> {
+  console.log('[Seed] Synchronizing Careers and Job Openings...');
+
+  // 1. Seed Career Page Settings
+  await CareerPageSettingsModel.findOneAndUpdate(
+    {},
+    {
+      $setOnInsert: {
+        hero: {
+          visible: true,
+          eyebrow: 'CAREERS AT VEENERO',
+          title: 'Build the Future of Water Intelligence',
+          description: "We are building India's water intelligence platform. Join our mission to make every litre visible, verifiable, and meaningful.",
+          primaryCtaText: 'Explore Opportunities',
+          secondaryCtaText: 'Hiring Process',
+        },
+        hiringProcess: {
+          visible: true,
+          eyebrow: 'HOW WE HIRE',
+          title: 'A Fair, Transparent Journey',
+          description: 'Our four-stage recruitment process is designed to be rigorous, respectful of your time, and focused on real-world capabilities.',
+          steps: [
+            {
+              num: '01',
+              icon: 'Search',
+              title: 'Application Review',
+              subtitle: 'Screening',
+              description: 'We review your background, past work, and experience against our operational goals within 5 business days.',
+            },
+            {
+              num: '02',
+              icon: 'PhoneCall',
+              title: 'Introductory Conversation',
+              subtitle: 'Discovery',
+              description: 'A 30-minute discussion covering your domain interests, career goals, and how you align with our mission.',
+            },
+            {
+              num: '03',
+              icon: 'Code2',
+              title: 'Technical Evaluation',
+              subtitle: 'Hands-on',
+              description: 'A practical, real-world exercise or architecture review tailored directly to the water-tech problems we solve.',
+            },
+            {
+              num: '04',
+              icon: 'Award',
+              title: 'Offer & Onboarding',
+              subtitle: 'Decision',
+              description: 'A transparent offer discussion followed by an immersive onboarding experience into our engineering workflows.',
+            },
+          ],
+        },
+        cta: {
+          visible: true,
+          eyebrow: "DON'T SEE YOUR ROLE?",
+          title: 'Send an Open Application',
+          description: 'We are always looking for exceptional engineers, IoT hardware specialists, hydrologists, and data scientists. Send us your portfolio and resume.',
+          buttonText: 'Submit General Application',
+          email: 'careers@veenerosolutions.com',
+        },
+        seo: {
+          metaTitle: 'Careers | Veenero - Build the Future of Water Intelligence',
+          metaDescription: 'Explore open engineering, IoT hardware, and data science roles at Veenero Sustainable Solutions Pvt Ltd.',
+        },
+      },
+    },
+    { upsert: true, new: true }
+  );
+
+  // 2. Seed Full Stack Developer Role
+  const seededRole = {
+    title: 'Full Stack Developer',
+    slug: 'full-stack-developer',
+    department: 'Engineering',
+    location: 'Hyderabad / Hybrid',
+    employmentType: 'Full-time',
+    experience: '2-5 Years',
+    salaryRange: 'Competitive / Based on Experience',
+    shortDescription: "Build and scale Veenero's water telemetry platform, real-time analytics pipelines, and IoT sensor dashboards.",
+    description: "As a Full Stack Developer at Veenero Sustainable Solutions, you will play a central role in engineering the digital infrastructure layer for water management and conservation. You will build scalable web applications, real-time IoT monitoring dashboards, and robust backend APIs that ingest streaming telemetry from water flow sensors, pressure monitors, and automated pumping devices across India.",
+    responsibilities: [
+      'Design, develop, and maintain responsive web applications using React, TypeScript, and TailwindCSS.',
+      'Build resilient RESTful and real-time backend microservices using Node.js, Express, and MongoDB.',
+      'Architect and optimize telemetry ingestion pipelines handling continuous time-series water flow and pressure data.',
+      'Implement interactive data visualization dashboards, analytics charts, and automated alert systems.',
+      'Collaborate with embedded systems engineers to integrate IoT hardware gateways and edge device streams.',
+      'Write clean, well-tested, documented, and maintainable code adhering to security and performance standards.',
+    ],
+    requirements: [
+      '2+ years of professional full-stack development experience with modern JavaScript / TypeScript.',
+      'Strong proficiency in React, state management, component architecture, and responsive design.',
+      'Solid experience designing and building RESTful APIs with Node.js and Express.',
+      'Hands-on experience with MongoDB / NoSQL databases, indexing, schema design, and query optimization.',
+      'Familiarity with IoT data streams, WebSockets, or real-time event-driven architectures.',
+      'Proficiency with Git, Docker, CI/CD pipelines, and cloud deployment environments.',
+      'Strong problem-solving mindset and a passion for environmental sustainability and water conservation.',
+    ],
+    niceToHave: [
+      'Experience with time-series data storage and aggregation (e.g., InfluxDB, MongoDB Timeseries).',
+      'Background in environmental technology, IoT hardware telemetry, or SCADA / smart utility systems.',
+      'Experience with data visualization libraries such as Recharts, Chart.js, or D3.',
+      'Understanding of cloud infrastructure (AWS / GCP / Cloudinary) and serverless architectures.',
+    ],
+    qualifications: [
+      'B.Tech / B.E. in Computer Science, Information Technology, or equivalent practical experience.',
+    ],
+    skills: ['React', 'Node.js', 'TypeScript', 'MongoDB', 'Express', 'REST APIs', 'Tailwind CSS', 'IoT Telemetry', 'Git'],
+    status: 'PUBLISHED' as const,
+    isFeatured: true,
+    sortOrder: 1,
+    publishedAt: new Date(),
+    createdBy: 'System',
+    updatedBy: 'System',
+    deletedAt: null,
+  };
+
+  const existing = await CareerModel.findOne({ slug: seededRole.slug });
+  if (existing) {
+    // If it was marked trashed or needs syncing, update and ensure not deleted
+    await CareerModel.findByIdAndUpdate(existing._id, {
+      $set: {
+        title: seededRole.title,
+        department: seededRole.department,
+        location: seededRole.location,
+        employmentType: seededRole.employmentType,
+        experience: seededRole.experience,
+        salaryRange: seededRole.salaryRange,
+        shortDescription: seededRole.shortDescription,
+        description: seededRole.description,
+        responsibilities: seededRole.responsibilities,
+        requirements: seededRole.requirements,
+        niceToHave: seededRole.niceToHave,
+        qualifications: seededRole.qualifications,
+        skills: seededRole.skills,
+        isFeatured: seededRole.isFeatured,
+        // Preserve admin-set status if explicitly closed or archived, but if draft or trashed restore to PUBLISHED
+        status: existing.status === 'ARCHIVED' || existing.status === 'CLOSED' ? existing.status : 'PUBLISHED',
+        deletedAt: null,
+      },
+    });
+    console.log('[Seed] Full Stack Developer role verified and synchronized.');
+  } else {
+    await CareerModel.create(seededRole);
+    console.log('[Seed] Full Stack Developer role seeded successfully.');
+  }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search, FileText, Users, Rocket, CheckCircle } from "lucide-react";
 
-const steps = [
+const defaultSteps = [
   {
     num: "01",
     icon: Search,
@@ -48,9 +48,46 @@ const steps = [
   },
 ];
 
-export const HiringProcess: React.FC = () => {
+export interface HiringProcessProps {
+  data?: {
+    visible?: boolean;
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    steps?: Array<{
+      num?: string;
+      icon?: string;
+      title: string;
+      subtitle?: string;
+      description: string;
+    }>;
+  };
+}
+
+export const HiringProcess: React.FC<HiringProcessProps> = ({ data }) => {
+  if (data?.visible === false) return null;
+
+  const displaySteps =
+    data?.steps && data.steps.length > 0
+      ? data.steps.map((s, idx) => {
+          const fallback = defaultSteps[idx % defaultSteps.length];
+          return {
+            num: s.num || fallback.num,
+            icon: fallback.icon,
+            title: s.title || fallback.title,
+            subtitle: s.subtitle || fallback.subtitle,
+            description: s.description || fallback.description,
+            accent: fallback.accent,
+            iconBg: fallback.iconBg,
+            pill: fallback.pill,
+          };
+        })
+      : defaultSteps;
+
   const sectionRef = useRef<HTMLElement>(null);
-  const [visibleSteps, setVisibleSteps] = useState<boolean[]>(Array(steps.length).fill(false));
+  const [visibleSteps, setVisibleSteps] = useState<boolean[]>(
+    Array(displaySteps.length).fill(false)
+  );
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -96,17 +133,18 @@ export const HiringProcess: React.FC = () => {
         <div className="text-left font-sans max-w-3xl mb-14 sm:mb-16">
           <div>
             <span className="text-teal-700 dark:text-teal-400 font-bold uppercase tracking-widest text-xs font-mono block mb-1.5">
-              THE HIRING PROCESS
+              {data?.eyebrow || "THE HIRING PROCESS"}
             </span>
             <div className="w-10 h-0.5 bg-teal-600 rounded-full mb-4" />
           </div>
 
           <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-3 leading-tight tracking-tight">
-            How We Hire at Veenero
+            {data?.title || "How We Hire at Veenero"}
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-            A transparent, candidate-first process designed to understand your expertise, values, and long-term alignment with our mission.
+            {data?.description ||
+              "A transparent, candidate-first process designed to understand your expertise, values, and long-term alignment with our mission."}
           </p>
         </div>
 
@@ -117,7 +155,7 @@ export const HiringProcess: React.FC = () => {
           <div className="hidden lg:block absolute top-[4.25rem] left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent z-0" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 relative z-10">
-            {steps.map((step, idx) => {
+            {displaySteps.map((step, idx) => {
               const Icon = step.icon;
               const isVisible = visibleSteps[idx];
               return (

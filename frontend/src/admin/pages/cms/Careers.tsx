@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { careerService, Career } from '../../services/career.service';
+import { JobApplications } from './JobApplications';
 
 export const Careers: React.FC = () => {
   const [careers, setCareers] = useState<Career[]>([]);
@@ -13,7 +14,7 @@ export const Careers: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Filter & Search states
-  const [mainTab, setMainTab] = useState<'openings' | 'page-content'>('openings');
+  const [mainTab, setMainTab] = useState<'openings' | 'applications' | 'page-content'>('openings');
   const [pageSettings, setPageSettings] = useState<any>(null);
   const [pageSettingsLoading, setPageSettingsLoading] = useState(false);
   const [pageSettingsSaving, setPageSettingsSaving] = useState(false);
@@ -199,11 +200,15 @@ export const Careers: React.FC = () => {
 
   // ── Stats calculation ──
   const stats = useMemo(() => {
+    const pub = apiStats?.published ?? careers.filter((c) => c.status === 'PUBLISHED' || c.status === 'ACTIVE').length;
+    const arc = apiStats?.archived ?? careers.filter((c) => c.status === 'ARCHIVED' || c.status === 'CLOSED').length;
     return {
       total: apiStats?.total ?? careers.length,
-      published: apiStats?.published ?? careers.filter((c) => c.status === 'PUBLISHED' || c.status === 'ACTIVE').length,
+      published: pub,
+      active: pub,
       draft: apiStats?.drafts ?? careers.filter((c) => c.status === 'DRAFT').length,
-      archived: apiStats?.archived ?? careers.filter((c) => c.status === 'ARCHIVED' || c.status === 'CLOSED').length,
+      archived: arc,
+      closed: arc,
       deleted: deletedCareers.length,
     };
   }, [careers, deletedCareers, apiStats]);
@@ -447,6 +452,17 @@ export const Careers: React.FC = () => {
           }`}
         >
           Job Openings ({careers.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setMainTab('applications')}
+          className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            mainTab === 'applications'
+              ? 'border-teal-600 text-teal-600 dark:text-teal-400'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Candidate Applications
         </button>
         <button
           type="button"
@@ -707,6 +723,8 @@ export const Careers: React.FC = () => {
         </div>
       )}
       </>
+      ) : mainTab === 'applications' ? (
+        <JobApplications />
       ) : (
         /* ── Page Content & Hero Editor ── */
         <div className="space-y-6">

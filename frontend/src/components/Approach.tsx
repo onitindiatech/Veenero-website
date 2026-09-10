@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
+import { getPublicHome, HomeApproach } from "@/services/home.service";
 
 interface StageData {
   id: string;
@@ -66,6 +67,41 @@ const STAGES: StageData[] = [
 ];
 
 export const Approach: React.FC = () => {
+  const [approach, setApproach] = useState<HomeApproach | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getPublicHome()
+      .then((data) => {
+        if (!cancelled && data?.approach) {
+          setApproach(data.approach);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (approach?.visible === false) return null;
+
+  const displayStages: StageData[] = (approach?.steps && approach.steps.length > 0)
+    ? approach.steps.map((s, i) => ({
+        id: `step-${i}`,
+        number: s.number || `0${i + 1}`,
+        title: s.title || STAGES[i % STAGES.length]?.title || "",
+        subtitle: (s as any).subtitle || STAGES[i % STAGES.length]?.subtitle || "",
+        description: s.description || STAGES[i % STAGES.length]?.description || "",
+        points: s.points && s.points.length > 0 ? s.points : (STAGES[i % STAGES.length]?.points || []),
+      }))
+    : STAGES;
+
+  const eyebrow = approach?.eyebrow || "OUR APPROACH";
+  const title = approach?.title || "A Proven Path to\nWater Sustainability";
+  const description =
+    approach?.description ||
+    "Our methodical four-step process transforms water data into actionable insights, driving measurable impact and long-term sustainability.";
+
   return (
     <section
       id="approach"
@@ -77,16 +113,14 @@ export const Approach: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/25 mb-4 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
             <span className="text-teal-700 dark:text-teal-300 font-bold uppercase tracking-widest text-[10px] md:text-xs">
-              OUR APPROACH
+              {eyebrow}
             </span>
           </div>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15] mb-5">
-            A Proven Path to
-            <br className="hidden sm:block" /> Water Sustainability
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15] mb-5 whitespace-pre-line">
+            {title}
           </h2>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Our methodical four-step process transforms water data into actionable
-            insights, driving measurable impact and long-term sustainability.
+            {description}
           </p>
         </div>
 
@@ -99,7 +133,7 @@ export const Approach: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8 relative z-10">
-            {STAGES.map((stage, idx) => {
+            {displayStages.map((stage, idx) => {
               const staggerDelay = idx === 0 ? "reveal-delay-100" : idx === 1 ? "reveal-delay-200" : idx === 2 ? "reveal-delay-300" : "reveal-delay-400";
               return (
                 <div key={stage.id} className={`group relative flex flex-col reveal-on-scroll ${staggerDelay}`}>

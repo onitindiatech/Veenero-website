@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ContactHero } from "@/components/contact/ContactHero";
 import { ContactFormSection } from "@/components/contact/ContactFormSection";
+import { ContactFAQ } from "@/components/contact/ContactFAQ";
 import { ContactCTA } from "@/components/contact/ContactCTA";
 import { contactPageContent } from "@/content/contact";
 import { getPublicContactContent, PublicContactData } from "@/services/contact.service";
@@ -36,6 +37,8 @@ export const ContactPage: React.FC = () => {
   const contactInfoData = cmsData?.contactInfo || contactPageContent.contactInfo;
   const demoCardData = cmsData?.demoCard || contactPageContent.demoCard;
   const formData = cmsData?.form || contactPageContent.form;
+  const faqData = cmsData?.faq || contactPageContent.faq;
+  const ctaData = cmsData?.cta;
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-x-hidden">
@@ -61,8 +64,13 @@ export const ContactPage: React.FC = () => {
           form={formData}
         />
 
-        {/* 3. FINAL CTA — Ready to Make an Impact? / Let's Work Together */}
-        <ContactCTA />
+        {/* 3. FAQ SECTION */}
+        {faqData && faqData.visible !== false && faqData.items && faqData.items.length > 0 && (
+          <ContactFAQ data={faqData} />
+        )}
+
+        {/* 4. FINAL CTA — Ready to Make an Impact? / Let's Work Together */}
+        <ContactCTA data={ctaData} />
       </main>
 
       {/* Main Global Footer */}

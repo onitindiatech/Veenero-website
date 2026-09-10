@@ -190,10 +190,10 @@ export const CareersPage: React.FC = () => {
         </section>
 
         {/* 3. HIRING PROCESS — Animated Step Timeline */}
-        <HiringProcess />
+        <HiringProcess data={pageSettings?.hiringProcess} />
 
         {/* 4. CAREER CTA — Dark Aquatic Final Call to Action */}
-        <CareersCTA />
+        <CareersCTA data={pageSettings?.cta} />
 
       </main>
 

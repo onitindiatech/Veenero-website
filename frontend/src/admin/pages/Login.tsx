@@ -23,10 +23,25 @@ export const Login: React.FC = () => {
   // Detect session-expired redirect (from inactivity auto-logout)
   const sessionExpired = searchParams.get('expired') === '1';
 
+  // Helper to resolve safe redirect destination
+  const getRedirectTarget = () => {
+    const returnTo = searchParams.get('returnTo');
+    if (
+      returnTo &&
+      returnTo.startsWith('/admin') &&
+      returnTo !== '/admin/login' &&
+      returnTo !== '/admin' &&
+      returnTo !== '/admin/'
+    ) {
+      return returnTo;
+    }
+    return '/admin/dashboard';
+  };
+
   // If already logged in, bypass login
   useEffect(() => {
     if (user) {
-      navigate('/admin/dashboard', { replace: true });
+      navigate(getRedirectTarget(), { replace: true });
     }
   }, [user, navigate]);
 
@@ -52,7 +67,7 @@ export const Login: React.FC = () => {
       toast.success('Authentication Successful', {
         description: 'Welcome back to Veenero Administration.',
       });
-      navigate('/admin/dashboard');
+      navigate(getRedirectTarget(), { replace: true });
     } catch (err: any) {
       setErrorMsg(err.message || 'Invalid email or password.');
     } finally {

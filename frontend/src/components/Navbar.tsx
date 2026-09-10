@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { navLinks } from "@/content/site/navbar";
-import veeneroLogo from "@/assets/veenero_logo.png";
+import { VeeneroLogo } from "@/components/VeeneroLogo";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,40 +24,14 @@ export const Navbar = () => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Determine if current page has a dark hero section where unscrolled navbar sits on top
-  const isDarkHeroPage =
-    location.pathname === "/about" ||
-    location.pathname === "/" ||
-    location.pathname === "/approach" ||
-    location.pathname === "/solutions" ||
-    location.pathname === "/impact" ||
-    location.pathname === "/careers" ||
-    location.pathname === "/blog" ||
-    location.pathname === "/contact" ||
-    location.pathname.startsWith("/solutions/") ||
-    location.pathname === "";
-
-  const isTransparentOverDark = !isScrolled && isDarkHeroPage;
-
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ease-out select-none ${
-        isScrolled
-          ? "bg-white/95 dark:bg-[#021316]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-teal-900/30 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] py-3"
-          : isTransparentOverDark
-          ? "bg-gradient-to-b from-slate-950/80 via-slate-950/40 to-transparent py-5"
-          : "bg-transparent py-5"
-      }`}
-    >
+    <nav className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ease-out select-none bg-white/95 dark:bg-[#021316]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-teal-900/30 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] py-3">
       <div className="container mx-auto px-6 md:px-12 max-w-7xl flex items-center justify-between">
-        {/* Brand Logo */}
+        {/* Brand Logo - Exact authentic logo identical to sticky navbar */}
         <Link to="/" className="flex items-center group select-none" aria-label="Veenero Home">
-          <img
-            src={veeneroLogo}
-            alt="Veenero Sustainable Solutions"
-            className={`h-9 w-auto object-contain transition-all duration-300 group-hover:opacity-85 ${
-              isTransparentOverDark ? "brightness-0 invert drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" : ""
-            }`}
+          <VeeneroLogo
+            variant="default"
+            className="h-9 w-auto object-contain transition-all duration-300 group-hover:opacity-85"
             loading="eager"
           />
         </Link>
@@ -70,14 +44,10 @@ export const Navbar = () => {
               <Link
                 key={link.href}
                 to={link.href}
-                className={`text-sm font-medium transition-all duration-200 relative py-1 px-0.5 group inline-flex flex-col items-center ${
-                  isTransparentOverDark
-                    ? isActive
-                      ? "text-teal-300 font-bold"
-                      : "text-slate-100/90 hover:text-white"
-                    : isActive
+                className={`text-sm transition-all duration-200 relative py-1 px-0.5 group inline-flex flex-col items-center ${
+                  isActive
                     ? "text-teal-700 dark:text-teal-400 font-semibold"
-                    : "text-foreground/80 hover:text-foreground hover:text-teal-700 dark:hover:text-teal-300"
+                    : "text-foreground/80 hover:text-foreground hover:text-teal-700 dark:hover:text-teal-300 font-medium"
                 }`}
               >
                 <span className="transition-transform duration-200 group-hover:-translate-y-[1px]">
@@ -85,11 +55,7 @@ export const Navbar = () => {
                 </span>
                 <span
                   className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full transition-all duration-300 ease-out ${
-                    isTransparentOverDark
-                      ? isActive
-                        ? "w-full bg-teal-400"
-                        : "w-0 bg-teal-400 group-hover:w-full"
-                      : isActive
+                    isActive
                       ? "w-full bg-teal-600 dark:bg-teal-400"
                       : "w-0 bg-teal-600 dark:bg-teal-400 group-hover:w-full"
                   }`}
@@ -103,11 +69,7 @@ export const Navbar = () => {
         <div className="hidden lg:flex items-center gap-3">
           <Link
             to="/contact"
-            className={`group/cta px-5 py-2.5 text-xs sm:text-sm font-extrabold tracking-wide rounded-xl text-white shadow-soft hover:shadow-glow hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 flex items-center gap-2 select-none ${
-              isTransparentOverDark
-                ? "bg-teal-600 hover:bg-teal-500"
-                : "bg-teal-700 hover:bg-teal-800"
-            }`}
+            className="group/cta px-5 py-2.5 text-xs sm:text-sm font-extrabold tracking-wide rounded-xl text-white shadow-soft hover:shadow-glow hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 flex items-center gap-2 select-none bg-teal-700 hover:bg-teal-800"
           >
             <span>Get in Touch</span>
             <ArrowRight className="h-4 w-4 stroke-[2.5] transition-transform duration-200 group-hover/cta:translate-x-0.5" />
@@ -117,11 +79,7 @@ export const Navbar = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className={`lg:hidden p-2.5 rounded-xl transition-all duration-200 shadow-xs ${
-            isTransparentOverDark
-              ? "bg-white/10 border border-white/20 text-white hover:bg-white/20"
-              : "bg-card border border-border/60 text-foreground hover:text-teal-600 hover:border-teal-500/30"
-          }`}
+          className="lg:hidden p-2.5 rounded-xl transition-all duration-200 shadow-xs bg-card border border-border/60 text-foreground hover:text-teal-600 hover:border-teal-500/30"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

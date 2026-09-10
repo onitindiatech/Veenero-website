@@ -14,6 +14,7 @@ import healthRouter from './routes/health.routes';
 import cmsPageRouter from './routes/cmsPage.routes';
 import authRouter from './routes/auth.routes';
 import { publicRouter as publicCareerRouter, adminRouter as adminCareerRouter } from './routes/career.routes';
+import { publicApplicationRouter, adminApplicationRouter } from './routes/application.routes';
 import { publicBlogRouter, adminBlogRouter } from './routes/blog.routes';
 import { adminMediaRouter, publicMediaRouter } from './routes/media.routes';
 
@@ -78,6 +79,9 @@ app.use(`${API_PREFIX}/cms/pages`, cmsPageRouter);
 app.use(`${API_PREFIX}/auth`, authRouter);
 app.use(`${API_PREFIX}/careers`, publicCareerRouter);
 app.use(`${API_PREFIX}/admin/careers`, adminCareerRouter);
+app.use(`${API_PREFIX}/applications`, publicApplicationRouter);
+app.use(`${API_PREFIX}/admin/applications`, adminApplicationRouter);
+app.use(`${API_PREFIX}/admin/job-applications`, adminApplicationRouter);
 app.use(`${API_PREFIX}/blog`, publicBlogRouter);
 app.use(`${API_PREFIX}/admin/blog`, adminBlogRouter);
 app.use(`${API_PREFIX}/home`, publicHomeRouter);
@@ -123,6 +127,16 @@ const startServer = async (): Promise<void> => {
     if (config.isDev) {
       logger.warn(`[MongoDB] Error: ${(dbError as Error).message}`);
     }
+    const retryTimer = setInterval(async () => {
+      try {
+        await connectDatabase();
+        await seedDatabase();
+        logger.success('[MongoDB] Reconnected and database seeded successfully.');
+        clearInterval(retryTimer);
+      } catch (err: any) {
+        logger.warn(`[MongoDB] Background reconnection attempt: ${err.message}`);
+      }
+    }, 5000);
   }
 
   // ── Reset Rate Limiter Store on Startup ───────────────────────────────────

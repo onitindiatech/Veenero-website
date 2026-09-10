@@ -4,8 +4,21 @@ import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
 
-export const CareersCTA: React.FC = () => {
+export interface CareersCTAProps {
+  data?: {
+    visible?: boolean;
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    buttonText?: string;
+    email?: string;
+  };
+}
+
+export const CareersCTA: React.FC<CareersCTAProps> = ({ data }) => {
   useScrollReveal([]);
+
+  if (data?.visible === false) return null;
 
   const scrollToPositions = () => {
     const el = document.getElementById("open-positions");
@@ -14,11 +27,13 @@ export const CareersCTA: React.FC = () => {
     }
   };
 
-  const eyebrow = "JOIN THE VEENERO MISSION";
-  const title = "Ready to Build";
-  const highlightedText = "What Truly Matters?";
+  const eyebrow = data?.eyebrow || "JOIN THE VEENERO MISSION";
+  const title = data?.title || "Ready to Build";
+  const highlightedText = data?.title ? "" : "What Truly Matters?";
   const description =
+    data?.description ||
     "Whether you build low-power IoT circuits, scale distributed streaming backends, or drive enterprise sustainability partnerships—there is a place for you at Veenero.";
+  const buttonText = data?.buttonText || "Explore Open Positions";
 
   return (
     <section
@@ -80,7 +95,7 @@ export const CareersCTA: React.FC = () => {
                 onClick={scrollToPositions}
                 className="px-7 py-3.5 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-full font-bold shadow-md hover:shadow-lg transition-all duration-200 text-sm flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>Explore Open Positions</span>
+                <span>{buttonText}</span>
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
 

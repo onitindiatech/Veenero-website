@@ -83,71 +83,77 @@ export interface AboutContent {
 export const aboutContent: AboutContent = {
   hero: {
     eyebrow: "ABOUT VEENERO",
-    title: "Building India's Water Intelligence Network",
+    title: "Veenero Sustainable Solutions Pvt Ltd",
     description:
-      "We are the digital infrastructure layer for water management—creating Water Visibility, Water Accountability, and Water Verification through real-time telemetry and advanced analytics.",
+      "Water is at the core of sustainable development, climate adaptation, and human survival. We engineer conservative devices and intelligent software to enforce water management, reduce waste, and ensure water security.",
     primaryCtaText: "Our Story",
-    secondaryCtaText: "Core Values",
+    secondaryCtaText: "Our Goals",
   },
   ourStory: {
     eyebrow: "OUR STORY & ORIGIN",
-    title: "From Water Blindspots to Real-Time Intelligence",
+    title: "From Village Roots to Water Security",
     paragraphs: [
-      "Veenero was founded with a singular conviction: organizations cannot manage or preserve what they cannot measure. Across municipal systems, industrial plants, and commercial facilities, billions of litres of water move unmonitored every single day.",
-      "Traditional approaches relied on static hardware or isolated leak detectors. Veenero is fundamentally different—we build the future digital infrastructure layer for water management.",
-      "By unifying rugged edge sensors, cloud telemetry, and AI-driven anomaly signals into a shared water data platform, we empower enterprise leaders and utilities to make every litre visible, accountable, and verifiable.",
+      "Water is at the core of sustainable development and is critical for socio-economic development, energy and food production, healthy ecosystems and for human survival itself. Water is also at the heart of adaptation to climate change, serving as the crucial link between society and the environment.",
+      "We are from a village background, and we have seen precisely how many liters of water are wasted every day as a result of leaks in overhead tanks, pipelines, and taps. After conducting a thorough analysis of the issue, we discovered that there are no appropriate water management systems or water usage rules.",
+      "We began working on water management and conservation after conducting an extensive study on the use and distribution of water across multiple sectors. Our primary goals are to enforce appropriate water management, reduce water waste, and ensure future water security.",
     ],
     stats: [
-      { value: "24/7", label: "Real-Time Monitoring Coverage" },
-      { value: "Multi-site", label: "Benchmarking & Anomaly Alerts" },
-      { value: "Audit-ready", label: "Verification-First Reporting" },
-      { value: "Pan-India", label: "Scalable Infrastructure" },
+      { value: "49B L", label: "Daily Water Wasted in India (Neerain)" },
+      { value: "30%", label: "Global Supply Lost to Leaks (Gitnux)" },
+      { value: "600M", label: "People Facing Water Crisis" },
+      { value: "297k", label: "Annual Child Diarrheal Deaths (WHO/UNICEF)" },
     ],
     image: "", // Resolved dynamically to defaultHeroImage in component
   },
   visionMission: {
     eyebrow: "PURPOSE & DIRECTION",
-    title: "Shaping a Water-Secure Future",
+    title: "A Disciplined Approach to Conservation",
     vision: {
       title: "Our Vision",
       description:
-        "A world where zero water goes unmeasured, unaccounted, or wasted. We envision sustainable, resilient ecosystems powered by universal water visibility and real-time intelligence.",
+        "A water-secure world where zero water is lost to unaddressed leaks, driven by appropriate water management systems and proactive conservation rules.",
     },
     mission: {
       title: "Our Mission",
       description:
-        "To deliver India's most reliable and scalable telemetry infrastructure and water data platform, empowering organizations, utilities, and communities to secure their water future.",
+        "To deliver effective water conservative devices (Aqua Saver) and software solutions that analyze usage, stop leakages, and protect precious water resources across societies and government sectors.",
     },
   },
   values: {
     eyebrow: "CORE PRINCIPLES",
     title: "The Pillars of Veenero",
     description:
-      "Our engineering, culture, and products are rooted in rigorous water accountability and sustainable impact.",
+      "Our engineering and software solutions are rooted in rigorous water management and verifiable conservation.",
     list: [
       {
-        title: "Water Intelligence",
+        title: "Appropriate Management",
         description:
-          "Turning fragmented telemetry data into predictive insights, benchmarking, and actionable governance.",
+          "Enforcing structured rules and systematic oversight over water distribution networks.",
         icon: "Cpu",
       },
       {
-        title: "Water Visibility",
+        title: "Waste Reduction",
         description:
-          "Making every single litre measurable across assets, operations, and networks with zero blindspots.",
+          "Systematic detection and prompt resolution of tap, pipe, seepage, and tank leaks.",
         icon: "Eye",
       },
       {
-        title: "Water Accountability",
+        title: "Water Security",
         description:
-          "Verification-ready data trails that support transparent ESG reporting and measurable conservation.",
+          "Safeguarding water access for communities, societies, and public administration.",
         icon: "ShieldCheck",
       },
       {
-        title: "Resilient Engineering",
+        title: "Hardware & Software",
         description:
-          "Rugged edge hardware and cloud architectures designed to perform reliably in demanding environments.",
+          "Combining Aqua Saver device hardware with digital monitoring informatics.",
         icon: "Activity",
+      },
+      {
+        title: "Community Collaboration",
+        description:
+          "Partnering with local societies, government bodies, and communities to protect every drop.",
+        icon: "Users",
       },
     ],
   },
@@ -155,18 +161,18 @@ export const aboutContent: AboutContent = {
     eyebrow: "WHY CHOOSE VEENERO",
     title: "What Sets Veenero Apart",
     description:
-      "We do not provide single-point devices or surface-level charts. We deliver a complete digital infrastructure layer for enterprise water management.",
+      "While others focus on water treatment, Veenero targets the root cause of systemic loss: physical leakages and unmanaged distribution.",
     list: [
       {
-        title: "End-to-End Infrastructure",
+        title: "Focused on Leakage Resolution",
         description:
-          "From edge telemetry sensors and gateway hardware to cloud intelligence and executive dashboards.",
+          "Targeting tap leaks, seepage, pipe bursts, and overhead tank overflows directly.",
         icon: "Layers",
       },
       {
-        title: "Real-Time Actionability",
+        title: "Unique Manufacturing Methods",
         description:
-          "Instant anomaly detection and threshold triggers so teams can intervene before losses compound.",
+          "Innovative technology and conservation mechanisms utilized in Aqua Saver manufacturing.",
         icon: "Zap",
       },
       {

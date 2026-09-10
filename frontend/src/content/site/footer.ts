@@ -2,33 +2,33 @@ import { HomeFooter } from "@/services/home.service";
 
 // Foundation: Static Footer Content
 export const footerContent: HomeFooter = {
-  description: "Building India’s Water Intelligence Network—making every litre visible through a real-time water data platform.",
-  address: "H-no 3-294/1/A/1 Tailors Colony Adilabad 504001",
+  description: "Veenero Sustainable Solutions Pvt Ltd provides water conservative devices and software to eliminate water waste and ensure future water security.",
+  address: "H-no 3-294/1/A/1 Tailors Colony Adilabad 504001, Telangana, India",
   mobile: "9346517202",
   links: {
     solutions: [
-      { label: "Veenero Sense", href: "/#solutions" },
-      { label: "Veenero Intelligence", href: "/#solutions" },
-      { label: "Veenero Insights", href: "/#solutions" },
-      { label: "Water Verification", href: "/#solutions" },
+      { label: "Aqua Saver", href: "/solutions/aqua-saver" },
+      { label: "Water Quality Assessment", href: "/solutions/water-quality-assessment" },
+      { label: "Water Pumping Automation", href: "/solutions/water-pumping-automation" },
+      { label: "Water Tracking & Informatics", href: "/solutions/water-tracking-informatics" },
+      { label: "Leak Identification & Reporting", href: "/solutions/leak-identification" },
     ],
     company: [
-      { label: "About Veenero", href: "/#about" },
-      { label: "How the Platform Works", href: "/#approach" },
-      { label: "Benefits & Outcomes", href: "/#impact" },
-      { label: "Careers", href: "/careers" },
+      { label: "About Veenero", href: "/about" },
+      { label: "Water Conservation Solutions", href: "/solutions" },
+      { label: "Impact & Verification", href: "/impact" },
+      { label: "Contact Us", href: "/contact" },
     ],
     resources: [
-      { label: "Case Studies", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "White Papers", href: "#" },
-      { label: "FAQ", href: "#" },
+      { label: "Blog & Insights", href: "/blog" },
+      { label: "Contact Support", href: "/contact" },
+      { label: "Official Portal", href: "https://www.veenerosolutions.com" },
     ],
   },
   socialLinks: [
     { iconName: "Linkedin", href: "#", label: "LinkedIn" },
     { iconName: "Twitter", href: "#", label: "Twitter" },
     { iconName: "Youtube", href: "#", label: "YouTube" },
-    { iconName: "Mail", href: "udaygedam@veenerosolutions.com", label: "Email" },
+    { iconName: "Mail", href: "info@veenerosolutions.com", label: "Email" },
   ]
 };
