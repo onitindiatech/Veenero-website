@@ -1,12 +1,8 @@
 import React from "react";
 import {
   ShieldCheck,
-  FileCheck2,
-  Cpu,
-  Lock,
   ArrowRight,
   Leaf,
-  CheckCircle2,
 } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { Link } from "react-router-dom";
@@ -15,41 +11,6 @@ import defaultGovImage from "@/assets/about/about-infrastructure-sensor.webp";
 interface ApproachGovernanceProps {
   data?: any;
 }
-
-const iconMap: Record<string, any> = {
-  ShieldCheck,
-  FileCheck2,
-  Cpu,
-  Lock,
-  CheckCircle2,
-};
-
-const defaultCards = [
-  {
-    icon: "ShieldCheck",
-    title: "Tamper-Evident Data Integrity",
-    description: "Cryptographic signing of field sensor packets ensuring zero data manipulation from edge to dashboard.",
-    tag: "AES-256",
-  },
-  {
-    icon: "FileCheck2",
-    title: "Regulatory Compliance Ready",
-    description: "Automated compliance reporting structured for regional water boards and environmental auditing standards.",
-    tag: "ISO Aligned",
-  },
-  {
-    icon: "Cpu",
-    title: "Edge-Resilient Telemetry",
-    description: "Local storage caching during network outages with automated delta backfill upon link restoration.",
-    tag: "99.9% Uptime",
-  },
-  {
-    icon: "Lock",
-    title: "Enterprise Access Control",
-    description: "Role-based permissions (RBAC), multi-factor authentication, and partitioned multi-tenant architecture.",
-    tag: "SOC 2 Ready",
-  },
-];
 
 export const ApproachGovernance: React.FC<ApproachGovernanceProps> = ({ data }) => {
   useScrollReveal([]);
@@ -68,8 +29,6 @@ export const ApproachGovernance: React.FC<ApproachGovernanceProps> = ({ data }) 
   const img = data?.image || defaultGovImage;
   const ctaText = data?.ctaText || "Explore Platform Security";
   const ctaLink = data?.ctaLink || "/solutions";
-
-  const cards = data?.cards && data.cards.length > 0 ? data.cards : defaultCards;
 
   return (
     <section
@@ -145,50 +104,6 @@ export const ApproachGovernance: React.FC<ApproachGovernanceProps> = ({ data }) 
               </div>
             </div>
           </div>
-        </div>
-
-        {/* 4 Feature/Pillar Cards in Balanced Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {cards.map((card: any, i: number) => {
-            const Icon = iconMap[card.icon] || ShieldCheck;
-            const stagger =
-              i === 0
-                ? ""
-                : i === 1
-                ? "reveal-delay-100"
-                : i === 2
-                ? "reveal-delay-200"
-                : "reveal-delay-300";
-
-            return (
-              <div
-                key={card.title || i}
-                className={`group bg-[#f8fafb] dark:bg-[#0c1f26] rounded-2xl p-6 border border-slate-200/80 dark:border-teal-900/35 hover:border-teal-500/40 shadow-xs hover:shadow-[0_16px_32px_-8px_rgba(19,104,115,0.12)] hover:-translate-y-1.5 transition-all duration-300 font-sans flex flex-col justify-between reveal-on-scroll ${stagger}`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/25 flex items-center justify-center text-teal-700 dark:text-teal-400 shrink-0">
-                      <Icon className="w-5 h-5" strokeWidth={1.8} />
-                    </div>
-                    {card.tag && (
-                      <span className="px-2.5 py-0.5 rounded-full bg-teal-600/10 dark:bg-teal-400/10 border border-teal-600/20 dark:border-teal-400/20 text-teal-700 dark:text-teal-300 font-mono text-[10px] font-bold">
-                        {card.tag}
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="font-display text-base font-bold text-slate-900 dark:text-white leading-snug mb-1.5">
-                    {card.title}
-                  </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    {card.description}
-                  </p>
-                </div>
-
-                <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mt-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-            );
-          })}
         </div>
       </div>
     </section>

@@ -85,13 +85,6 @@ export const CareersHero: React.FC<CareersHeroProps> = ({ data, jobCount = 6 }) 
               <span>Explore Opportunities ({jobCount})</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-
-            <button
-              onClick={() => scrollToSection("selection-process")}
-              className="px-6 py-2.5 sm:py-3 rounded-full bg-white/70 hover:bg-white text-slate-900 border border-slate-300/80 dark:bg-slate-900/60 dark:hover:bg-slate-900/90 dark:text-white dark:border-white/20 font-semibold text-xs sm:text-sm transition-all duration-200 cursor-pointer shadow-xs"
-            >
-              <span>Hiring Process</span>
-            </button>
           </div>
 
         </div>

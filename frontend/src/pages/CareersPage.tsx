@@ -4,7 +4,6 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CareersHero } from "@/components/careers/CareersHero";
-import { HiringProcess } from "@/components/careers/HiringProcess";
 import { JobFilters } from "@/components/careers/JobFilters";
 import { JobList } from "@/components/careers/JobList";
 import { CareersCTA } from "@/components/careers/CareersCTA";
@@ -189,10 +188,7 @@ export const CareersPage: React.FC = () => {
           </div>
         </section>
 
-        {/* 3. HIRING PROCESS — Animated Step Timeline */}
-        <HiringProcess data={pageSettings?.hiringProcess} />
-
-        {/* 4. CAREER CTA — Dark Aquatic Final Call to Action */}
+        {/* 3. CAREER CTA — Dark Aquatic Final Call to Action */}
         <CareersCTA data={pageSettings?.cta} />
 
       </main>

@@ -207,10 +207,10 @@ export const HiringProcess: React.FC<HiringProcessProps> = ({ data }) => {
                       {/* Step indicator footer */}
                       <div className="pt-4 border-t border-border/20 flex items-center justify-between">
                         <span className="text-[10px] font-bold text-muted-foreground font-mono tracking-widest">
-                          {idx + 1} of {steps.length}
+                          {idx + 1} of {displaySteps.length}
                         </span>
                         <div className="flex gap-1">
-                          {steps.map((_, i) => (
+                          {displaySteps.map((_, i) => (
                             <div
                               key={i}
                               className={`h-1 rounded-full transition-all duration-300 ${

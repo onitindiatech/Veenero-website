@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ContactPageContent } from "@/content/contact";
 import {
-  MapPin,
   Phone,
   Mail,
   Send,
@@ -10,7 +9,6 @@ import {
   Building2,
   Landmark,
   Droplets,
-  Handshake,
   ArrowRight,
   Leaf,
   ExternalLink,
@@ -19,46 +17,10 @@ import {
 import { submitContactInquiry } from "@/services/contact.service";
 
 interface ContactFormSectionProps {
-  contactInfo: ContactPageContent["contactInfo"];
-  demoCard: ContactPageContent["demoCard"];
+  contactInfo?: ContactPageContent["contactInfo"];
+  demoCard?: ContactPageContent["demoCard"];
   form: ContactPageContent["form"];
 }
-
-// 4 Top Contact Option Cards
-const contactOptionCards = [
-  {
-    icon: Phone,
-    label: "Call Us",
-    sublabel: "Mon–Fri, 9:00 AM – 6:00 PM",
-    detail: "+91 98765 43210",
-    href: "tel:+919876543210",
-    arrowLabel: "Call now",
-  },
-  {
-    icon: Mail,
-    label: "Email Us",
-    sublabel: "We reply within 24 hours",
-    detail: "hello@veenero.com",
-    href: "mailto:hello@veenero.com",
-    arrowLabel: "Send email",
-  },
-  {
-    icon: MapPin,
-    label: "Visit Our Office",
-    sublabel: "Contact us for directions",
-    detail: "New Delhi, India",
-    href: "#office-map",
-    arrowLabel: "Get directions",
-  },
-  {
-    icon: Handshake,
-    label: "Partner With Us",
-    sublabel: "For integrations & collaborations",
-    detail: "partnerships@veenero.com",
-    href: "mailto:partnerships@veenero.com",
-    arrowLabel: "Reach out",
-  },
-];
 
 // Focus area options matching intent cards
 const focusAreas = [
@@ -84,9 +46,6 @@ export const ContactFormSection: React.FC<ContactFormSectionProps> = ({
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Card reveal state
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [visibleCards, setVisibleCards] = useState<boolean[]>(Array(4).fill(false));
   const sectionRef = useRef<HTMLElement>(null);
   const [sectionVisible, setSectionVisible] = useState(false);
 
@@ -98,24 +57,7 @@ export const ContactFormSection: React.FC<ContactFormSectionProps> = ({
     );
     if (sectionRef.current) secObs.observe(sectionRef.current);
 
-    // Card staggered reveal
-    const cardObs: IntersectionObserver[] = [];
-    cardRefs.current.forEach((el, idx) => {
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => setVisibleCards((prev) => { const n = [...prev]; n[idx] = true; return n; }), idx * 100);
-            obs.disconnect();
-          }
-        },
-        { threshold: 0.15 }
-      );
-      obs.observe(el);
-      cardObs.push(obs);
-    });
-
-    return () => { secObs.disconnect(); cardObs.forEach((o) => o.disconnect()); };
+    return () => { secObs.disconnect(); };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -154,106 +96,7 @@ export const ContactFormSection: React.FC<ContactFormSectionProps> = ({
       ref={sectionRef}
       className="relative z-20 select-none bg-white dark:bg-background border-b border-slate-200/60 dark:border-teal-900/20"
     >
-
-      {/* ── SECTION 1: Contact Option Cards ("Get in Touch") ── */}
-      <div
-        id="contact-details"
-        className="bg-gradient-wave dark:bg-slate-900/30 border-b border-slate-200/60 dark:border-teal-900/20 py-14 sm:py-18 lg:py-20 relative overflow-hidden"
-      >
-        <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10">
-
-          {/* Section Header: Eyebrow + Large H1 + H2-style Subheading */}
-          <div className="max-w-4xl text-left font-sans mb-10 sm:mb-12">
-            {/* Monospace Eyebrow with decorative teal bar */}
-            <div className="mb-3">
-              <span className="text-teal-700 dark:text-teal-400 font-bold uppercase tracking-widest text-xs font-mono block mb-1.5">
-                GET IN TOUCH
-              </span>
-              <div className="w-12 h-0.5 bg-teal-600 rounded-full" />
-            </div>
-
-            {/* Prominent Serif H1 Headline matching Veenero typography */}
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-bold text-slate-950 dark:text-white leading-[1.16] tracking-tight mb-4">
-              Connect with Our{" "}
-              <span className="text-[#136873] dark:text-teal-400">
-                Water Intelligence Team.
-              </span>
-            </h1>
-
-            {/* H2-style Subheading / Supporting Description */}
-            <p className="text-base sm:text-lg lg:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
-              {contactInfo?.description ||
-                "Reach out directly to our engineering and sustainability team for technical consultations, pilots, or partnerships."}
-            </p>
-          </div>
-
-          {/* 4 Contact Cards Grid — Responsive 4-col (desktop) / 2-col (tablet) / 1-col (mobile) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-            {contactOptionCards.map((card, idx) => {
-              const Icon = card.icon;
-              const isVisible = visibleCards[idx];
-              return (
-                <div
-                  key={idx}
-                  ref={(el) => { cardRefs.current[idx] = el; }}
-                  className="h-full"
-                  style={{
-                    opacity: isVisible ? 1 : 0,
-                    transform: isVisible ? "translateY(0)" : "translateY(24px)",
-                    transition: "opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
-                  }}
-                >
-                  <a
-                    href={card.href}
-                    className="group relative flex flex-col justify-between h-full bg-white dark:bg-card/90 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-teal-900/30 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] hover:shadow-[0_14px_36px_-6px_rgba(19,104,115,0.18)] hover:border-teal-500/50 dark:hover:border-teal-400/40 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden font-sans select-none"
-                  >
-                    {/* Top accent gradient indicator on hover */}
-                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                    {/* Subtle soft ambient glow inside card on hover */}
-                    <div className="absolute -top-16 -right-16 w-36 h-36 bg-teal-500/[0.04] rounded-full blur-2xl pointer-events-none group-hover:bg-teal-500/[0.08] transition-colors duration-300" />
-
-                    {/* Card Content Top Area */}
-                    <div className="relative z-10">
-                      {/* Icon Pill */}
-                      <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200/70 dark:border-teal-800/40 flex items-center justify-center text-teal-700 dark:text-teal-300 mb-5 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-600 hover-ripple-subtle transition-all duration-300 shadow-xs">
-                        <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                      </div>
-
-                      {/* Small Monospace Label */}
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono block mb-1.5">
-                        {card.label}
-                      </span>
-
-                      {/* Sublabel / Operational info */}
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-3.5">
-                        {card.sublabel}
-                      </p>
-
-                      {/* Primary Contact Detail */}
-                      <p className="text-sm sm:text-[0.95rem] xl:text-base font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors leading-snug break-words">
-                        {card.detail}
-                      </p>
-                    </div>
-
-                    {/* Bottom CTA Action Bar */}
-                    <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 dark:border-border/40 flex items-center justify-between">
-                      <span className="text-xs font-bold text-teal-700 dark:text-teal-400 group-hover:text-teal-800 dark:group-hover:text-teal-300 transition-colors">
-                        {card.arrowLabel}
-                      </span>
-                      <div className="w-6 h-6 rounded-full bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center text-teal-700 dark:text-teal-400 group-hover:bg-teal-600 group-hover:text-white arrow-shift group-hover:translate-x-1 transition-all duration-300">
-                        <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* ── SECTION 2: Main Contact Form + Office ── */}
+      {/* ── Main Contact Form + Office ── */}
       <div className="py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-6 md:px-12 max-w-7xl">
           <div

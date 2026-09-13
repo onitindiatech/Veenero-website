@@ -6,9 +6,7 @@ import { OurStory } from "@/components/about/OurStory";
 import { AboutImpactStats } from "@/components/about/AboutImpactStats";
 import { VisionMission } from "@/components/about/VisionMission";
 import { OurValues } from "@/components/about/OurValues";
-import { WhyVeenero } from "@/components/about/WhyVeenero";
 import { Leadership } from "@/components/about/Leadership";
-import { AboutTimeline } from "@/components/about/AboutTimeline";
 import { AboutCTA } from "@/components/about/AboutCTA";
 import { getPublicAboutContent, PublicAboutData } from "@/services/about.service";
 import { getAssetBySlot, PublicMediaAsset } from "@/services/media.service";
@@ -92,15 +90,7 @@ export const AboutUsPage: React.FC = () => {
         {/* 5. PURPOSE & DIRECTION (VISION & MISSION) */}
         <VisionMission data={aboutData?.purposeDirection} />
 
-        {/* 6. WHY VEENERO */}
-        <WhyVeenero data={aboutData?.whyChoose} />
-
-        {/* 7. OUR JOURNEY & MILESTONES */}
-        {aboutData?.ourJourney?.visible !== false && (
-          <AboutTimeline data={aboutData?.ourJourney} />
-        )}
-
-        {/* 8. LEADERSHIP & TEAM */}
+        {/* 6. LEADERSHIP & TEAM */}
         <Leadership data={aboutData?.leadership} />
 
         {/* 9. FINAL CTA */}

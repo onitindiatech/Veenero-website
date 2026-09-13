@@ -4,7 +4,6 @@ import { Footer } from "@/components/Footer";
 import { ImpactHero } from "@/components/impact/ImpactHero";
 import { ImpactOverview } from "@/components/impact/ImpactOverview";
 import { ImpactMetrics } from "@/components/impact/ImpactMetrics";
-import { RealWorldImpact } from "@/components/impact/RealWorldImpact";
 import { SustainabilitySection } from "@/components/impact/SustainabilitySection";
 import { ImpactCTA } from "@/components/impact/ImpactCTA";
 import { impactPageContent } from "@/content/impact";
@@ -73,10 +72,7 @@ export const ImpactPage: React.FC = () => {
         {/* 3. IMPACT METRICS — Quantified Performance Across 4 Core Areas */}
         <ImpactMetrics data={outcomesData} />
 
-        {/* 4. REAL-WORLD IMPACT — Infrastructure Deployments & Industry Domains */}
-        <RealWorldImpact data={ecosystemData} />
-
-        {/* 5. SUSTAINABILITY & MOTION SECTION — Long-term ESG Resilience & Looping Video */}
+        {/* 4. SUSTAINABILITY & MOTION SECTION — Long-term ESG Resilience & Looping Video */}
         <SustainabilitySection
           data={sustainabilityData}
           quote={ecosystemData.quote || impactPageContent.ecosystem.quote}

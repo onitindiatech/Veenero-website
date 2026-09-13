@@ -1,31 +1,8 @@
 import React from "react";
-import { Eye, Cpu, ShieldCheck, Leaf } from "lucide-react";
+import { Leaf } from "lucide-react";
 import overviewImage from "@/assets/about/about-industrial-water-system.webp";
 
 export const ImpactOverview: React.FC = () => {
-  const pillars = [
-    {
-      icon: Eye,
-      title: "Water Visibility",
-      desc: "Continuous sub-second telemetry across treatment nodes, trunk lines, and consumer meters.",
-    },
-    {
-      icon: Cpu,
-      title: "Operational Efficiency",
-      desc: "AI algorithms detect micro-leaks, automate pumping schedules, and optimize electrical energy.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Accountability & Verification",
-      desc: "Tamper-evident logs convert unmetered water estimates into audit-ready financial and ESG disclosures.",
-    },
-    {
-      icon: Leaf,
-      title: "Sustainable Resource Stewardship",
-      desc: "Preserves local aquifers and reservoirs to safeguard equitable community water resilience.",
-    },
-  ];
-
   return (
     <section
       id="impact-overview"
@@ -55,7 +32,7 @@ export const ImpactOverview: React.FC = () => {
             </h2>
 
             {/* Paragraphs */}
-            <div className="space-y-3.5 text-sm sm:text-base text-slate-600 dark:text-slate-300/90 leading-relaxed">
+            <div className="space-y-4 text-sm sm:text-base text-slate-600 dark:text-slate-300/90 leading-relaxed">
               <p>
                 At Veenero, impact is not an abstract corporate slogan—it is a mathematically verified reality measured litre by litre, asset by asset. For decades, water management relied on guesswork, manual logbooks, and post-billing surprises.
               </p>
@@ -63,34 +40,6 @@ export const ImpactOverview: React.FC = () => {
                 By unifying high-precision edge IoT sensors with automated hydrodynamic modeling and certified data provenance, we empower municipal utilities, heavy industries, and commercial campuses to transform unmetered losses into quantifiable cost savings and verified sustainability achievements.
               </p>
             </div>
-
-            {/* 2x2 Pillar Matrix with Equal Heights */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
-              {pillars.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-2xl bg-[#f8fcfe] dark:bg-[#071920] border border-slate-200/80 dark:border-teal-900/30 hover:border-teal-500/50 transition-all duration-300 shadow-xs flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2.5 mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-teal-600/10 dark:bg-teal-400/15 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0">
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                          {item.title}
-                        </h4>
-                      </div>
-                      <p className="text-xs text-slate-600 dark:text-slate-300/80 leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
           </div>
 
           {/* Right Column: Visual Telemetry Card with High-Res Facility Imagery */}
