@@ -6,7 +6,7 @@ import iiitDelhiImage from "@/assets/iiitdelhi_logo.jpg";
 import stpiImage from "@/assets/STPI_LOGO.png";
 import meityImage from "@/assets/Ministry_of_electronics_information_technology.png";
 import stpiNextImage from "@/assets/STPINEXT_LOGO.png";
-import iesaImage from "@/assets/iesa_logo.jpg";
+import iesaImage from "@/assets/Iesa_logo.jpg";
 import { getPublicHome, HomePartners, HomePartnerItem } from "@/services/home.service";
 import { partnersContent } from "@/content/home/partners";
 import { mergeHomeSection } from "@/utils/mergeHomeSection";
