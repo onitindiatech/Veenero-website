@@ -6,10 +6,12 @@ import defaultHeroBackground from "@/assets/solutions/solutions-hero-background.
 
 interface SolutionsHeroProps {
   data?: any;
+  /** True when CMS data is actively loading and not yet available */
+  isLoading?: boolean;
 }
 
-export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
-  useScrollReveal([]);
+export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data, isLoading = false }) => {
+  useScrollReveal([isLoading, !!data]);
   const [offsetY, setOffsetY] = useState(0);
 
   // Subtle parallax effect on scroll
@@ -29,19 +31,22 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
     }
   };
 
+  const isContentLoading = isLoading && !data;
+
   const heroBg =
     data?.image && (data.image.startsWith("http://") || data.image.startsWith("https://"))
       ? data.image
       : defaultHeroBackground;
-  const eyebrow = data?.eyebrow || "SUSTAINABLE SOLUTIONS";
-  const titlePart1 = data?.title || "Intelligent Water Infrastructure";
-  const titlePart2 = data?.highlightedText || "Built for a Better Tomorrow.";
-  const description =
-    data?.description ||
-    "Modular solutions to solve real-world water challenges with data, intelligence, and lasting impact.";
+  const eyebrow = data?.eyebrow || "VEENERO SOLUTION SUITE";
+  const titlePart1 = data?.title || "Water Conservative Devices & Software";
+  const titlePart2 = data?.highlightedText || "Aqua Saver";
+  const primaryCtaText = data?.primaryCtaText || "Request a Demo";
+  const primaryCtaLink = data?.primaryCtaLink || "#solutions-categories";
+  const secondaryCtaText = data?.secondaryCtaText || "Talk to an Expert";
+  const secondaryCtaLink = data?.secondaryCtaLink || "/contact";
 
   return (
-    <section className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[420px] lg:h-[52vh] lg:min-h-[460px] lg:max-h-[540px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30">
+    <section className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[380px] sm:min-h-[400px] lg:h-[48vh] lg:min-h-[420px] lg:max-h-[500px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30">
       {/* Background Hero Image Composition — Full width seamless water environment with uncropped droplet */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
@@ -68,79 +73,92 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data }) => {
         <div className="absolute top-1/3 right-1/3 w-4 h-4 rounded-full bg-teal-300/15 blur-sm" />
       </div>
 
-      {/* Floating Right Accents matching design mockup */}
-      <div className="hidden lg:block absolute top-20 right-10 sm:right-16 text-right pointer-events-none select-none z-10">
-        <div className="text-[10px] tracking-[0.25em] font-bold text-slate-700 dark:text-slate-200 uppercase leading-[1.4] opacity-85">
-          <span>SOLVING</span>
-          <br />
-          <span>TODAY</span>
-          <br />
-          <span>FOR A</span>
-          <br />
-          <span>BRIGHTER</span>
-          <br />
-          <span>TOMORROW</span>
-        </div>
-      </div>
-
-      <div className="hidden lg:block absolute bottom-8 right-10 sm:right-16 pointer-events-none select-none z-10">
-        <div className="px-5 py-2.5 rounded-2xl bg-white/45 dark:bg-slate-900/50 backdrop-blur-md border border-white/60 dark:border-white/15 shadow-sm">
-          <span className="text-xs font-bold tracking-wider text-slate-900 dark:text-white block uppercase leading-snug">
-            CLEANER
-            <br />
-            WATER
-            <br />
-            HEALTHIER
-            <br />
-            TOMORROWS
-          </span>
-        </div>
-      </div>
-
       {/* Content Container */}
       <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 font-sans">
-        <div className="max-w-xl lg:max-w-2xl text-left">
+        <div className="max-w-xl lg:max-w-4xl xl:max-w-5xl text-left">
 
-          {/* Eyebrow Capsule with Leaf Icon matching mockup */}
-          <div className="reveal-on-scroll inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600/10 dark:bg-teal-400/10 border border-teal-600/20 dark:border-teal-400/20 backdrop-blur-xs mb-3">
-            <Leaf className="w-3 h-3 text-teal-700 dark:text-teal-300" />
-            <span className="text-teal-800 dark:text-teal-300 font-bold uppercase tracking-widest text-[10px] sm:text-[11px] font-mono">
-              {eyebrow}
-            </span>
-          </div>
+          {isContentLoading ? (
+            <div className="space-y-4" aria-busy="true" aria-label="Loading Solutions hero">
+              {/* Eyebrow Leaf Pill Skeleton */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600/10 dark:bg-teal-400/10 border border-teal-600/20 dark:border-teal-400/20 backdrop-blur-xs mb-3 animate-pulse">
+                <Leaf className="w-3 h-3 text-teal-700/40 dark:text-teal-300/40" />
+                <span className="h-2.5 w-36 rounded-sm bg-teal-800/20 dark:bg-teal-300/20 inline-block" />
+              </div>
 
-          {/* H1 Headline — Balanced line height preventing any letter collisions */}
-          <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold leading-[1.18] tracking-tight mb-3">
-            <span className="text-slate-950 dark:text-white block">
-              {titlePart1}
-            </span>
-            <span className="text-[#136873] dark:text-teal-400 block font-bold mt-1">
-              {titlePart2}
-            </span>
-          </h1>
+              {/* H1 Headline Skeleton — Exact 2-line height matching text-2xl sm:text-3xl lg:text-[2.65rem] leading-[1.18] */}
+              <div className="mb-5 sm:mb-6 space-y-2.5 py-0.5 animate-pulse" aria-hidden="true">
+                <div className="h-7 sm:h-9 lg:h-11 w-4/5 max-w-xl rounded-md bg-slate-900/15 dark:bg-white/15" />
+                <div className="h-7 sm:h-9 lg:h-11 w-2/5 max-w-sm rounded-md bg-[#136873]/25 dark:bg-teal-400/25" />
+              </div>
 
-          {/* Supporting Description */}
-          <p className="reveal-on-scroll reveal-delay-200 text-xs sm:text-sm text-slate-700 dark:text-slate-200/90 leading-relaxed max-w-xl mb-5 font-sans">
-            {description}
-          </p>
+              {/* Action CTAs Skeleton */}
+              <div className="flex flex-wrap items-center gap-3 animate-pulse">
+                <div className="h-9 sm:h-10.5 w-36 rounded-full bg-teal-600/30 dark:bg-teal-500/30 shadow-xs" />
+                <div className="h-9 sm:h-10.5 w-32 rounded-full border border-slate-700/30 dark:border-slate-300/30 bg-white/40 dark:bg-white/5" />
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Eyebrow Capsule with Leaf Icon matching mockup */}
+              {eyebrow && (
+                <div className="reveal-on-scroll inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600/10 dark:bg-teal-400/10 border border-teal-600/20 dark:border-teal-400/20 backdrop-blur-xs mb-3">
+                  <Leaf className="w-3 h-3 text-teal-700 dark:text-teal-300" />
+                  <span className="text-teal-800 dark:text-teal-300 font-bold uppercase tracking-widest text-[10px] sm:text-[11px] font-mono">
+                    {eyebrow}
+                  </span>
+                </div>
+              )}
 
-          {/* Action CTAs */}
-          <div className="reveal-on-scroll reveal-delay-300 flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => scrollToSection("solutions-categories")}
-              className="px-6 py-2.5 sm:py-3 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
-            >
-              <span>Explore Solutions</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+              {/* H1 Headline — Balanced line height preventing any letter collisions */}
+              <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold leading-[1.18] tracking-tight mb-5 sm:mb-6">
+                <span className="text-slate-950 dark:text-white block">
+                  {titlePart1}
+                </span>
+                {titlePart2 && (
+                  <span className="text-[#136873] dark:text-teal-400 block font-bold mt-1">
+                    {titlePart2}
+                  </span>
+                )}
+              </h1>
 
-            <Link
-              to="/contact"
-              className="px-6 py-2.5 sm:py-3 rounded-full border border-slate-700/80 dark:border-slate-300/70 hover:border-slate-950 dark:hover:border-white text-slate-800 dark:text-white bg-white/40 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-xs sm:text-sm transition-all duration-200"
-            >
-              Talk to an Expert
-            </Link>
-          </div>
+              {/* Action CTAs */}
+              <div className="reveal-on-scroll reveal-delay-200 flex flex-wrap items-center gap-3">
+                {primaryCtaLink.startsWith("#") ? (
+                  <button
+                    onClick={() => scrollToSection(primaryCtaLink)}
+                    className="px-6 py-2.5 sm:py-3 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
+                  >
+                    <span>{primaryCtaText}</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                ) : (
+                  <Link
+                    to={primaryCtaLink}
+                    className="px-6 py-2.5 sm:py-3 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
+                  >
+                    <span>{primaryCtaText}</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                )}
+
+                {secondaryCtaLink.startsWith("#") ? (
+                  <button
+                    onClick={() => scrollToSection(secondaryCtaLink)}
+                    className="px-6 py-2.5 sm:py-3 rounded-full border border-slate-700/80 dark:border-slate-300/70 hover:border-slate-950 dark:hover:border-white text-slate-800 dark:text-white bg-white/40 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-xs sm:text-sm transition-all duration-200 cursor-pointer"
+                  >
+                    {secondaryCtaText}
+                  </button>
+                ) : (
+                  <Link
+                    to={secondaryCtaLink}
+                    className="px-6 py-2.5 sm:py-3 rounded-full border border-slate-700/80 dark:border-slate-300/70 hover:border-slate-950 dark:hover:border-white text-slate-800 dark:text-white bg-white/40 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-xs sm:text-sm transition-all duration-200"
+                  >
+                    {secondaryCtaText}
+                  </Link>
+                )}
+              </div>
+            </>
+          )}
 
         </div>
       </div>

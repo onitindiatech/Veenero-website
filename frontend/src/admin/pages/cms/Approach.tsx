@@ -350,20 +350,6 @@ export const ApproachCms: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Hero Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={settings.hero.description}
-                  onChange={(e) =>
-                    setSettings({ ...settings, hero: { ...settings.hero, description: e.target.value } })
-                  }
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-border rounded-lg text-xs font-medium text-slate-900 dark:text-white focus:outline-teal-500"
-                />
-              </div>
-
               {/* Background Image with Media Library picker */}
               <div className="pt-2 border-t border-border">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">

@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
-import { TechCapabilitiesTrack } from "@/components/home/TechCapabilitiesTrack";
 import { About } from "@/components/About";
 import { Solutions } from "@/components/Solutions";
 import { Approach } from "@/components/Approach";
@@ -14,7 +13,6 @@ const Index = () => {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
-      <TechCapabilitiesTrack />
       <About />
       <Solutions />
       <Approach />

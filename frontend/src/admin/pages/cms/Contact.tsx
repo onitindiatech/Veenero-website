@@ -303,26 +303,6 @@ export const ContactCms: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className={labelCls}>
-                  Description
-                  <span className="ml-1 text-[10px] text-teal-600 font-mono font-normal">
-                    → Supporting subtitle text below the hero headline
-                  </span>
-                </label>
-                <textarea
-                  rows={3}
-                  value={settings.hero.description}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      hero: { ...settings.hero, description: e.target.value },
-                    })
-                  }
-                  className={textareaCls}
-                />
-              </div>
-
               {/* Cloudinary Hero Background Media */}
               <div>
                 <label className={labelCls}>

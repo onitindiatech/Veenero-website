@@ -6,10 +6,12 @@ import { SolutionsCategories } from "@/components/solutions/SolutionsCategories"
 import { SolutionsImpact } from "@/components/solutions/SolutionsImpact";
 import { SolutionsCTA } from "@/components/solutions/SolutionsCTA";
 import { solutionsPageContent } from "@/content/solutions";
-import { getPublicSolutionsContent, PublicSolutionsData } from "@/services/solutions.service";
+import { getPublicSolutionsContent, getCachedSolutionsContent, PublicSolutionsData } from "@/services/solutions.service";
 
 export const SolutionsPage: React.FC = () => {
-  const [cmsData, setCmsData] = useState<PublicSolutionsData | null>(null);
+  const cached = getCachedSolutionsContent();
+  const [cmsData, setCmsData] = useState<PublicSolutionsData | null>(() => cached);
+  const [isLoading, setIsLoading] = useState<boolean>(() => !cached);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -17,6 +19,7 @@ export const SolutionsPage: React.FC = () => {
     getPublicSolutionsContent()
       .then((data) => {
         setCmsData(data);
+        setIsLoading(false);
         if (data.seo?.metaTitle) {
           document.title = data.seo.metaTitle;
         }
@@ -27,17 +30,19 @@ export const SolutionsPage: React.FC = () => {
       })
       .catch((err) => {
         console.warn("Using fallback solutions content:", err);
+        setIsLoading(false);
       });
   }, []);
 
-  // Safe fallbacks to static content for zero delay/flicker
-  const heroData = cmsData?.hero || solutionsPageContent.hero;
-  const introData = cmsData?.intro || solutionsPageContent.architecture;
+  if (cached?.seo?.metaTitle) {
+    document.title = cached.seo.metaTitle;
+  } else {
+    document.title = "Solutions | Veenero - Sustainable Water Infrastructure";
+  }
+
   const categoriesList = cmsData?.categories || [];
   const solutionsList = cmsData?.solutions || [];
   const gridHeader = cmsData?.gridHeader;
-  const featuredData = cmsData?.featuredSolution;
-  const ctaData = cmsData?.cta || solutionsPageContent.cta;
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans relative overflow-x-hidden">
@@ -49,7 +54,7 @@ export const SolutionsPage: React.FC = () => {
       <main className="flex-1">
 
         {/* 1. HERO — Compact 50-55vh Sustainable Solutions with light blue water background */}
-        <SolutionsHero data={heroData} />
+        <SolutionsHero data={cmsData?.hero} isLoading={isLoading} />
 
         {/* 2. SOLUTIONS CATEGORIES — 5-column grid with subtle 01-05 badges */}
         <SolutionsCategories
@@ -63,7 +68,7 @@ export const SolutionsPage: React.FC = () => {
         <SolutionsImpact />
 
         {/* 4. FINAL CTA — Water circularity & Earth splash banner */}
-        <SolutionsCTA data={ctaData} />
+        <SolutionsCTA data={cmsData?.cta} />
 
       </main>
 

@@ -174,10 +174,6 @@ const BlogSettingsPage: React.FC = () => {
             <input value={settings.hero.title} onChange={(e) => setHero('title', e.target.value)} className={inputCls} placeholder="Water Intelligence & Innovation" />
           </div>
           <div className="col-span-2">
-            <label className={labelCls}>Hero Description</label>
-            <textarea value={settings.hero.description} onChange={(e) => setHero('description', e.target.value)} className={`${inputCls} resize-none`} rows={2} placeholder="Short description for the hero section..." />
-          </div>
-          <div className="col-span-2">
             <label className={labelCls}>Hero Image URL</label>
             <input value={settings.hero.image} onChange={(e) => setHero('image', e.target.value)} className={inputCls} placeholder="https://..." />
             {settings.hero.image && (

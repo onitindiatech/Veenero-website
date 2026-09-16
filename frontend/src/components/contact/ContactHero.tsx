@@ -18,7 +18,7 @@ export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
   return (
     <section
       id="contact-hero"
-      className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[420px] lg:h-[52vh] lg:min-h-[460px] lg:max-h-[560px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30"
+      className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[380px] sm:min-h-[400px] lg:h-[48vh] lg:min-h-[420px] lg:max-h-[500px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30"
     >
       {/* Full-width Cinematic Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -56,21 +56,15 @@ export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
           </div>
 
           {/* H1 Headline — Playfair Display */}
-          <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold text-slate-950 dark:text-white leading-[1.18] mb-3 tracking-tight">
+          <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold text-slate-950 dark:text-white leading-[1.18] mb-5 sm:mb-6 tracking-tight">
             <span className="block">Let's Build Better</span>
             <span className="text-[#136873] dark:text-teal-400 font-bold block mt-1">
               Water Systems Together.
             </span>
           </h1>
 
-          {/* Supporting Description */}
-          <p className="reveal-on-scroll reveal-delay-200 text-xs sm:text-sm text-slate-700 dark:text-slate-200/90 leading-relaxed max-w-xl mb-5 font-sans">
-            {data?.description ||
-              "Whether you are an enterprise seeking multi-site water visibility, a municipal utility modernizing telemetry, or an organization preparing audit-ready ESG disclosures — our engineering team is ready to connect."}
-          </p>
-
           {/* Action CTAs — Rounded Pill Buttons */}
-          <div className="reveal-on-scroll reveal-delay-300 flex flex-wrap items-center gap-3 pt-1">
+          <div className="reveal-on-scroll reveal-delay-200 flex flex-wrap items-center gap-3 pt-1">
             <button
               onClick={() => scrollToSection("inquiry-form")}
               className="px-6 py-2.5 sm:py-3 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"

@@ -69,11 +69,11 @@ export interface SolutionsContent {
 export const solutionsPageContent: SolutionsContent = {
   hero: {
     eyebrow: "VEENERO SOLUTION SUITE",
-    title: "Intelligent Water Infrastructure for Enterprise & Cities",
+    title: "Water Conservative Devices & Software",
     description:
-      "A complete digital infrastructure layer for water management—unifying rugged edge telemetry, real-time cloud analytics, and verification-ready governance into one seamless platform.",
-    primaryCtaText: "Explore Solutions",
-    secondaryCtaText: "Platform Architecture",
+      "Veenero Sustainable Solutions works on water management and conservation through a combination of hardware/device-based solutions and intelligent software.",
+    primaryCtaText: "Request a Demo",
+    secondaryCtaText: "Talk to an Expert",
   },
   architecture: {
     eyebrow: "PLATFORM ARCHITECTURE",

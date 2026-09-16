@@ -224,18 +224,18 @@ const SolutionsHeroSchema = new Schema<ISolutionsHero>(
   {
     visible: { type: Boolean, default: true },
     eyebrow: { type: String, default: 'VEENERO SOLUTION SUITE', trim: true },
-    title: { type: String, default: 'Water Intelligence Solutions', trim: true },
-    highlightedText: { type: String, default: 'Built for Visibility, Accountability & Action.', trim: true },
+    title: { type: String, default: 'Water Conservative Devices & Software', trim: true },
+    highlightedText: { type: String, default: 'Aqua Saver', trim: true },
     description: {
       type: String,
       default:
-        'A complete digital infrastructure layer for water management—unifying rugged edge telemetry, real-time cloud analytics, and verification-ready governance into one seamless platform.',
+        'Veenero Sustainable Solutions works on water management and conservation through a combination of hardware/device-based solutions and intelligent software.',
       trim: true,
     },
-    primaryCtaText: { type: String, default: 'Explore Solutions', trim: true },
-    primaryCtaLink: { type: String, default: '#solutions-ecosystem', trim: true },
-    secondaryCtaText: { type: String, default: 'Platform Architecture', trim: true },
-    secondaryCtaLink: { type: String, default: '#platform-architecture', trim: true },
+    primaryCtaText: { type: String, default: 'Request a Demo', trim: true },
+    primaryCtaLink: { type: String, default: '#solutions-categories', trim: true },
+    secondaryCtaText: { type: String, default: 'Talk to an Expert', trim: true },
+    secondaryCtaLink: { type: String, default: '/contact', trim: true },
     image: { type: String, default: '', trim: true },
     imageAlt: {
       type: String,

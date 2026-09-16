@@ -5,12 +5,11 @@ import { ApproachHero } from "@/components/approach/ApproachHero";
 import { StrategicJourneyRoadmap } from "@/components/approach/StrategicJourneyRoadmap";
 import { ApproachCapabilities } from "@/components/approach/ApproachCapabilities";
 import { ApproachFlow } from "@/components/approach/ApproachFlow";
-import { ApproachGovernance } from "@/components/approach/ApproachGovernance";
 import { ApproachCTA } from "@/components/approach/ApproachCTA";
-import { getPublicApproachContent, PublicApproachData } from "@/services/approach.service";
+import { getPublicApproachContent, getCachedApproachContent, PublicApproachData } from "@/services/approach.service";
 
 export const ApproachPage: React.FC = () => {
-  const [cmsData, setCmsData] = useState<PublicApproachData | null>(null);
+  const [cmsData, setCmsData] = useState<PublicApproachData | null>(() => getCachedApproachContent());
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -59,9 +58,6 @@ export const ApproachPage: React.FC = () => {
 
         {/* 5. REAL-WORLD EXECUTION */}
         <ApproachFlow data={cmsData?.execution} />
-
-        {/* 6. ENTERPRISE GOVERNANCE & TRUST */}
-        <ApproachGovernance data={cmsData?.governance} />
 
         {/* 8. FINAL CTA */}
         <ApproachCTA data={cmsData?.cta} />

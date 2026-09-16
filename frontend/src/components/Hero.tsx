@@ -31,110 +31,115 @@ export const Hero = () => {
   // Resolve the background image: prefer the CMS URL, fall back to the bundled asset
   const bgSrc = hero.image && hero.image.trim() !== "" ? hero.image : heroImageFallback;
 
-  // Build the title: keep the original two-part gradient animation style
-  // The CMS stores the full title; we split on the last word for the gradient span
-  const titleWords = hero.title.trim().split(" ");
-  const titleLastWord = titleWords.pop() ?? "";
-  const titleRest = titleWords.join(" ");
-
   if (!hero.visible) return null;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden font-sans select-none">
-      {/* Background Image with Layered Water Depth & Gradient */}
+      {/* Background Image with Crisp Water Depth */}
       <div className="absolute inset-0 z-0">
         <img
           src={bgSrc}
-          alt={hero.imageAlt}
+          alt={hero.imageAlt || "India's Water Intelligence Platform"}
           className="w-full h-full object-cover transition-transform ease-out duration-[10000ms] hover:scale-105"
         />
-        {/* Layered Gradient Overlays for High Legibility & Deep Ocean Atmosphere */}
-        <div className="absolute inset-0 bg-gradient-hero opacity-80 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-t from-teal-950/50 via-transparent to-black/30 pointer-events-none" />
+        {/* Deep Ocean Teal Atmosphere Overlays matching reference image */}
+        <div className="absolute inset-0 bg-[#0c4c56]/65 mix-blend-multiply pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#063038]/50 via-transparent to-[#063038]/60 pointer-events-none" />
       </div>
 
-      {/* Water cursor ripple effect — above background (z-2), below content (z-10) */}
+      {/* Water cursor ripple effect */}
       <WaterCursorEffect />
 
-      {/* Floating Water Droplet Accents Matching Careers, About & Solutions Benchmark */}
-      <div className="absolute top-[22%] left-[4%] w-6 h-6 rounded-full bg-teal-300/15 border border-teal-200/30 blur-[0.5px] pointer-events-none animate-float z-10" />
-      <div className="absolute top-[48%] right-[5%] w-8 h-8 rounded-full bg-cyan-300/15 border border-cyan-200/30 blur-[1px] pointer-events-none animate-float animation-delay-400 z-10" />
-      <div className="absolute top-[72%] left-[6%] w-5 h-5 rounded-full bg-teal-200/20 border border-teal-100/40 blur-[0.5px] pointer-events-none animate-float animation-delay-200 z-10" />
-
-      {/* Ambient Caustic Light & Wave Elements */}
-      <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary-foreground/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-aqua/15 rounded-full blur-3xl animate-float animation-delay-400" />
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-6 relative z-10 text-center py-20">
+      <div className="container mx-auto px-6 relative z-10 text-center py-20 sm:py-24">
         <WaterScrollEffect>
-          <div className="max-w-4xl mx-auto">
-            {/* Eyebrow with Pulsing Live Indicator */}
+          <div className="max-w-5xl mx-auto flex flex-col items-center">
+            {/* Eyebrow: Clean uppercase tracking text */}
             {hero.eyebrow && (
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6 opacity-0 animate-fade-up">
-                <span className="w-2 h-2 rounded-full bg-aqua animate-ping inline-block" />
-                <p className="text-primary-foreground/90 font-bold tracking-widest uppercase text-xs">
-                  {hero.eyebrow}
-                </p>
-              </div>
+              <p className="text-white/90 font-medium tracking-[0.18em] uppercase text-xs sm:text-sm mb-4 sm:mb-6 opacity-0 animate-fade-up">
+                {hero.eyebrow}
+              </p>
             )}
 
-            {/* Editorial H1 Heading */}
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-[1.1] mb-8 opacity-0 animate-fade-up animation-delay-200 tracking-tight">
-              {titleRest}{" "}
-              <span className="block sm:inline mt-2 sm:mt-0 bg-clip-text text-transparent bg-gradient-to-r from-white via-aqua to-teal-200 animate-gradient">
-                {titleLastWord}
-              </span>
+            {/* Editorial H1 Heading: Playfair Display Serif */}
+            <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[4.2rem] font-extrabold text-white leading-[1.15] mb-6 sm:mb-8 opacity-0 animate-fade-up animation-delay-200 tracking-tight max-w-5xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+              {hero.title.includes("\n") ? (
+                hero.title.split("\n").map((line, idx) => (
+                  <span
+                    key={idx}
+                    className={`block ${idx > 0 ? "text-[#b8eded] font-black drop-shadow-[0_2px_8px_rgba(4,47,46,0.6)]" : "text-white font-extrabold"}`}
+                  >
+                    {line}
+                  </span>
+                ))
+              ) : hero.title.toLowerCase().trim() === "india's water intelligence platform" ? (
+                <>
+                  <span className="block sm:whitespace-nowrap text-white font-extrabold">India's Water Intelligence</span>
+                  <span className="block text-[#b8eded] font-black drop-shadow-[0_2px_8px_rgba(4,47,46,0.6)]">Platform</span>
+                </>
+              ) : (
+                (() => {
+                  const words = hero.title.trim().split(" ");
+                  if (words.length > 1) {
+                    const last = words.pop();
+                    return (
+                      <>
+                        <span className="text-white font-extrabold">{words.join(" ")} </span>
+                        <span className="text-[#b8eded] font-black drop-shadow-[0_2px_8px_rgba(4,47,46,0.6)]">{last}</span>
+                      </>
+                    );
+                  }
+                  return <span className="text-white font-extrabold">{hero.title}</span>;
+                })()
+              )}
             </h1>
 
-            {/* Description */}
-            <p className="text-base sm:text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-10 leading-relaxed opacity-0 animate-fade-up animation-delay-400 font-sans">
+            {/* Subtitle / Description */}
+            <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8 sm:mb-10 font-normal leading-relaxed opacity-0 animate-fade-up animation-delay-400">
               {hero.description}
             </p>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-up animation-delay-600">
               <Button
-                variant="hero"
+                variant="default"
                 size="xl"
-                className="w-full sm:w-auto shadow-glow hover:shadow-soft hover:-translate-y-0.5 transition-all duration-200 font-bold group"
+                className="w-full sm:w-auto bg-white text-teal-950 hover:bg-white/95 hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm sm:text-base px-7 py-3.5 rounded-lg shadow-sm group flex items-center justify-center gap-2 border border-white"
                 asChild
               >
                 <a href={hero.primaryCtaLink || "/#solutions"}>
-                  {hero.primaryCtaText || "Explore the Platform"}
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  <span>{hero.primaryCtaText || "Explore the Platform"}</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </a>
               </Button>
               <Button
-                variant="heroOutline"
+                variant="outline"
                 size="xl"
-                className="w-full sm:w-auto hover:bg-white/15 hover:-translate-y-0.5 transition-all duration-200 font-bold group"
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/80 text-white hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm sm:text-base px-6 py-3.5 rounded-lg backdrop-blur-xs group flex items-center justify-center gap-2.5"
                 asChild
               >
                 <a href={hero.secondaryCtaLink || "/approach"}>
-                  <Play className="h-5 w-5 text-aqua fill-aqua/30" />
-                  {hero.secondaryCtaText || "Watch How Water Visibility Works"}
+                  <Play className="h-4 w-4 fill-none stroke-current stroke-[2]" />
+                  <span>{hero.secondaryCtaText || "Watch How Water Visibility Works"}</span>
                 </a>
               </Button>
             </div>
 
             {/* Bottom Tagline */}
             {hero.bottomText && (
-              <p className="mt-8 text-xs sm:text-sm md:text-base text-primary-foreground/80 tracking-widest uppercase font-semibold opacity-0 animate-fade-up animation-delay-700">
+              <p className="mt-8 sm:mt-10 text-xs sm:text-sm text-white/80 tracking-[0.2em] uppercase font-medium opacity-0 animate-fade-up animation-delay-700">
                 {hero.bottomText}
               </p>
             )}
+
+            {/* Mouse Scroll Indicator */}
+            <div className="mt-7 sm:mt-9 flex justify-center opacity-0 animate-fade-in animation-delay-800 pointer-events-none">
+              <div className="w-[20px] h-[32px] border-[1.5px] border-white/60 rounded-full flex justify-center pt-1.5 backdrop-blur-[1px]">
+                <div className="w-[2px] h-[5px] bg-white/80 rounded-full animate-bounce" />
+              </div>
+            </div>
           </div>
         </WaterScrollEffect>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in animation-delay-800 pointer-events-none">
-        <div className="w-6 h-10 border-2 border-primary-foreground/40 rounded-full flex justify-center backdrop-blur-sm bg-black/10">
-          <div className="w-1.5 h-3 bg-aqua rounded-full mt-2 animate-bounce" />
-        </div>
       </div>
     </section>
   );

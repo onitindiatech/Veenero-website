@@ -179,16 +179,42 @@ import { API_BASE_URL } from '@/config/api';
 
 const API_BASE = `${API_BASE_URL}/api`;
 
-export const getPublicSolutionsContent = async (): Promise<PublicSolutionsData> => {
-  const res = await fetch(`${API_BASE}/solutions`);
-  if (!res.ok) {
-    throw new Error('Failed to fetch Solutions page content.');
+let cachedSolutionsData: PublicSolutionsData | null = null;
+let inFlightSolutionsPromise: Promise<PublicSolutionsData> | null = null;
+
+export const getCachedSolutionsContent = (): PublicSolutionsData | null => cachedSolutionsData;
+
+export const clearSolutionsCache = (): void => {
+  cachedSolutionsData = null;
+};
+
+export const getPublicSolutionsContent = async (forceRefresh = false): Promise<PublicSolutionsData> => {
+  if (!forceRefresh && cachedSolutionsData) {
+    return cachedSolutionsData;
   }
-  const json = await res.json();
-  if (!json.success || !json.data) {
-    throw new Error(json.error?.message || 'Invalid API response for Solutions page.');
+
+  if (inFlightSolutionsPromise) {
+    return inFlightSolutionsPromise;
   }
-  return json.data;
+
+  inFlightSolutionsPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE}/solutions`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch Solutions page content.');
+      }
+      const json = await res.json();
+      if (!json.success || !json.data) {
+        throw new Error(json.error?.message || 'Invalid API response for Solutions page.');
+      }
+      cachedSolutionsData = json.data;
+      return json.data;
+    } finally {
+      inFlightSolutionsPromise = null;
+    }
+  })();
+
+  return inFlightSolutionsPromise;
 };
 
 export const getPublicSolutionDetail = async (slug: string): Promise<any> => {

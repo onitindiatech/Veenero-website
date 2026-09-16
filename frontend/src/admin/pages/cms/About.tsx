@@ -31,6 +31,7 @@ import {
   getAdminAboutSettings,
   updateAdminAboutSection,
 } from '../../services/about.service';
+import { clearAboutCache } from '@/services/about.service';
 import { MediaPickerModal } from '../../components/cms/MediaPickerModal';
 import { MediaAsset } from '../../services/media.service';
 
@@ -136,6 +137,7 @@ export const AboutCms: React.FC = () => {
     try {
       const sectionData = (settings as any)[sectionKey];
       const updatedSection = await updateAdminAboutSection(sectionKey, sectionData);
+      clearAboutCache();
       setSettings((prev) => (prev ? { ...prev, [sectionKey]: updatedSection } : prev));
       showToast(`${SECTIONS.find((s) => s.id === sectionKey)?.label || sectionKey} saved successfully.`);
       setIsDirty(false);
@@ -472,7 +474,7 @@ export const AboutCms: React.FC = () => {
                         value={settings.hero.title}
                         onChange={(e) => updateSectionState('hero', 'title', e.target.value)}
                         className={inputCls}
-                        placeholder="e.g. Building India's"
+                        placeholder="e.g. Veenero Sustainable"
                       />
                     </div>
                   </div>
@@ -485,17 +487,6 @@ export const AboutCms: React.FC = () => {
                       onChange={(e) => updateSectionState('hero', 'highlightedText', e.target.value)}
                       className={inputCls}
                       placeholder="e.g. Water Intelligence"
-                    />
-                  </div>
-
-                  <div>
-                    <label className={labelCls}>Hero Description</label>
-                    <textarea
-                      rows={3}
-                      value={settings.hero.description}
-                      onChange={(e) => updateSectionState('hero', 'description', e.target.value)}
-                      className={textareaCls}
-                      placeholder="Enter description..."
                     />
                   </div>
 

@@ -195,13 +195,37 @@ export interface PublicApproachData {
 
 import { API_BASE_URL } from '@/config/api';
 
-const API_BASE = `${API_BASE_URL}/api`;
+let cachedApproachData: PublicApproachData | null = null;
+let inFlightApproachPromise: Promise<PublicApproachData> | null = null;
 
-export async function getPublicApproachContent(): Promise<PublicApproachData> {
-  const res = await fetch(`${API_BASE}/approach`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch Approach content: ${res.status}`);
+export const getCachedApproachContent = (): PublicApproachData | null => cachedApproachData;
+
+export const clearApproachCache = (): void => {
+  cachedApproachData = null;
+};
+
+export async function getPublicApproachContent(forceRefresh = false): Promise<PublicApproachData> {
+  if (!forceRefresh && cachedApproachData) {
+    return cachedApproachData;
   }
-  const json = await res.json();
-  return json.data as PublicApproachData;
+
+  if (inFlightApproachPromise) {
+    return inFlightApproachPromise;
+  }
+
+  inFlightApproachPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE}/approach`);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch Approach content: ${res.status}`);
+      }
+      const json = await res.json();
+      cachedApproachData = json.data as PublicApproachData;
+      return cachedApproachData;
+    } finally {
+      inFlightApproachPromise = null;
+    }
+  })();
+
+  return inFlightApproachPromise;
 }

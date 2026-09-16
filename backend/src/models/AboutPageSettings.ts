@@ -221,8 +221,8 @@ const AboutHeroSchema = new Schema<IAboutHero>(
   {
     visible: { type: Boolean, default: true },
     eyebrow: { type: String, default: 'ABOUT VEENERO', trim: true },
-    title: { type: String, default: "Building India's", trim: true },
-    highlightedText: { type: String, default: 'Water Intelligence', trim: true },
+    title: { type: String, default: "Veenero Sustainable", trim: true },
+    highlightedText: { type: String, default: 'Solutions Pvt Ltd', trim: true },
     description: {
       type: String,
       default:
@@ -544,7 +544,7 @@ const AboutCTASchema = new Schema<IAboutCTA>(
 
 const AboutSEOSchema = new Schema<IAboutSEO>(
   {
-    metaTitle: { type: String, default: 'About Us | Veenero - Building India’s Water Intelligence', trim: true },
+    metaTitle: { type: String, default: 'About Us | Veenero - Sustainable Water Solutions', trim: true },
     metaDescription: {
       type: String,
       default:

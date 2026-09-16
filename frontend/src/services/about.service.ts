@@ -214,14 +214,40 @@ import { API_BASE_URL } from '@/config/api';
 
 const API_BASE = `${API_BASE_URL}/api`;
 
-export const getPublicAboutContent = async (): Promise<PublicAboutData> => {
-  const res = await fetch(`${API_BASE}/about`);
-  if (!res.ok) {
-    throw new Error('Failed to fetch About page content.');
+let cachedAboutData: PublicAboutData | null = null;
+let inFlightPromise: Promise<PublicAboutData> | null = null;
+
+export const getCachedAboutContent = (): PublicAboutData | null => cachedAboutData;
+
+export const clearAboutCache = (): void => {
+  cachedAboutData = null;
+};
+
+export const getPublicAboutContent = async (forceRefresh = false): Promise<PublicAboutData> => {
+  if (!forceRefresh && cachedAboutData) {
+    return cachedAboutData;
   }
-  const json = await res.json();
-  if (!json.success || !json.data) {
-    throw new Error(json.error?.message || 'Invalid API response for About page.');
+
+  if (inFlightPromise) {
+    return inFlightPromise;
   }
-  return json.data;
+
+  inFlightPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE}/about`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch About page content.');
+      }
+      const json = await res.json();
+      if (!json.success || !json.data) {
+        throw new Error(json.error?.message || 'Invalid API response for About page.');
+      }
+      cachedAboutData = json.data;
+      return json.data;
+    } finally {
+      inFlightPromise = null;
+    }
+  })();
+
+  return inFlightPromise;
 };

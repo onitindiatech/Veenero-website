@@ -23,9 +23,6 @@ export const ApproachHero: React.FC<ApproachHeroProps> = ({ data }) => {
   const eyebrow = data?.eyebrow || "OUR APPROACH";
   const title = data?.title || "A Smarter Way to Manage Water";
   const highlightedText = data?.highlightedText || "Visibility. Intelligence. Accountability.";
-  const description =
-    data?.description ||
-    "Veenero's approach unifies IoT telemetry, advanced data pipelines, and field expertise to turn water blindspots into real-time visibility, operational excellence, and verified outcomes.";
   const primaryCtaText = data?.primaryCtaText || "Explore Our Approach";
   const primaryCtaLink = data?.primaryCtaLink || "#approach-philosophy";
   const secondaryCtaText = data?.secondaryCtaText || "Explore Solutions";
@@ -34,7 +31,7 @@ export const ApproachHero: React.FC<ApproachHeroProps> = ({ data }) => {
   return (
     <section
       id="approach-hero"
-      className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[420px] lg:h-[52vh] lg:min-h-[460px] lg:max-h-[540px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30"
+      className="relative w-full overflow-hidden select-none bg-[#daf0f5] dark:bg-slate-950 min-h-[380px] sm:min-h-[400px] lg:h-[48vh] lg:min-h-[420px] lg:max-h-[500px] flex items-center pt-20 pb-8 sm:pt-22 sm:pb-10 lg:pt-24 lg:pb-10 border-b border-teal-200/50 dark:border-teal-900/30"
     >
       {/* Full-width Cinematic Background Image & Cool Blue/Aqua Water Atmosphere */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -61,7 +58,7 @@ export const ApproachHero: React.FC<ApproachHeroProps> = ({ data }) => {
 
       {/* Hero Content Container */}
       <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 font-sans">
-        <div className="max-w-xl lg:max-w-2xl text-left">
+        <div className="max-w-xl lg:max-w-4xl xl:max-w-5xl text-left">
           
           {/* Eyebrow Capsule with Leaf Icon matching Solutions & About Hero */}
           {eyebrow && (
@@ -74,20 +71,15 @@ export const ApproachHero: React.FC<ApproachHeroProps> = ({ data }) => {
           )}
 
           {/* H1 Headline — Clean, balanced line-height, Playfair Display */}
-          <h1 className="font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold text-slate-950 dark:text-white leading-[1.18] mb-3 tracking-tight reveal-on-scroll reveal-delay-100">
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold text-slate-950 dark:text-white leading-[1.18] mb-5 sm:mb-6 tracking-tight reveal-on-scroll reveal-delay-100">
             <span className="block">{title}</span>
             <span className="text-[#136873] dark:text-teal-400 font-bold block mt-1">
               {highlightedText}
             </span>
           </h1>
 
-          {/* Supporting Description */}
-          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200/90 leading-relaxed max-w-xl mb-5 font-sans reveal-on-scroll reveal-delay-200">
-            {description}
-          </p>
-
           {/* Action CTAs — Rounded Pill Buttons matching Solutions & About Hero */}
-          <div className="flex flex-wrap items-center gap-3 reveal-on-scroll reveal-delay-300">
+          <div className="flex flex-wrap items-center gap-3 reveal-on-scroll reveal-delay-200">
             <button
               onClick={() => scrollToSection(primaryCtaLink)}
               className="px-6 py-2.5 sm:py-3 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"

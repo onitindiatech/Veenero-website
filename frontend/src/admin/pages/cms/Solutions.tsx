@@ -573,16 +573,6 @@ export const SolutionsCms: React.FC = () => {
                     />
                   </div>
 
-                  <div>
-                    <label className={labelCls}>Supporting Description</label>
-                    <textarea
-                      rows={3}
-                      value={settings.hero.description}
-                      onChange={(e) => updateSectionState('hero', 'description', e.target.value)}
-                      className={textareaCls}
-                    />
-                  </div>
-
 
                   {/* Hero Media Asset */}
                   <div className="pt-4 border-t border-border/60">

@@ -44,11 +44,20 @@ import { AuthProvider } from "./admin/context/AuthContext";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
 
 import LoadingScreen from "./components/LoadingScreen";
+import { getPublicAboutContent } from "@/services/about.service";
+import { getPublicSolutionsContent } from "@/services/solutions.service";
 
 const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+
+  useEffect(() => {
+    // Warm up public CMS data in background so navigation has zero delay/flash
+    getPublicAboutContent().catch(() => {});
+    getPublicSolutionsContent().catch(() => {});
+  }, []);
+
   useEffect(() => {
     const cleanup = initScrollReveal();
     return cleanup;

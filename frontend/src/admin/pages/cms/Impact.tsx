@@ -335,21 +335,6 @@ export const ImpactCms: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className={labelCls}>Hero Description</label>
-                <textarea
-                  rows={3}
-                  value={settings.hero.description}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      hero: { ...settings.hero, description: e.target.value },
-                    })
-                  }
-                  className={textareaCls}
-                />
-              </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>Primary CTA Text</label>

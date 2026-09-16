@@ -8,11 +8,13 @@ import { VisionMission } from "@/components/about/VisionMission";
 import { OurValues } from "@/components/about/OurValues";
 import { Leadership } from "@/components/about/Leadership";
 import { AboutCTA } from "@/components/about/AboutCTA";
-import { getPublicAboutContent, PublicAboutData } from "@/services/about.service";
+import { getPublicAboutContent, getCachedAboutContent, PublicAboutData } from "@/services/about.service";
 import { getAssetBySlot, PublicMediaAsset } from "@/services/media.service";
 
 export const AboutUsPage: React.FC = () => {
-  const [aboutData, setAboutData] = useState<PublicAboutData | null>(null);
+  const cached = getCachedAboutContent();
+  const [aboutData, setAboutData] = useState<PublicAboutData | null>(() => cached);
+  const [isLoading, setIsLoading] = useState<boolean>(() => !cached);
 
   // Canonical hero image resolved from the Media Library.
   // This is the source of truth — updated whenever an admin replaces the asset
@@ -33,11 +35,13 @@ export const AboutUsPage: React.FC = () => {
 
       if (aboutResult.status === "fulfilled") {
         setAboutData(aboutResult.value);
+        setIsLoading(false);
         if (aboutResult.value.seo?.metaTitle) {
           document.title = aboutResult.value.seo.metaTitle;
         }
       } else {
         console.warn("[About] Could not load dynamic CMS content from API, using default fallbacks.", aboutResult.reason);
+        setIsLoading(false);
       }
 
       if (heroAsset.status === "fulfilled" && heroAsset.value) {
@@ -46,7 +50,11 @@ export const AboutUsPage: React.FC = () => {
       // If heroAsset is null (404) or rejected (network error), AboutHero falls back to its local PNG
     };
 
-    document.title = "About Us | Veenero - Building India's Water Intelligence";
+    if (cached?.seo?.metaTitle) {
+      document.title = cached.seo.metaTitle;
+    } else {
+      document.title = "About Us | Veenero - Sustainable Water Solutions";
+    }
     loadContent();
 
     return () => {
@@ -76,6 +84,7 @@ export const AboutUsPage: React.FC = () => {
           data={aboutData?.hero}
           mediaUrl={heroMediaAsset?.secureUrl}
           mediaAlt={heroMediaAsset?.altText}
+          isLoading={isLoading}
         />
 
         {/* 2. WHO WE ARE (Technology. Purpose. Impact.) */}

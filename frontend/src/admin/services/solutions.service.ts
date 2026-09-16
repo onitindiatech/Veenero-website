@@ -216,6 +216,8 @@ export async function getAdminSolutionsSettings(): Promise<SolutionsPageSettings
   return res.data;
 }
 
+import { clearSolutionsCache } from '@/services/solutions.service';
+
 export async function updateAdminSolutionsSettings(
   data: Partial<SolutionsPageSettings>
 ): Promise<SolutionsPageSettings> {
@@ -226,6 +228,7 @@ export async function updateAdminSolutionsSettings(
       body: JSON.stringify(data),
     }
   );
+  clearSolutionsCache();
   return res.data;
 }
 
@@ -247,6 +250,7 @@ export async function updateAdminSolutionsSection<T = any>(
       body: JSON.stringify(sectionData),
     }
   );
+  clearSolutionsCache();
   return res.data;
 }
 
@@ -258,6 +262,7 @@ export async function createCategory(category: Partial<AdminSolutionCategory>): 
       body: JSON.stringify(category),
     }
   );
+  clearSolutionsCache();
   return res.data;
 }
 
@@ -269,6 +274,7 @@ export async function updateCategory(id: string, category: Partial<AdminSolution
       body: JSON.stringify(category),
     }
   );
+  clearSolutionsCache();
   return res.data;
 }
 
@@ -279,6 +285,7 @@ export async function deleteCategory(id: string): Promise<void> {
       method: 'DELETE',
     }
   );
+  clearSolutionsCache();
 }
 
 export async function createSolutionItem(solution: Partial<AdminSolutionItem>): Promise<AdminSolutionItem> {
@@ -289,6 +296,7 @@ export async function createSolutionItem(solution: Partial<AdminSolutionItem>): 
       body: JSON.stringify(solution),
     }
   );
+  clearSolutionsCache();
   return res.data;
 }
 
@@ -300,6 +308,7 @@ export async function updateSolutionItem(id: string, solution: Partial<AdminSolu
       body: JSON.stringify(solution),
     }
   );
+  clearSolutionsCache();
   return res.data;
 }
 
@@ -310,4 +319,5 @@ export async function deleteSolutionItem(id: string): Promise<void> {
       method: 'DELETE',
     }
   );
+  clearSolutionsCache();
 }

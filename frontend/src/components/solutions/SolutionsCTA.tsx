@@ -12,15 +12,15 @@ export const SolutionsCTA: React.FC<SolutionsCTAProps> = ({ data }) => {
   useScrollReveal([]);
 
   const ctaBg = data?.image || defaultCtaBackground;
-  const eyebrow = data?.eyebrow || "READY TO MAKE AN IMPACT?";
-  const title = data?.title || "Let's Build a Water-Secure Future.";
+  const eyebrow = data?.eyebrow || "TAKE ACTION";
+  const title = data?.title || "Start Conserving Water with Aqua Saver";
   const description =
     data?.description ||
-    "Discover how Veenero's integrated solutions can help you achieve measurable impact — for people, planet, and progress.";
-  const primaryButtonText = data?.primaryButtonText || "Get in Touch";
+    "Connect with our team to discuss pilot deployments, municipal partnerships, or society installations.";
+  const primaryButtonText = data?.primaryButtonText || "Request a Demo";
   const primaryButtonLink = data?.primaryButtonLink || "/contact";
-  const secondaryButtonText = data?.secondaryButtonText || "Explore Our Approach";
-  const secondaryButtonLink = data?.secondaryButtonLink || "/approach";
+  const secondaryButtonText = data?.secondaryButtonText || "Talk to an Expert";
+  const secondaryButtonLink = data?.secondaryButtonLink || "/contact";
 
   return (
     <section
