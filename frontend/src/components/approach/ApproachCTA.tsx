@@ -2,13 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Leaf } from "lucide-react";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface ApproachCTAProps {
   data?: any;
 }
 
 export const ApproachCTA: React.FC<ApproachCTAProps> = ({ data }) => {
-  const ctaBg = defaultCtaBackground;
+  const ctaBg = resolveAsset(data?.image, defaultCtaBackground);
   const eyebrow = data?.eyebrow || "READY TO GET STARTED";
   const title = data?.title || "Ready to Transform";
   const highlightedText = data?.highlightedText || "Water Future?";
@@ -35,6 +36,11 @@ export const ApproachCTA: React.FC<ApproachCTAProps> = ({ data }) => {
               alt="Veenero Sustainable Water Infrastructure — Earth splashing in water"
               className="w-full h-full object-cover object-[center_right]"
               loading="lazy"
+              onError={(e) => {
+                if ((e.currentTarget as HTMLImageElement).src !== defaultCtaBackground) {
+                  (e.currentTarget as HTMLImageElement).src = defaultCtaBackground;
+                }
+              }}
             />
             {/* Deep dark teal gradient overlay on left to ensure high readability */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#021316] via-[#021316]/90 via-55% to-transparent pointer-events-none" />

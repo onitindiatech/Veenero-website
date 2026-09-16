@@ -7,6 +7,7 @@ import {
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { Link } from "react-router-dom";
 import defaultGovImage from "@/assets/about/about-infrastructure-sensor.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface ApproachGovernanceProps {
   data?: any;
@@ -26,7 +27,7 @@ export const ApproachGovernance: React.FC<ApproachGovernanceProps> = ({ data }) 
   const supportingContent =
     data?.supportingContent ||
     "From municipal distribution networks to zero-liquid discharge industrial facilities, every data point captured by Veenero undergoes encrypted edge processing, redundant validation, and tamper-evident audit logging.";
-  const img = data?.image || defaultGovImage;
+  const img = resolveAsset(data?.image, defaultGovImage);
   const ctaText = data?.ctaText || "Explore Platform Security";
   const ctaLink = data?.ctaLink || "/solutions";
 
@@ -83,6 +84,11 @@ export const ApproachGovernance: React.FC<ApproachGovernanceProps> = ({ data }) 
                 alt="Veenero enterprise water telemetry and security architecture"
                 className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                 loading="lazy"
+                onError={(e) => {
+                  if ((e.currentTarget as HTMLImageElement).src !== defaultGovImage) {
+                    (e.currentTarget as HTMLImageElement).src = defaultGovImage;
+                  }
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent pointer-events-none" />
 

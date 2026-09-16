@@ -8,6 +8,7 @@ import operationalIntelImg from "@/assets/about/about-industrial-water-system.we
 import waterAccountImg from "@/assets/about/about-field-verification.webp";
 import waterVerifyImg from "@/assets/about/about-vision-water-infrastructure.webp";
 import analyticsImg from "@/assets/about/about-real-time-analytics.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface SolutionsCategoriesProps {
   data?: any;
@@ -83,7 +84,7 @@ export const SolutionsCategories: React.FC<SolutionsCategoriesProps> = ({
           slug: c.slug || fallback.slug,
           description: c.description || fallback.description,
           icon: iconMap[c.icon] || fallback.icon,
-          image: c.image || fallback.image,
+          image: resolveAsset(c.image, fallback.image),
         };
       });
     }
@@ -174,6 +175,12 @@ export const SolutionsCategories: React.FC<SolutionsCategoriesProps> = ({
                       alt={`${card.displayLabel} — Veenero Water Intelligence`}
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                       loading="lazy"
+                      onError={(e) => {
+                        const fallbackImg = DEFAULT_CATEGORY_CARDS[idx % DEFAULT_CATEGORY_CARDS.length]?.image;
+                        if (fallbackImg && (e.currentTarget as HTMLImageElement).src !== fallbackImg) {
+                          (e.currentTarget as HTMLImageElement).src = fallbackImg;
+                        }
+                      }}
                     />
                     {/* Numbered Indicator Badge (01, 02, etc.) */}
                     <span className="absolute top-3 left-3 text-[10.5px] font-mono font-bold px-2 py-0.5 rounded-md bg-white/85 dark:bg-slate-950/80 text-slate-800 dark:text-teal-300 backdrop-blur-xs border border-white/50 dark:border-white/10 shadow-2xs select-none">

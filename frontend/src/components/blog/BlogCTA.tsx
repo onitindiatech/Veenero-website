@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Leaf, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 import { BlogSettings } from "./types";
 
 interface BlogCTAProps {
@@ -11,6 +12,15 @@ interface BlogCTAProps {
 
 export const BlogCTA: React.FC<BlogCTAProps> = ({ settings }) => {
   useScrollReveal([]);
+
+  const rawBg = (settings?.cta as any)?.backgroundImage;
+  const [ctaBg, setCtaBg] = React.useState<string>(() => resolveAsset(rawBg) || defaultCtaBackground);
+
+  React.useEffect(() => {
+    if (rawBg) {
+      setCtaBg(resolveAsset(rawBg) || defaultCtaBackground);
+    }
+  }, [rawBg]);
 
   if (settings?.cta?.visible === false) return null;
 
@@ -35,7 +45,10 @@ export const BlogCTA: React.FC<BlogCTAProps> = ({ settings }) => {
           {/* Background Planet & Water Splash Image */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <img
-              src={defaultCtaBackground}
+              src={ctaBg}
+              onError={() => {
+                if (ctaBg !== defaultCtaBackground) setCtaBg(defaultCtaBackground);
+              }}
               alt="Veenero Sustainable Water Infrastructure — Earth splashing in water"
               className="w-full h-full object-cover object-[center_right]"
               loading="lazy"

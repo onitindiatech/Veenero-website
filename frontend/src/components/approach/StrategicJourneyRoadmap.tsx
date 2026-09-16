@@ -2,6 +2,7 @@ import React from "react";
 import { Leaf } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import philosophyImage from "@/assets/about/about-real-time-analytics.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface StrategicJourneyRoadmapProps {
   data?: any;
@@ -21,7 +22,7 @@ export const StrategicJourneyRoadmap: React.FC<StrategicJourneyRoadmapProps> = (
         "It begins with visibility — knowing exactly what happens across every pipe, pump, tank and process. From there we apply intelligence to surface insights, build accountability through governance, and deliver outcomes that can be independently verified.",
       ];
 
-  const img = data?.image || philosophyImage;
+  const img = resolveAsset(data?.image, philosophyImage);
   const badgeText = data?.badgeText || "PLATFORM ECOSYSTEM";
 
   return (
@@ -68,6 +69,11 @@ export const StrategicJourneyRoadmap: React.FC<StrategicJourneyRoadmapProps> = (
                 alt="Veenero water intelligence platform ecosystem — sensors, analytics and verification working together"
                 className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                 loading="lazy"
+                onError={(e) => {
+                  if ((e.currentTarget as HTMLImageElement).src !== philosophyImage) {
+                    (e.currentTarget as HTMLImageElement).src = philosophyImage;
+                  }
+                }}
               />
               {/* Subtle gradient overlay */}
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />

@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { Article } from '@/components/blog/types';
+import { resolveAsset } from '@/utils/resolveAsset';
 import * as BlogService from '@/services/blog.service';
 
 // Skeleton loader
@@ -122,7 +123,8 @@ export const BlogDetailsPage: React.FC = () => {
       : article.date || '';
   }, [article]);
 
-  const imgSrc = article?.featuredImage || article?.image || '';
+  const rawImg = article?.featuredImage || article?.image || '';
+  const imgSrc = resolveAsset(rawImg) || rawImg;
   const imgAlt = article?.featuredImageAlt || article?.title || 'Article image';
 
   return (

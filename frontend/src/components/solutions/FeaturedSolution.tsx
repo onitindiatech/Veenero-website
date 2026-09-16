@@ -3,6 +3,7 @@ import { ArrowRight, Check, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import featuredImage from "@/assets/about/about-vision-water-infrastructure.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface FeaturedSolutionProps {
   data?: any;
@@ -26,7 +27,7 @@ export const FeaturedSolution: React.FC<FeaturedSolutionProps> = ({ data }) => {
       }))
     : defaultCapabilityItems;
 
-  const featImage = data?.image || featuredImage;
+  const featImage = resolveAsset(data?.image, featuredImage);
 
   return (
     <section
@@ -54,6 +55,11 @@ export const FeaturedSolution: React.FC<FeaturedSolutionProps> = ({ data }) => {
                 alt="Real-time Water Visibility Platform — water treatment facility monitoring station"
                 className="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                 loading="lazy"
+                onError={(e) => {
+                  if ((e.currentTarget as HTMLImageElement).src !== featuredImage) {
+                    (e.currentTarget as HTMLImageElement).src = featuredImage;
+                  }
+                }}
               />
               {/* Strong dark gradient overlay to make data/badge readable */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-slate-950/10 pointer-events-none" />

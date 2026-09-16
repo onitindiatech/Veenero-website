@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CheckCircle2, Landmark, Factory, Building2, Globe2, Leaf } from "lucide-react";
 import { ImpactContent } from "@/content/impact";
+import { resolveAsset } from "@/utils/resolveAsset";
 import municipalImg from "@/assets/about/about-journey-water-infrastructure.webp";
 import industrialImg from "@/assets/about/about-industrial-water-system.webp";
 import commercialImg from "@/assets/about/about-field-verification.webp";
@@ -82,7 +83,10 @@ export const RealWorldImpact: React.FC<RealWorldImpactProps> = ({ data }) => {
           <div className="lg:col-span-7">
             <div className="group relative rounded-2xl overflow-hidden aspect-[16/10] shadow-sm border border-slate-200/80 dark:border-teal-900/30">
               <img
-                src={domainImages[activeTab]}
+                src={((currentDomain as any)?.image ? resolveAsset((currentDomain as any).image) : null) || domainImages[activeTab]}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = domainImages[activeTab];
+                }}
                 alt={currentDomain.title}
                 className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                 loading="lazy"

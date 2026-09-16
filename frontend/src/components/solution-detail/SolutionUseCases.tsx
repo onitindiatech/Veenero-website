@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
 import { UseCaseItem } from "@/content/solutionDetailsData";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface SolutionUseCasesProps {
   data: {
@@ -58,7 +59,7 @@ export const SolutionUseCases: React.FC<SolutionUseCasesProps> = ({ data }) => {
                 {item.image && (
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                     <img
-                      src={item.image}
+                      src={resolveAsset(item.image)}
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500"
                       loading="lazy"

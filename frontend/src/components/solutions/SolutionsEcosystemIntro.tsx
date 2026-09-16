@@ -3,6 +3,7 @@ import { Eye, TrendingUp, ShieldCheck, Leaf } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { SolutionsContent } from "@/content/solutions";
 import ecosystemIllustration from "@/assets/about/about-infrastructure-sensor.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface SolutionsEcosystemIntroProps {
   data?: any;
@@ -25,7 +26,7 @@ export const SolutionsEcosystemIntro: React.FC<SolutionsEcosystemIntroProps> = (
       }))
     : defaultCapabilityBadges;
 
-  const illustrationImg = data?.image || ecosystemIllustration;
+  const illustrationImg = resolveAsset(data?.image, ecosystemIllustration);
   const p1 = data?.paragraphs?.[0] ||
     "Veenero unifies sensors, connectivity, and intelligence to deliver real-time visibility, drive operational efficiency, ensure accountability, and verify outcomes across the entire water lifecycle.";
   const p2 = data?.paragraphs?.[1] ||
@@ -69,6 +70,11 @@ export const SolutionsEcosystemIntro: React.FC<SolutionsEcosystemIntroProps> = (
                 alt="Veenero Water Intelligence Ecosystem — integrated sensor, analytics, and verification infrastructure"
                 className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                 loading="lazy"
+                onError={(e) => {
+                  if ((e.currentTarget as HTMLImageElement).src !== ecosystemIllustration) {
+                    (e.currentTarget as HTMLImageElement).src = ecosystemIllustration;
+                  }
+                }}
               />
               {/* Subtle teal gradient overlay on bottom */}
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#e3f2ef]/40 dark:from-[#042127]/60 to-transparent pointer-events-none" />

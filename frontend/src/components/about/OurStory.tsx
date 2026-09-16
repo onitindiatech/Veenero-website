@@ -3,6 +3,7 @@ import { X, Leaf, Target, TrendingDown, ShieldCheck } from "lucide-react";
 import { PublicAboutStory } from "@/services/about.service";
 import fallbackStoryVideo from "@/assets/about/about-story-water-infrastructure.mp4";
 import posterFallback from "@/assets/about/about-vision-water-infrastructure.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface OurStoryProps {
   data?: PublicAboutStory;
@@ -38,25 +39,8 @@ export const OurStory: React.FC<OurStoryProps> = ({ data }) => {
           "Ensure Water Security",
         ];
 
-  // Resolve local asset strings to ESM imports to prevent unnecessary reload/flicker
-  const resolveVideoSrc = (url?: string) => {
-    if (!url) return fallbackStoryVideo;
-    if (url.includes("about-story-water-infrastructure")) return fallbackStoryVideo;
-    return url;
-  };
-
-  const resolvePosterSrc = (url?: string) => {
-    if (!url) return posterFallback;
-    if (
-      url.includes("about-vision-water-infrastructure") ||
-      url.includes("about-hero-water-infrastructure")
-    )
-      return posterFallback;
-    return url;
-  };
-
-  const videoSrc = resolveVideoSrc(data?.video);
-  const posterSrc = resolvePosterSrc(data?.videoPoster);
+  const videoSrc = resolveAsset(data?.video, fallbackStoryVideo);
+  const posterSrc = resolveAsset(data?.videoPoster, posterFallback);
 
   // Auto-play attempt on mount / ready
   useEffect(() => {

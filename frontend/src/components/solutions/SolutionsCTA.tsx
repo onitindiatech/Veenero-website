@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Leaf } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface SolutionsCTAProps {
   data?: any;
@@ -11,7 +12,7 @@ interface SolutionsCTAProps {
 export const SolutionsCTA: React.FC<SolutionsCTAProps> = ({ data }) => {
   useScrollReveal([]);
 
-  const ctaBg = data?.image || defaultCtaBackground;
+  const ctaBg = resolveAsset(data?.image, defaultCtaBackground);
   const eyebrow = data?.eyebrow || "TAKE ACTION";
   const title = data?.title || "Start Conserving Water with Aqua Saver";
   const description =
@@ -37,6 +38,11 @@ export const SolutionsCTA: React.FC<SolutionsCTAProps> = ({ data }) => {
               alt="Veenero Sustainable Water Infrastructure — Earth splashing in water"
               className="w-full h-full object-cover object-[center_right]"
               loading="lazy"
+              onError={(e) => {
+                if ((e.currentTarget as HTMLImageElement).src !== defaultCtaBackground) {
+                  (e.currentTarget as HTMLImageElement).src = defaultCtaBackground;
+                }
+              }}
             />
             {/* Deep dark teal gradient overlay on left to ensure high readability */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#021316] via-[#021316]/90 via-55% to-transparent pointer-events-none" />

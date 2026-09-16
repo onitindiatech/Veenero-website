@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, Leaf } from "lucide-react";
 import defaultCareersHeroBg from "@/assets/careers-hero-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 import { CareerHeroData } from "./types";
 
 interface CareersHeroProps {
@@ -9,6 +10,14 @@ interface CareersHeroProps {
 }
 
 export const CareersHero: React.FC<CareersHeroProps> = ({ data, jobCount = 6 }) => {
+  const [imgSrc, setImgSrc] = React.useState<string>(() => resolveAsset(data?.backgroundImage) || defaultCareersHeroBg);
+
+  React.useEffect(() => {
+    if (data?.backgroundImage) {
+      setImgSrc(resolveAsset(data.backgroundImage) || defaultCareersHeroBg);
+    }
+  }, [data?.backgroundImage]);
+
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -28,7 +37,10 @@ export const CareersHero: React.FC<CareersHeroProps> = ({ data, jobCount = 6 }) 
       {/* Full-width Cinematic Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src={defaultCareersHeroBg}
+          src={imgSrc}
+          onError={() => {
+            if (imgSrc !== defaultCareersHeroBg) setImgSrc(defaultCareersHeroBg);
+          }}
           alt="Veenero team collaboration and water intelligence builders"
           className="w-full h-full object-cover object-[center_35%] select-none pointer-events-none"
           loading="eager"

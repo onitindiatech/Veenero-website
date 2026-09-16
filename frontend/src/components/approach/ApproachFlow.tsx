@@ -7,6 +7,7 @@ import stageUnderstandImg from "@/assets/about/about-journey-water-infrastructur
 import stageDesignImg from "@/assets/about/about-field-verification.webp";
 import stageDeployImg from "@/assets/about/about-real-time-analytics.webp";
 import stageMonitorImg from "@/assets/about/about-industrial-water-system.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface ApproachFlowProps {
   data?: any;
@@ -73,7 +74,7 @@ export const ApproachFlow: React.FC<ApproachFlowProps> = ({ data }) => {
           icon: flowIconMap[s.icon] || defaultExecutionStages[i % defaultExecutionStages.length]?.icon || Search,
           title: s.title,
           description: s.description,
-          image: s.image || defaultExecutionStages[i % defaultExecutionStages.length]?.image || stageUnderstandImg,
+          image: resolveAsset(s.image, defaultExecutionStages[i % defaultExecutionStages.length]?.image || stageUnderstandImg),
         }))
       : defaultExecutionStages;
 
@@ -119,6 +120,12 @@ export const ApproachFlow: React.FC<ApproachFlowProps> = ({ data }) => {
                         alt={stage.title}
                         className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700 ease-out"
                         loading="lazy"
+                        onError={(e) => {
+                          const fb = defaultExecutionStages[i % defaultExecutionStages.length]?.image || stageUnderstandImg;
+                          if ((e.currentTarget as HTMLImageElement).src !== fb) {
+                            (e.currentTarget as HTMLImageElement).src = fb;
+                          }
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/55 via-transparent to-transparent pointer-events-none" />
                       {/* Stage number */}

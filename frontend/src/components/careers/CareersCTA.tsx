@@ -3,6 +3,7 @@ import { ArrowRight, Leaf, Sparkles, CheckCircle2, ShieldCheck } from "lucide-re
 import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 export interface CareersCTAProps {
   data?: {
@@ -12,11 +13,21 @@ export interface CareersCTAProps {
     description?: string;
     buttonText?: string;
     email?: string;
+    backgroundImage?: string;
   };
 }
 
 export const CareersCTA: React.FC<CareersCTAProps> = ({ data }) => {
   useScrollReveal([]);
+
+  const rawBg = data?.backgroundImage;
+  const [ctaBg, setCtaBg] = React.useState<string>(() => resolveAsset(rawBg) || defaultCtaBackground);
+
+  React.useEffect(() => {
+    if (rawBg) {
+      setCtaBg(resolveAsset(rawBg) || defaultCtaBackground);
+    }
+  }, [rawBg]);
 
   if (data?.visible === false) return null;
 
@@ -46,7 +57,10 @@ export const CareersCTA: React.FC<CareersCTAProps> = ({ data }) => {
           {/* Background Planet & Water Splash Image */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <img
-              src={defaultCtaBackground}
+              src={ctaBg}
+              onError={() => {
+                if (ctaBg !== defaultCtaBackground) setCtaBg(defaultCtaBackground);
+              }}
               alt="Veenero Sustainable Water Infrastructure — Earth splashing in water"
               className="w-full h-full object-cover object-[center_right]"
               loading="lazy"

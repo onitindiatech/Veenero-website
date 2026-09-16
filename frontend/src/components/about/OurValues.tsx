@@ -7,6 +7,7 @@ import integrityImg from "@/assets/about/about-pillar-integrity.webp";
 import impactImg from "@/assets/about/about-pillar-impact.webp";
 import innovationImg from "@/assets/about/about-pillar-innovation.webp";
 import togetherImg from "@/assets/about/about-pillar-together.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface OurValuesProps {
   data?: PublicAboutPillars;
@@ -91,8 +92,8 @@ export const OurValues: React.FC<OurValuesProps> = ({ data }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 sm:gap-6 items-stretch">
           {valuesList.map((value, idx) => {
             const Icon = pillarIcons[idx % pillarIcons.length];
-            const imageSrc =
-              value.image || fallbackPillarImages[idx % fallbackPillarImages.length];
+            const fallback = fallbackPillarImages[idx % fallbackPillarImages.length];
+            const imageSrc = resolveAsset(value.image, fallback);
             const staggerDelay = idx === 0 ? "" : idx === 1 ? "reveal-delay-100" : idx === 2 ? "reveal-delay-200" : idx === 3 ? "reveal-delay-300" : "reveal-delay-400";
 
             return (
@@ -109,6 +110,11 @@ export const OurValues: React.FC<OurValuesProps> = ({ data }) => {
                         alt={`${value.title} visual`}
                         className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
                         loading="lazy"
+                        onError={(e) => {
+                          if ((e.currentTarget as HTMLImageElement).src !== fallback) {
+                            (e.currentTarget as HTMLImageElement).src = fallback;
+                          }
+                        }}
                       />
                       <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/35 via-black/10 to-transparent pointer-events-none" />
                       {/* Numbered Indicator Badge matching Solutions cards */}

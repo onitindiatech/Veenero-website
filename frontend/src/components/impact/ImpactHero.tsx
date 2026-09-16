@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import defaultImpactHeroBg from "@/assets/impact-hero-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 import { ImpactContent } from "@/content/impact";
 
 interface ImpactHeroProps {
@@ -16,6 +17,7 @@ export const ImpactHero: React.FC<ImpactHeroProps> = ({ data }) => {
     }
   };
 
+  const bgImage = resolveAsset((data as any)?.image, defaultImpactHeroBg);
   const eyebrow = data?.eyebrow || "OUR IMPACT";
   const title = "Turning Water Intelligence";
   const highlightedText = "Into Measurable Impact.";
@@ -28,10 +30,15 @@ export const ImpactHero: React.FC<ImpactHeroProps> = ({ data }) => {
       {/* Full-width Cinematic Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src={defaultImpactHeroBg}
+          src={bgImage}
           alt="Veenero water intelligence impact — sustainable infrastructure telemetry"
           className="w-full h-full object-cover object-[center_35%] select-none pointer-events-none"
           loading="eager"
+          onError={(e) => {
+            if ((e.currentTarget as HTMLImageElement).src !== defaultImpactHeroBg) {
+              (e.currentTarget as HTMLImageElement).src = defaultImpactHeroBg;
+            }
+          }}
         />
 
         {/* Soft, clean white-to-transparent left gradient matching Solutions/About heroes */}

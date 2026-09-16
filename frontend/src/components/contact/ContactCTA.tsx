@@ -3,6 +3,7 @@ import { ArrowRight, Leaf, CheckCircle2, ShieldCheck, Sparkles } from "lucide-re
 import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 export interface ContactCTAProps {
   data?: {
@@ -13,11 +14,21 @@ export interface ContactCTAProps {
     primaryButtonLink?: string;
     secondaryButtonText?: string;
     secondaryButtonLink?: string;
+    backgroundImage?: string;
   };
 }
 
 export const ContactCTA: React.FC<ContactCTAProps> = ({ data }) => {
   useScrollReveal([]);
+
+  const rawBg = data?.backgroundImage;
+  const [ctaBg, setCtaBg] = React.useState<string>(() => resolveAsset(rawBg) || defaultCtaBackground);
+
+  React.useEffect(() => {
+    if (rawBg) {
+      setCtaBg(resolveAsset(rawBg) || defaultCtaBackground);
+    }
+  }, [rawBg]);
 
   if (data?.visible === false) return null;
 
@@ -47,7 +58,10 @@ export const ContactCTA: React.FC<ContactCTAProps> = ({ data }) => {
           {/* Background CTA Image */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <img
-              src={defaultCtaBackground}
+              src={ctaBg}
+              onError={() => {
+                if (ctaBg !== defaultCtaBackground) setCtaBg(defaultCtaBackground);
+              }}
               alt="Veenero water intelligence — ready to make an impact"
               className="w-full h-full object-cover object-[center_right]"
               loading="lazy"

@@ -1,3 +1,5 @@
+import { resolveAsset } from './resolveAsset';
+
 // Authentic, real-life water-related photographic images (high quality Unsplash photography)
 export const WATER_PHOTOGRAPHS = {
   // Telemetry, Sensing & Measurement (Digital flow meters & sensors on pipes)
@@ -38,8 +40,9 @@ export const WATER_PHOTOGRAPHS = {
 };
 
 export const getWaterPhotograph = (customUrl?: string, keyOrTitle?: string, fallbackIdx: number = 0): string => {
-  if (customUrl && (customUrl.startsWith('http') || customUrl.startsWith('/'))) {
-    return customUrl;
+  if (customUrl) {
+    const resolved = resolveAsset(customUrl);
+    if (resolved) return resolved;
   }
   
   if (!keyOrTitle) {

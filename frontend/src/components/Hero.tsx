@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImageFallback from "@/assets/hero-water.jpg";
+import { resolveAsset } from "@/utils/resolveAsset";
 import { waterRipple } from "@/assets/animations";
 import { heroContent } from "@/content/home/hero";
 import { getPublicHome, HomeHero } from "@/services/home.service";
@@ -28,8 +29,8 @@ export const Hero = () => {
     };
   }, []);
 
-  // Resolve the background image: prefer the CMS URL, fall back to the bundled asset
-  const bgSrc = hero.image && hero.image.trim() !== "" ? hero.image : heroImageFallback;
+  // Resolve the background image: properly maps /src/assets/... to bundled asset
+  const bgSrc = resolveAsset(hero.image, heroImageFallback);
 
   if (!hero.visible) return null;
 
@@ -41,6 +42,9 @@ export const Hero = () => {
           src={bgSrc}
           alt={hero.imageAlt || "India's Water Intelligence Platform"}
           className="w-full h-full object-cover transition-transform ease-out duration-[10000ms] hover:scale-105"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = heroImageFallback;
+          }}
         />
         {/* Deep Ocean Teal Atmosphere Overlays matching reference image */}
         <div className="absolute inset-0 bg-[#0c4c56]/65 mix-blend-multiply pointer-events-none" />

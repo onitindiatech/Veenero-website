@@ -10,6 +10,7 @@ import {
   Droplets,
 } from "lucide-react";
 import { SolutionDetailData } from "@/content/solutionDetailsData";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface SolutionHeroProps {
   data: SolutionDetailData;
@@ -201,7 +202,7 @@ export const SolutionHero: React.FC<SolutionHeroProps> = ({
             <div className="relative w-full rounded-[26px] overflow-hidden border border-teal-500/25 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-slate-950">
               <div className="aspect-[4/3] w-full overflow-hidden relative">
                 <img
-                  src={data.heroImage}
+                  src={resolveAsset(data.heroImage)}
                   alt={`${data.title} Infrastructure`}
                   className="w-full h-full object-cover"
                   loading="eager"

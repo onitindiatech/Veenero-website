@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Leaf, ShieldCheck, CheckCircle2, Droplets } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultCtaBackground from "@/assets/solutions/solutions-cta-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 import { ImpactContent } from "@/content/impact";
 
 interface ImpactCTAProps {
@@ -12,7 +13,14 @@ interface ImpactCTAProps {
 export const ImpactCTA: React.FC<ImpactCTAProps> = ({ data }) => {
   useScrollReveal([]);
 
-  const ctaBg = defaultCtaBackground;
+  const rawBg = (data as any)?.backgroundImage;
+  const [ctaBg, setCtaBg] = React.useState<string>(() => resolveAsset(rawBg) || defaultCtaBackground);
+
+  React.useEffect(() => {
+    if (rawBg) {
+      setCtaBg(resolveAsset(rawBg) || defaultCtaBackground);
+    }
+  }, [rawBg]);
   const eyebrow = "ACTIONABLE WATER INTELLIGENCE";
   const title = "Making Every Litre";
   const highlightedText = "Measurable, Verified & Meaningful.";
@@ -37,6 +45,9 @@ export const ImpactCTA: React.FC<ImpactCTAProps> = ({ data }) => {
           <div className="absolute inset-0 z-0 pointer-events-none">
             <img
               src={ctaBg}
+              onError={() => {
+                if (ctaBg !== defaultCtaBackground) setCtaBg(defaultCtaBackground);
+              }}
               alt="Veenero Sustainable Water Infrastructure — Earth splashing in water"
               className="w-full h-full object-cover object-[center_right]"
               loading="lazy"

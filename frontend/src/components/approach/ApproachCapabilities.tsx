@@ -2,6 +2,7 @@ import React from "react";
 import { Radio, Cloud, Cpu, PlugZap, TrendingUp, Gauge, BarChart3, Leaf } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import dashboardImage from "@/assets/about/about-infrastructure-sensor.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface ApproachCapabilitiesProps {
   data?: any;
@@ -58,7 +59,7 @@ export const ApproachCapabilities: React.FC<ApproachCapabilitiesProps> = ({ data
       }))
     : defaultTechCapabilities;
 
-  const img = data?.image || dashboardImage;
+  const img = resolveAsset(data?.image, dashboardImage);
 
   const flowRateLabel = data?.telemetry?.flowRate?.label || "Water Flow Rate";
   const flowRateValue = data?.telemetry?.flowRate?.value || "1,245";
@@ -139,6 +140,11 @@ export const ApproachCapabilities: React.FC<ApproachCapabilitiesProps> = ({ data
                   alt="Veenero real-time intelligence dashboard — live flow, quality and system health monitoring"
                   className="w-full h-full object-cover opacity-90 group-hover:scale-[1.02] transition-transform duration-700 ease-out"
                   loading="lazy"
+                  onError={(e) => {
+                    if ((e.currentTarget as HTMLImageElement).src !== dashboardImage) {
+                      (e.currentTarget as HTMLImageElement).src = dashboardImage;
+                    }
+                  }}
                 />
                 {/* Dark overlay so telemetry overlays read clearly */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-950/40 via-slate-950/20 to-slate-950/50 pointer-events-none" />

@@ -3,6 +3,7 @@ import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultApproachHeroBg from "@/assets/approach/approach-hero-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface ApproachHeroProps {
   data?: any;
@@ -19,7 +20,7 @@ export const ApproachHero: React.FC<ApproachHeroProps> = ({ data }) => {
     }
   };
 
-  const bgImage = data?.image || defaultApproachHeroBg;
+  const bgImage = resolveAsset(data?.image, defaultApproachHeroBg);
   const eyebrow = data?.eyebrow || "OUR APPROACH";
   const title = data?.title || "A Smarter Way to Manage Water";
   const highlightedText = data?.highlightedText || "Visibility. Intelligence. Accountability.";
@@ -40,6 +41,11 @@ export const ApproachHero: React.FC<ApproachHeroProps> = ({ data }) => {
           alt="Veenero water intelligence approach — watershed and smart telemetry network"
           className="w-full h-full object-cover object-[center_35%] select-none pointer-events-none"
           loading="eager"
+          onError={(e) => {
+            if ((e.currentTarget as HTMLImageElement).src !== defaultApproachHeroBg) {
+              (e.currentTarget as HTMLImageElement).src = defaultApproachHeroBg;
+            }
+          }}
         />
 
         {/* Soft, clean white-to-transparent left gradient matching Solutions/About heroes */}

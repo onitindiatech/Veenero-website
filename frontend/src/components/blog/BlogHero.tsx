@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, Leaf } from "lucide-react";
 import defaultBlogHeroBg from "@/assets/blog-hero-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 import { BlogSettings } from "./types";
 
 interface BlogHeroProps {
@@ -10,6 +11,13 @@ interface BlogHeroProps {
 
 export const BlogHero: React.FC<BlogHeroProps> = ({ settings, postCount = 8 }) => {
   const hero = settings?.hero;
+  const [imgSrc, setImgSrc] = React.useState<string>(() => resolveAsset(hero?.image) || defaultBlogHeroBg);
+
+  React.useEffect(() => {
+    if (hero?.image) {
+      setImgSrc(resolveAsset(hero.image) || defaultBlogHeroBg);
+    }
+  }, [hero?.image]);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -30,7 +38,10 @@ export const BlogHero: React.FC<BlogHeroProps> = ({ settings, postCount = 8 }) =
       {/* Full-width Cinematic Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src={defaultBlogHeroBg}
+          src={imgSrc}
+          onError={() => {
+            if (imgSrc !== defaultBlogHeroBg) setImgSrc(defaultBlogHeroBg);
+          }}
           alt="Veenero water intelligence insights, research and telemetry analytics"
           className="w-full h-full object-cover object-[center_35%] select-none pointer-events-none"
           loading="eager"

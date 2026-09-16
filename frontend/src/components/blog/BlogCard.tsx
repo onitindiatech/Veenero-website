@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Calendar, Clock } from 'lucide-react';
 import { Article } from './types';
 import heroWater from '@/assets/about/about-journey-water-infrastructure.webp';
+import { resolveAsset } from '@/utils/resolveAsset';
 
 interface BlogCardProps {
   article: Article;
@@ -11,7 +12,8 @@ interface BlogCardProps {
 const FALLBACK_IMG = heroWater;
 
 export const BlogCard: React.FC<BlogCardProps> = ({ article, onViewDetails }) => {
-  const imgSrc = article.featuredImage || article.image || '';
+  const rawImg = article.featuredImage || article.image || '';
+  const imgSrc = resolveAsset(rawImg) || rawImg || FALLBACK_IMG;
   const imgAlt = article.featuredImageAlt || article.title;
 
   const dateDisplay = article.publishedAt

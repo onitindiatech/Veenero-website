@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Calendar, Clock, User, Sparkles } from 'lucide-react';
 import { Article } from './types';
 import heroWater from '@/assets/about/about-journey-water-infrastructure.webp';
+import { resolveAsset } from '@/utils/resolveAsset';
 
 interface FeaturedArticleProps {
   article: Article;
@@ -12,7 +13,8 @@ interface FeaturedArticleProps {
 const FALLBACK_IMG = heroWater;
 
 export const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ article, settings, onViewDetails }) => {
-  const imgSrc = article.featuredImage || article.image || '';
+  const rawImg = article.featuredImage || article.image || '';
+  const imgSrc = resolveAsset(rawImg) || rawImg || FALLBACK_IMG;
   const imgAlt = article.featuredImageAlt || article.title;
 
   const dateDisplay = article.publishedAt

@@ -3,6 +3,7 @@ import { ArrowRight, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import defaultHeroBackground from "@/assets/solutions/solutions-hero-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface SolutionsHeroProps {
   data?: any;
@@ -33,10 +34,7 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data, isLoading = 
 
   const isContentLoading = isLoading && !data;
 
-  const heroBg =
-    data?.image && (data.image.startsWith("http://") || data.image.startsWith("https://"))
-      ? data.image
-      : defaultHeroBackground;
+  const heroBg = resolveAsset(data?.image, defaultHeroBackground);
   const eyebrow = data?.eyebrow || "VEENERO SOLUTION SUITE";
   const titlePart1 = data?.title || "Water Conservative Devices & Software";
   const titlePart2 = data?.highlightedText || "Aqua Saver";
@@ -54,6 +52,11 @@ export const SolutionsHero: React.FC<SolutionsHeroProps> = ({ data, isLoading = 
           alt={data?.imageAlt || "Veenero Sustainable Water Infrastructure Solutions"}
           className="w-full h-full object-cover object-[right_center] select-none pointer-events-none"
           loading="eager"
+          onError={(e) => {
+            if ((e.currentTarget as HTMLImageElement).src !== defaultHeroBackground) {
+              (e.currentTarget as HTMLImageElement).src = defaultHeroBackground;
+            }
+          }}
         />
 
         {/* Cool Water-Blue / Aqua Atmospheric Tonal Wash (eliminates chalky white, adds vibrant water depth) */}

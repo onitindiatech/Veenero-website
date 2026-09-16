@@ -3,6 +3,7 @@ import { ArrowRight, Leaf } from "lucide-react";
 import { PublicAboutHero } from "@/services/about.service";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import aboutHeroBackground from "@/assets/about/about-hero-background.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface AboutHeroProps {
   data?: PublicAboutHero;
@@ -54,12 +55,14 @@ export const AboutHero: React.FC<AboutHeroProps> = ({
       )
     );
 
-  const heroImage =
+  const rawImage =
     mediaUrl && !isLegacyIllustrated
       ? mediaUrl
       : data?.image && !isLegacyIllustrated
       ? data.image
       : aboutHeroBackground;
+
+  const heroImage = resolveAsset(rawImage, aboutHeroBackground);
 
   const heroAlt =
     data?.imageAlt ||
@@ -91,6 +94,11 @@ export const AboutHero: React.FC<AboutHeroProps> = ({
           alt={heroAlt}
           className="w-full h-full object-cover object-[right_center] select-none pointer-events-none"
           loading="eager"
+          onError={(e) => {
+            if ((e.currentTarget as HTMLImageElement).src !== aboutHeroBackground) {
+              (e.currentTarget as HTMLImageElement).src = aboutHeroBackground;
+            }
+          }}
         />
 
         {/* Cool Water-Blue / Aqua Atmospheric Tonal Wash (eliminates chalky white, adds vibrant water depth) */}

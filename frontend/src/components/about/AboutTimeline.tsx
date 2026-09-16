@@ -2,6 +2,7 @@ import React from "react";
 import { MilestoneWaterIcon } from "./waterIllustrations";
 import { PublicAboutJourney, PublicAboutMilestone } from "@/services/about.service";
 import defaultJourneyImage from "@/assets/about/about-journey-water-infrastructure.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface AboutTimelineProps {
   data?: PublicAboutJourney;
@@ -53,7 +54,7 @@ export const AboutTimeline: React.FC<AboutTimelineProps> = ({ data }) => {
   const description =
     data?.description ||
     "From our founding vision to nationwide water intelligence infrastructure across India.";
-  const journeyImage = data?.journeyImage || defaultJourneyImage;
+  const journeyImage = resolveAsset(data?.journeyImage, defaultJourneyImage);
   const journeyCaption =
     data?.journeyCaption ||
     "Rugged edge sensors and IoT transmission units monitoring high-pressure water conduits, clarifiers, and urban distribution networks in real time.";
@@ -168,6 +169,11 @@ export const AboutTimeline: React.FC<AboutTimelineProps> = ({ data }) => {
               alt="Veenero nationwide water infrastructure telemetry and treatment facility deployment"
               className="w-full h-full object-cover object-[center_35%] rounded-2xl sm:rounded-3xl transition-transform duration-700 ease-out group-hover:scale-[1.01]"
               loading="lazy"
+              onError={(e) => {
+                if ((e.currentTarget as HTMLImageElement).src !== defaultJourneyImage) {
+                  (e.currentTarget as HTMLImageElement).src = defaultJourneyImage;
+                }
+              }}
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-black/15 pointer-events-none rounded-2xl sm:rounded-3xl" />

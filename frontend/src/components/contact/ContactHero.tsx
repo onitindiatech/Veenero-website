@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, Leaf } from "lucide-react";
 import contactHeroBg from "@/assets/contact/contact-hero-bg.png";
+import { resolveAsset } from "@/utils/resolveAsset";
 import { ContactPageContent } from "@/content/contact";
 
 interface ContactHeroProps {
@@ -8,6 +9,17 @@ interface ContactHeroProps {
 }
 
 export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
+  const [imgSrc, setImgSrc] = React.useState<string>(
+    () => resolveAsset((data as any)?.backgroundImage) || contactHeroBg
+  );
+
+  React.useEffect(() => {
+    const raw = (data as any)?.backgroundImage;
+    if (raw) {
+      setImgSrc(resolveAsset(raw) || contactHeroBg);
+    }
+  }, [(data as any)?.backgroundImage]);
+
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -23,7 +35,10 @@ export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
       {/* Full-width Cinematic Background Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <img
-          src={(data as any)?.backgroundImage || contactHeroBg}
+          src={imgSrc}
+          onError={() => {
+            if (imgSrc !== contactHeroBg) setImgSrc(contactHeroBg);
+          }}
           alt="Veenero water intelligence contact — enterprise communication and water systems"
           className="w-full h-full object-cover object-[center_35%] select-none pointer-events-none"
           loading="eager"

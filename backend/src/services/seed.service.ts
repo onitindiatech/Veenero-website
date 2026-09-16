@@ -436,7 +436,7 @@ export async function syncVeeneroSourceContent(): Promise<void> {
             },
             {
               name: 'IESA (India Electronics & Semiconductor Association)',
-              logo: '/src/assets/iesa_logo.jpg',
+              logo: '/src/assets/Iesa_logo.jpg',
               description: 'Recognized under IESA for innovation and technology development in sustainable solutions.',
             },
           ],

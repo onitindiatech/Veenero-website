@@ -6,6 +6,7 @@ import sensorImg from "@/assets/about/about-infrastructure-sensor.webp";
 import analyticsImg from "@/assets/about/about-real-time-analytics.webp";
 import verificationImg from "@/assets/about/about-field-verification.webp";
 import systemImg from "@/assets/about/about-industrial-water-system.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface WhyVeeneroProps {
   data?: PublicAboutWhyChoose;
@@ -86,8 +87,8 @@ export const WhyVeenero: React.FC<WhyVeeneroProps> = ({ data }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {cards.map((card, idx) => {
             const Icon = (LucideIcons as any)[card.icon] || LucideIcons.Layers;
-            const imageSrc =
-              card.image || fallbackImages[idx % fallbackImages.length];
+            const fallback = fallbackImages[idx % fallbackImages.length];
+            const imageSrc = resolveAsset(card.image, fallback);
 
             return (
               <div
@@ -118,6 +119,11 @@ export const WhyVeenero: React.FC<WhyVeeneroProps> = ({ data }) => {
                         alt={`${card.title} preview`}
                         className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                         loading="lazy"
+                        onError={(e) => {
+                          if ((e.currentTarget as HTMLImageElement).src !== fallback) {
+                            (e.currentTarget as HTMLImageElement).src = fallback;
+                          }
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                     </div>

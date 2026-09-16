@@ -5,6 +5,7 @@ import { Leaf } from "lucide-react";
 import teamLeadershipImg from "@/assets/about/about-team-leadership.webp";
 import edgeTelemetryImg from "@/assets/about/about-field-verification.webp";
 import cloudAnalyticsImg from "@/assets/about/about-real-time-analytics.webp";
+import { resolveAsset } from "@/utils/resolveAsset";
 
 interface LeadershipProps {
   data?: PublicAboutLeadership;
@@ -74,8 +75,8 @@ export const Leadership: React.FC<LeadershipProps> = ({ data }) => {
         {/* 3 Leadership Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {teamList.map((member, idx) => {
-            const imageSrc =
-              member.image || fallbackTeamImages[idx % fallbackTeamImages.length];
+            const fallback = fallbackTeamImages[idx % fallbackTeamImages.length];
+            const imageSrc = resolveAsset(member.image, fallback);
 
             const staggerDelay = idx === 0 ? "reveal-delay-100" : idx === 1 ? "reveal-delay-200" : "reveal-delay-300";
 
@@ -91,6 +92,11 @@ export const Leadership: React.FC<LeadershipProps> = ({ data }) => {
                     alt={member.name}
                     className="w-full h-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                     loading="lazy"
+                    onError={(e) => {
+                      if ((e.currentTarget as HTMLImageElement).src !== fallback) {
+                        (e.currentTarget as HTMLImageElement).src = fallback;
+                      }
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
                   
