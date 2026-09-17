@@ -3,8 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { initScrollReveal } from "@/hooks/useScrollReveal";
+
+// Lazy-load the AI chat assistant — zero impact on initial bundle
+const VeeneroChat = lazy(() => import("@/components/chat/VeeneroChat"));
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AboutUsPage from "./pages/AboutUsPage";
@@ -145,6 +148,11 @@ const AnimatedRoutes = () => {
         {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      {/* Veenero AI Help Assistant — lazy loaded, zero initial bundle impact */}
+      <Suspense fallback={null}>
+        <VeeneroChat />
+      </Suspense>
     </div>
   );
 };

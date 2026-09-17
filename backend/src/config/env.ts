@@ -55,6 +55,12 @@ export const config = {
   cloudinaryCloudName: requireEnv('CLOUDINARY_CLOUD_NAME'),
   cloudinaryApiKey:    requireEnv('CLOUDINARY_API_KEY'),
   cloudinaryApiSecret: requireEnv('CLOUDINARY_API_SECRET'),
+
+  // ── AI Provider (Backend only — API key NEVER exposed to frontend) ────────────
+  // Set AI_API_KEY in backend/.env to enable the Veenero AI chat assistant.
+  // Without it, the chatbot returns a graceful error message.
+  aiApiKey:  optionalEnv('AI_API_KEY', ''),
+  aiModel:   optionalEnv('AI_MODEL', 'gemini-3.5-flash'),
 } as const;
 
 export type Config = typeof config;

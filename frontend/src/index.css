@@ -511,3 +511,67 @@
   }
 }
 
+/* ─── Veenero AI Chat Assistant Animations ────────────────────────────────── */
+/* All animations respect prefers-reduced-motion                               */
+
+/* Ripple rings around the floating button */
+.chat-ripple-ring {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: 2px solid hsl(185 65% 28% / 0.35);
+  animation: chat-ripple 2.4s ease-out infinite;
+  pointer-events: none;
+}
+
+.chat-ripple-ring--delay {
+  animation-delay: 1.2s;
+}
+
+@keyframes chat-ripple {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Typing indicator — water droplet bounce */
+.chat-typing-drop {
+  animation: chat-drop-bounce 1s ease-in-out infinite;
+  display: inline-block;
+  border-radius: 9999px;
+}
+
+@keyframes chat-drop-bounce {
+  0%, 80%, 100% { transform: translateY(0) scaleY(1); }
+  40%            { transform: translateY(-6px) scaleY(0.85); }
+}
+
+/* Active/online pulse dot */
+.chat-pulse-dot {
+  animation: chat-dot-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes chat-dot-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.85); }
+}
+
+/* Tooltip fade-in */
+.animate-chat-tooltip {
+  animation: chat-tooltip-in 0.18s ease-out forwards;
+}
+
+@keyframes chat-tooltip-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .chat-ripple-ring,
+  .chat-typing-drop,
+  .chat-pulse-dot,
+  .animate-chat-tooltip {
+    animation: none !important;
+  }
+}

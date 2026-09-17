@@ -96,3 +96,22 @@ export const apiLimiter = rateLimit({
     return req.path.startsWith('/api/health');
   },
 });
+
+// ─── AI Chat Rate Limiter ──────────────────────────────────────────────────────
+// Strict limit to protect AI API costs and prevent abuse.
+// 10 requests per minute per IP is generous for legitimate usage.
+export const aiRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10,             // 10 AI requests per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { default: false },
+  message: {
+    success: false,
+    error: {
+      status: 429,
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'You have sent too many messages. Please wait a moment before trying again.',
+    },
+  },
+});

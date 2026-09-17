@@ -28,6 +28,9 @@ import { publicImpactRouter, adminImpactRouter } from './routes/impact.routes';
 import { publicContactRouter, adminContactRouter, adminLeadsRouter } from './routes/contact.routes';
 import { publicFooterRouter, adminFooterRouter } from './routes/footer.routes';
 import { apiLimiter, resetAuthLimiter } from './middleware/rateLimit.middleware';
+import { publicSolutionDetailRouter, adminSolutionDetailRouter } from './routes/solutionDetail.routes';
+import aiRouter from './routes/ai.routes';
+import adminDashboardRouter from './routes/dashboard.routes';
 
 // ─── Express Application ──────────────────────────────────────────────────────
 
@@ -101,6 +104,10 @@ app.use(`${API_PREFIX}/footer`, publicFooterRouter);
 app.use(`${API_PREFIX}/admin/footer`, adminFooterRouter);
 app.use(`${API_PREFIX}/media`, publicMediaRouter);
 app.use(`${API_PREFIX}/admin/media`, adminMediaRouter);
+app.use(`${API_PREFIX}/solutions-detail`, publicSolutionDetailRouter);
+app.use(`${API_PREFIX}/admin/solutions-detail`, adminSolutionDetailRouter);
+app.use(`${API_PREFIX}/admin/dashboard`, adminDashboardRouter);
+app.use(`${API_PREFIX}/ai`, aiRouter);
 
 
 // ── 404 Catch-All ─────────────────────────────────────────────────────────────

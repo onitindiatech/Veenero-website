@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
+import { VeeneroLogo } from '@/components/VeeneroLogo';
+import veeneroLogo from '@/assets/veenero_logo.png';
 
 // Define the structure of Sidebar Links
 interface SidebarItem {
@@ -147,14 +149,29 @@ export const AdminLayout: React.FC = () => {
         )}
       >
         {/* Brand header */}
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-border/30 overflow-hidden shrink-0">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-teal-600 to-cyan-600 shadow-md text-white shrink-0">
-            <Icons.Droplet className="h-5 w-5 fill-white/10" />
-          </div>
-          {!isSidebarCollapsed && (
-            <span className="font-extrabold text-sm tracking-wider font-sans bg-clip-text text-transparent bg-gradient-to-r from-teal-700 to-cyan-600">
-              VEENERO <span className="text-teal-500 font-light">OS</span>
-            </span>
+        <div
+          className={cn(
+            "h-16 flex items-center border-b border-border/30 overflow-hidden shrink-0 transition-all duration-300",
+            isSidebarCollapsed ? "justify-center px-2" : "px-5"
+          )}
+        >
+          {isSidebarCollapsed ? (
+            <Link to="/admin/dashboard" title="Veenero OS" className="flex items-center justify-center select-none" aria-label="Veenero OS Home">
+              <div className="h-9 w-9 rounded-xl bg-card border border-border/50 shadow-sm flex items-center justify-center overflow-hidden p-1.5 hover:border-teal-500/50 transition-colors">
+                <img src={veeneroLogo} alt="Veenero" className="h-full w-full object-cover object-left" />
+              </div>
+            </Link>
+          ) : (
+            <Link to="/admin/dashboard" className="flex items-center gap-2 select-none group py-1" aria-label="Veenero OS Dashboard">
+              <VeeneroLogo
+                variant="default"
+                className="h-8 w-auto max-w-[170px] object-contain transition-opacity group-hover:opacity-90"
+                loading="eager"
+              />
+              <span className="text-[10px] font-extrabold tracking-widest px-1.5 py-0.5 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 font-mono shrink-0">
+                OS
+              </span>
+            </Link>
           )}
         </div>
 
@@ -233,15 +250,22 @@ export const AdminLayout: React.FC = () => {
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="h-16 flex items-center justify-between px-6 border-b border-border">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-teal-600 text-white">
-                <Icons.Droplet className="h-5 w-5" />
-              </div>
-              <span className="font-extrabold text-sm tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-teal-700 to-cyan-600">
-                VEENERO <span className="text-teal-500 font-light">OS</span>
+          <div className="h-16 flex items-center justify-between px-5 border-b border-border shrink-0">
+            <Link
+              to="/admin/dashboard"
+              onClick={() => setIsMobileOpen(false)}
+              className="flex items-center gap-2 select-none"
+              aria-label="Veenero OS Dashboard"
+            >
+              <VeeneroLogo
+                variant="default"
+                className="h-7 w-auto max-w-[160px] object-contain"
+                loading="eager"
+              />
+              <span className="text-[10px] font-extrabold tracking-widest px-1.5 py-0.5 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 font-mono shrink-0">
+                OS
               </span>
-            </div>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
@@ -299,35 +323,35 @@ export const AdminLayout: React.FC = () => {
       {/* ----------------------------------------------------
           Main Layout Work Area
          ---------------------------------------------------- */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+      <div className="flex-1 flex flex-col min-w-0 relative" style={{ minWidth: 0 }}>
         {/* Top Header */}
-        <header className="h-16 border-b border-border/40 bg-card/60 backdrop-blur-md flex items-center justify-between px-6 z-10 shrink-0">
-          <div className="flex items-center gap-4">
+        <header className="h-16 border-b border-border/40 bg-card/60 backdrop-blur-md flex items-center justify-between px-6 z-50 shrink-0 relative">
+          <div className="flex items-center gap-3 min-w-0">
             {/* Hamburger Trigger for Mobile */}
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-muted-foreground hover:text-foreground"
+              className="md:hidden text-muted-foreground hover:text-foreground shrink-0"
               onClick={() => setIsMobileOpen(true)}
             >
               <Icons.Menu className="h-5.5 w-5.5" />
             </Button>
 
             {/* Breadcrumb Info */}
-            <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-muted-foreground font-sans">
-              <span>Veenero Admin</span>
-              <Icons.ChevronRight className="h-3.5 w-3.5 stroke-[2.5]" />
-              <span className="text-foreground font-bold">{currentRouteName()}</span>
+            <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-muted-foreground font-sans min-w-0">
+              <span className="shrink-0">Veenero Admin</span>
+              <Icons.ChevronRight className="h-3.5 w-3.5 stroke-[2.5] shrink-0" />
+              <span className="text-foreground font-bold truncate max-w-[140px] md:max-w-[200px] xl:max-w-none">{currentRouteName()}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             {/* Quick search input */}
-            <div className="relative hidden lg:block w-64">
+            <div className="relative hidden md:block w-44 lg:w-56 xl:w-64">
               <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
               <input
                 type="text"
-                placeholder="Search facility stats..."
+                placeholder="Search CMS pages, leads..."
                 className="w-full pl-9 pr-4 py-1.5 text-xs bg-muted/40 border border-border/50 rounded-xl focus:outline-none focus:border-teal-500/60 focus:ring-1 focus:ring-teal-500/20 font-sans"
               />
             </div>
@@ -350,30 +374,30 @@ export const AdminLayout: React.FC = () => {
 
               {isNotificationOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-80 bg-card border border-border/60 rounded-xl shadow-2xl p-4 z-30 animate-fade-in"
+                  className="absolute right-0 mt-2.5 w-80 max-w-[calc(100vw-2rem)] bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-2xl p-4 z-[9999] animate-fade-in"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="flex items-center justify-between pb-2.5 border-b border-border/40">
-                    <span className="text-xs font-bold text-foreground font-sans">Active Notifications</span>
-                    <span className="text-[10px] font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded-full font-sans">
-                      4 Urgent
+                    <span className="text-xs font-bold text-foreground font-sans">CMS Notifications</span>
+                    <span className="text-[10px] font-semibold text-teal-600 bg-teal-50 dark:bg-teal-950/20 px-1.5 py-0.5 rounded-full font-sans">
+                      System
                     </span>
                   </div>
                   <div className="mt-2 space-y-2 max-h-60 overflow-y-auto no-scrollbar">
-                    <div className="p-2 hover:bg-muted/40 rounded-lg text-xs font-sans border-l-2 border-rose-500">
-                      <p className="font-bold text-foreground">Austin Datacenter Flow Spike</p>
-                      <p className="text-muted-foreground mt-0.5">Flow loop exceeded limits by 45%.</p>
-                      <span className="text-[10px] text-muted-foreground/60 block mt-1">10 mins ago</span>
-                    </div>
-                    <div className="p-2 hover:bg-muted/40 rounded-lg text-xs font-sans border-l-2 border-amber-500">
-                      <p className="font-bold text-foreground">Pressure Drop in Chicago</p>
-                      <p className="text-muted-foreground mt-0.5">Differential pressure dropped in Boiler loop.</p>
-                      <span className="text-[10px] text-muted-foreground/60 block mt-1">42 mins ago</span>
+                    <div className="p-2 hover:bg-muted/40 rounded-lg text-xs font-sans border-l-2 border-teal-500">
+                      <p className="font-bold text-foreground">Dashboard Connected</p>
+                      <p className="text-muted-foreground mt-0.5">Live data is streaming from MongoDB Atlas.</p>
+                      <span className="text-[10px] text-muted-foreground/60 block mt-1">Just now</span>
                     </div>
                     <div className="p-2 hover:bg-muted/40 rounded-lg text-xs font-sans border-l-2 border-sky-500">
-                      <p className="font-bold text-foreground">Weekly report generated</p>
-                      <p className="text-muted-foreground mt-0.5">Water Savings report is ready for export.</p>
-                      <span className="text-[10px] text-muted-foreground/60 block mt-1">1 hr ago</span>
+                      <p className="font-bold text-foreground">CMS Backup Available</p>
+                      <p className="text-muted-foreground mt-0.5">Use the dashboard to export a full CMS snapshot.</p>
+                      <span className="text-[10px] text-muted-foreground/60 block mt-1">System</span>
+                    </div>
+                    <div className="p-2 hover:bg-muted/40 rounded-lg text-xs font-sans border-l-2 border-emerald-500">
+                      <p className="font-bold text-foreground">All Services Operational</p>
+                      <p className="text-muted-foreground mt-0.5">API, media upload, and CMS routes are healthy.</p>
+                      <span className="text-[10px] text-muted-foreground/60 block mt-1">Today</span>
                     </div>
                   </div>
                 </div>
@@ -384,14 +408,14 @@ export const AdminLayout: React.FC = () => {
             <div className="relative">
               <button
                 type="button"
-                className="flex items-center gap-2 focus:outline-none"
+                className="flex items-center gap-2 focus:outline-none rounded-xl p-1 hover:bg-muted/40 transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsProfileOpen(!isProfileOpen);
                   setIsNotificationOpen(false);
                 }}
               >
-                <div className="h-8.5 w-8.5 rounded-xl bg-gradient-to-br from-teal-600 to-cyan-600 text-white flex items-center justify-center font-bold text-sm shadow-sm select-none">
+                <div className="h-8.5 w-8.5 rounded-xl bg-gradient-to-br from-teal-600 to-cyan-600 text-white flex items-center justify-center font-bold text-sm shadow-sm select-none shrink-0">
                   {user?.name
                     ? user.name
                         .split(' ')
@@ -401,36 +425,66 @@ export const AdminLayout: React.FC = () => {
                         .slice(0, 2)
                     : 'AD'}
                 </div>
-                <div className="hidden sm:flex flex-col items-start text-left leading-none">
-                  <span className="text-xs font-bold text-foreground font-sans">{user?.name || 'Admin User'}</span>
-                  <span className="text-[9px] text-muted-foreground font-mono mt-0.5">{user?.role || 'Console Admin'}</span>
+                <div className="hidden sm:flex flex-col items-start text-left leading-none max-w-[120px] md:max-w-[150px]">
+                  <span className="text-xs font-bold text-foreground font-sans truncate w-full">{user?.name || 'Admin User'}</span>
+                  <span className="text-[9px] text-muted-foreground font-mono mt-0.5 truncate w-full">{user?.role || 'Console Admin'}</span>
                 </div>
-                <Icons.ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                <Icons.ChevronDown className={`h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isProfileOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-52 bg-card border border-border/60 rounded-xl shadow-2xl p-2.5 z-30 animate-fade-in text-xs font-sans font-medium"
+                  className="absolute right-0 mt-2.5 w-64 max-w-[calc(100vw-2rem)] bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-2xl p-2 z-[9999] animate-fade-in text-xs font-sans ring-1 ring-black/5 dark:ring-white/5"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="px-3 py-2 border-b border-border/40 mb-1.5">
-                    <p className="font-bold text-foreground">Account Status</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Veenero Cloud Server 1</p>
+                  {/* Account Status Header */}
+                  <div className="px-3.5 py-3 border-b border-border/40 mb-1 rounded-xl bg-muted/30">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-foreground tracking-tight text-xs">Account Status</span>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Active
+                      </span>
+                    </div>
+                    <div className="mt-1.5">
+                      <p className="font-semibold text-foreground truncate text-xs">{user?.name || 'Super Admin'}</p>
+                      <p className="text-[10px] text-muted-foreground truncate">{user?.email || 'admin@veenerosolutions.com'}</p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-border/30 flex items-center justify-between text-[10px] text-muted-foreground font-mono">
+                      <span>Server</span>
+                      <span className="text-teal-600 dark:text-teal-400 font-semibold">Veenero Cloud 01</span>
+                    </div>
                   </div>
-                  <Link
-                    to="/admin/settings"
-                    className="flex items-center gap-2.5 w-full px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted/55 rounded-lg"
-                    onClick={() => setIsProfileOpen(false)}
-                  >
-                    <Icons.Settings className="h-4 w-4" />
-                    Console Settings
-                  </Link>
+
+                  {/* Menu Action Links */}
+                  <div className="space-y-0.5 py-1">
+                    <Link
+                      to="/admin/careers"
+                      className="flex items-center gap-2.5 w-full px-3 py-2.5 text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-xl transition-all duration-150 font-medium"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <Icons.Briefcase className="h-4 w-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                      <span>Post Job</span>
+                    </Link>
+                    <Link
+                      to="/admin/settings"
+                      className="flex items-center gap-2.5 w-full px-3 py-2.5 text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-xl transition-all duration-150 font-medium"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <Icons.Settings className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <span>Console Settings</span>
+                    </Link>
+                  </div>
+
+                  <div className="h-[1px] bg-border/40 my-1 mx-1" />
+
+                  {/* Sign Out Action */}
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2.5 w-full px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg text-left font-bold"
+                    className="flex items-center gap-2.5 w-full px-3 py-2.5 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-all duration-150 font-bold text-left"
                   >
-                    <Icons.LogOut className="h-4 w-4" />
-                    Sign Out Session
+                    <Icons.LogOut className="h-4 w-4 shrink-0" />
+                    <span>Sign Out Session</span>
                   </button>
                 </div>
               )}
@@ -439,7 +493,7 @@ export const AdminLayout: React.FC = () => {
         </header>
 
         {/* Dynamic Nested Content */}
-        <main className="flex-1 overflow-y-auto bg-muted/20 flex flex-col relative">
+        <main className="flex-1 overflow-y-auto bg-muted/20 flex flex-col relative z-0">
           <Outlet />
         </main>
       </div>
