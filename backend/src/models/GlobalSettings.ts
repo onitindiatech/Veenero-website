@@ -1,5 +1,19 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export interface ISocialLink {
+  _id?: any;
+  name: string;
+  url: string;
+  platform: string;
+  icon?: string;
+  iconSource?: 'platform' | 'favicon' | 'custom';
+  enabled: boolean;
+  order: number;
+  openInNewTab: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface IGlobalSettings extends Document {
   general: {
     websiteName: string;
@@ -26,6 +40,7 @@ export interface IGlobalSettings extends Document {
     twitter: string;
     github: string;
   };
+  socialLinks: ISocialLink[];
   behavior: {
     maintenanceMode: boolean;
     cookieConsentEnabled: boolean;
@@ -35,6 +50,20 @@ export interface IGlobalSettings extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+const SocialLinkSchema = new Schema<ISocialLink>(
+  {
+    name: { type: String, required: true, trim: true },
+    url: { type: String, required: true, trim: true },
+    platform: { type: String, default: 'custom', trim: true },
+    icon: { type: String, default: '' },
+    iconSource: { type: String, enum: ['platform', 'favicon', 'custom'], default: 'platform' },
+    enabled: { type: Boolean, default: true },
+    order: { type: Number, default: 0 },
+    openInNewTab: { type: Boolean, default: true },
+  },
+  { timestamps: true }
+);
 
 const GlobalSettingsSchema = new Schema<IGlobalSettings>(
   {
@@ -63,6 +92,7 @@ const GlobalSettingsSchema = new Schema<IGlobalSettings>(
       twitter: { type: String, default: 'https://twitter.com/veenero' },
       github: { type: String, default: '' },
     },
+    socialLinks: { type: [SocialLinkSchema], default: [] },
     behavior: {
       maintenanceMode: { type: Boolean, default: false },
       cookieConsentEnabled: { type: Boolean, default: true },

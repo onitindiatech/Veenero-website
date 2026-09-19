@@ -12,6 +12,7 @@ import { FooterSettingsModel } from '../models/FooterSettings';
 import { MediaModel } from '../models/Media';
 import { CareerModel } from '../models/Career';
 import { CareerPageSettingsModel } from '../models/CareerPageSettings';
+import { GlobalSettingsModel } from '../models/GlobalSettings';
 import { seedSolutionDetails } from './seedSolutionDetails';
 
 const mockPages = [
@@ -2134,5 +2135,73 @@ export async function seedCareers(): Promise<void> {
   } else {
     await CareerModel.create(seededRole);
     console.log('[Seed] Full Stack Developer role seeded successfully.');
+  }
+
+  // 3. Idempotently Seed Global Settings & Default Social / Contact Links
+  const defaultSocialLinks = [
+    {
+      name: 'LinkedIn',
+      url: 'https://linkedin.com/company/veenero',
+      platform: 'linkedin',
+      icon: 'linkedin',
+      iconSource: 'platform',
+      enabled: true,
+      order: 0,
+      openInNewTab: true,
+    },
+    {
+      name: 'GitHub',
+      url: 'https://github.com/veenero',
+      platform: 'github',
+      icon: 'github',
+      iconSource: 'platform',
+      enabled: true,
+      order: 1,
+      openInNewTab: true,
+    },
+    {
+      name: 'Twitter / X',
+      url: 'https://twitter.com/veenero',
+      platform: 'x',
+      icon: 'twitter',
+      iconSource: 'platform',
+      enabled: true,
+      order: 2,
+      openInNewTab: true,
+    },
+    {
+      name: 'Email',
+      url: 'mailto:info@veenerosolutions.com',
+      platform: 'email',
+      icon: 'mail',
+      iconSource: 'platform',
+      enabled: true,
+      order: 3,
+      openInNewTab: false,
+    },
+    {
+      name: 'WhatsApp',
+      url: 'https://wa.me/919346517202',
+      platform: 'whatsapp',
+      icon: 'whatsapp',
+      iconSource: 'platform',
+      enabled: true,
+      order: 4,
+      openInNewTab: true,
+    },
+  ];
+
+  const globalSettings = await GlobalSettingsModel.findOne();
+  if (!globalSettings) {
+    await GlobalSettingsModel.create({
+      socialLinks: defaultSocialLinks,
+    });
+    console.log('[Seed] Global settings created with default social & contact links.');
+  } else if (!globalSettings.socialLinks || globalSettings.socialLinks.length === 0) {
+    globalSettings.socialLinks = defaultSocialLinks as any;
+    await globalSettings.save();
+    console.log('[Seed] Default social & contact links populated into Global Settings.');
+  } else {
+    console.log(`[Seed] Global settings verified (${globalSettings.socialLinks.length} social links present).`);
   }
 }

@@ -11,7 +11,9 @@ import {
 } from "lucide-react";
 import { footerContent } from "@/content/site/footer";
 import { getPublicFooter, PublicFooterData } from "@/services/footer.service";
+import { getPublicGlobalSettings, SocialLinkItem } from "@/services/globalSettings.service";
 import { VeeneroLogo } from "@/components/VeeneroLogo";
+import { SocialPlatformIcon } from "@/components/SocialPlatformIcon";
 
 const iconMap: Record<string, React.FC<{ className?: string }>> = {
   Linkedin,
@@ -46,11 +48,20 @@ const GoogleGLogo: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }
 
 export const Footer: React.FC = () => {
   const [data, setData] = useState<PublicFooterData | null>(null);
+  const [cmsSocialLinks, setCmsSocialLinks] = useState<SocialLinkItem[]>([]);
 
   useEffect(() => {
     getPublicFooter()
       .then((res) => {
         if (res) setData(res);
+      })
+      .catch(() => {});
+
+    getPublicGlobalSettings()
+      .then((res) => {
+        if (res?.socialLinks && res.socialLinks.length > 0) {
+          setCmsSocialLinks(res.socialLinks);
+        }
       })
       .catch(() => {});
   }, []);
@@ -59,7 +70,7 @@ export const Footer: React.FC = () => {
   const address = data?.address || footerContent.address;
   const mobile = data?.mobile || footerContent.mobile;
   const links = data?.links || footerContent.links;
-  const socialLinks = data?.socialLinks || footerContent.socialLinks;
+  const legacySocialLinks = data?.socialLinks || footerContent.socialLinks;
   const currentYear = new Date().getFullYear();
 
   const isExternal = (url: string) =>
@@ -231,24 +242,62 @@ export const Footer: React.FC = () => {
               <span className="text-[11px] font-mono uppercase tracking-widest text-slate-400 block mb-3">
                 Connect With Us
               </span>
-              <div className="flex items-center gap-2.5">
-                {socialLinks.map((social) => {
-                  const IconComponent = iconMap[social.iconName] || Mail;
-                  const isEmail = social.iconName === "Mail";
-                  const href = isEmail && !social.href.startsWith("mailto:") ? `mailto:${social.href}` : social.href;
-                  return (
-                    <a
-                      key={social.label}
-                      href={href}
-                      target={isEmail ? "_self" : "_blank"}
-                      rel={isEmail ? undefined : "noopener noreferrer"}
-                      aria-label={social.label}
-                      className="w-9 h-9 rounded-xl bg-white/[0.035] border border-white/[0.08] hover:border-teal-400/50 hover:bg-teal-500/15 text-slate-300 hover:text-teal-300 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex items-center justify-center shadow-xs"
-                    >
-                      <IconComponent className="h-4 w-4" />
-                    </a>
-                  );
-                })}
+              <div className="flex items-center gap-2.5 flex-wrap">
+                {cmsSocialLinks.length > 0
+                  ? cmsSocialLinks.map((social) => {
+                      const isEmail =
+                        social.platform === 'email' ||
+                        social.url.startsWith('mailto:') ||
+                        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(social.url);
+                      const href =
+                        isEmail && !social.url.startsWith('mailto:')
+                          ? `mailto:${social.url}`
+                          : social.url;
+                      const target = !isEmail && social.openInNewTab ? '_blank' : undefined;
+                      const rel = !isEmail && social.openInNewTab ? 'noopener noreferrer' : undefined;
+
+                      return (
+                        <a
+                          key={social._id || social.name}
+                          href={href}
+                          target={target}
+                          rel={rel}
+                          aria-label={social.name}
+                          title={social.name}
+                          className="w-9 h-9 rounded-xl bg-white/[0.035] border border-white/[0.08] hover:border-teal-400/50 hover:bg-teal-500/15 text-slate-300 hover:text-teal-300 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex items-center justify-center shadow-xs group"
+                        >
+                          <SocialPlatformIcon
+                            platform={social.platform}
+                            icon={social.icon}
+                            iconSource={social.iconSource}
+                            url={social.url}
+                            className="h-4 w-4 group-hover:scale-105 transition-transform"
+                            alt={social.name}
+                          />
+                        </a>
+                      );
+                    })
+                  : legacySocialLinks.map((social) => {
+                      const IconComponent = iconMap[social.iconName] || Mail;
+                      const isEmail = social.iconName === 'Mail' || social.href.startsWith('mailto:');
+                      const href =
+                        isEmail && !social.href.startsWith('mailto:')
+                          ? `mailto:${social.href}`
+                          : social.href;
+                      return (
+                        <a
+                          key={social.label}
+                          href={href}
+                          target={isEmail ? '_self' : '_blank'}
+                          rel={isEmail ? undefined : 'noopener noreferrer'}
+                          aria-label={social.label}
+                          title={social.label}
+                          className="w-9 h-9 rounded-xl bg-white/[0.035] border border-white/[0.08] hover:border-teal-400/50 hover:bg-teal-500/15 text-slate-300 hover:text-teal-300 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex items-center justify-center shadow-xs"
+                        >
+                          <IconComponent className="h-4 w-4" />
+                        </a>
+                      );
+                    })}
               </div>
             </div>
           </div>

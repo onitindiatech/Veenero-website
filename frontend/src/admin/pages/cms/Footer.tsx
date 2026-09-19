@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Save,
   Plus,
@@ -247,6 +248,26 @@ export const FooterCms: React.FC = () => {
 
         {/* Social Links */}
         <div className="space-y-3 pt-4 border-t border-border/60">
+          {/* Global Settings CMS Notice */}
+          <div className="p-3.5 rounded-xl bg-teal-500/10 border border-teal-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-teal-500/20 text-teal-600 dark:text-teal-400">
+                <Share2 className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-foreground">Footer &quot;CONNECT WITH US&quot; Dynamic CMS</p>
+                <p className="text-[11px] text-muted-foreground">
+                  The footer &quot;Connect With Us&quot; channels are now powered by the Global Settings Social &amp; Contact Links CMS with auto icon resolution and drag/drop reordering.
+                </p>
+              </div>
+            </div>
+            <Link to="/admin/global-settings">
+              <Button size="sm" className="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl h-8 shrink-0">
+                Open Social Links CMS →
+              </Button>
+            </Link>
+          </div>
+
           <div className="flex items-center justify-between">
             <label className={labelCls}>Social Media Links</label>
             <Button

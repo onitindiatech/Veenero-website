@@ -184,6 +184,7 @@ app.use(`${API_PREFIX}/ai`, aiRouter);
 app.use(`${API_PREFIX}/navigation`, publicNavigationRouter);
 app.use(`${API_PREFIX}/admin/navigation`, adminNavigationRouter);
 app.use(`${API_PREFIX}/global-settings`, publicGlobalSettingsRouter);
+app.use(`${API_PREFIX}/settings`, publicGlobalSettingsRouter);
 app.use(`${API_PREFIX}/admin/global-settings`, adminGlobalSettingsRouter);
 app.use(`${API_PREFIX}/admin/seo`, adminSeoRouter);
 app.use(`${API_PREFIX}/admin/users`, adminUserRouter);
