@@ -540,6 +540,8 @@ export async function getOrCreateCareerSettings(): Promise<ICareerPageSettings> 
   return doc;
 }
 
+import { resolvePageHero } from '../services/mediaSync.service';
+
 export const getPublicCareerSettings = async (
   _req: Request,
   res: Response,
@@ -547,7 +549,11 @@ export const getPublicCareerSettings = async (
 ): Promise<void> => {
   try {
     const settings = await getOrCreateCareerSettings();
-    res.status(200).json({ success: true, data: settings });
+    const publicData = (settings as any).toObject ? (settings as any).toObject() : JSON.parse(JSON.stringify(settings));
+
+    publicData.hero = await resolvePageHero('careers', publicData.hero);
+
+    res.status(200).json({ success: true, data: publicData });
   } catch (error) {
     next(error);
   }
@@ -560,7 +566,11 @@ export const getAdminCareerSettings = async (
 ): Promise<void> => {
   try {
     const settings = await getOrCreateCareerSettings();
-    res.status(200).json({ success: true, data: settings });
+    const adminData = (settings as any).toObject ? (settings as any).toObject() : JSON.parse(JSON.stringify(settings));
+
+    adminData.hero = await resolvePageHero('careers', adminData.hero);
+
+    res.status(200).json({ success: true, data: adminData });
   } catch (error) {
     next(error);
   }

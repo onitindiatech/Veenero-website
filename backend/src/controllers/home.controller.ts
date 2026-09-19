@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HomePageSettingsModel } from '../models/HomePageSettings';
 import { ApiError } from '../middleware/errorHandler';
+import { resolvePageHero } from '../services/mediaSync.service';
 
 /**
  * GET /api/home
@@ -12,7 +13,11 @@ export const getPublicHome = async (_req: Request, res: Response, next: NextFunc
     if (!settings) {
       throw new ApiError(500, 'Home page settings not found. Please seed the database.');
     }
-    res.json({ success: true, data: settings });
+    const data = (settings as any).toObject ? (settings as any).toObject() : JSON.parse(JSON.stringify(settings));
+
+    data.hero = await resolvePageHero('home', data.hero);
+
+    res.json({ success: true, data });
   } catch (err) {
     next(err);
   }
@@ -28,7 +33,11 @@ export const getAdminHome = async (_req: Request, res: Response, next: NextFunct
     if (!settings) {
       throw new ApiError(500, 'Home page settings not found. Please seed the database.');
     }
-    res.json({ success: true, data: settings });
+    const data = (settings as any).toObject ? (settings as any).toObject() : JSON.parse(JSON.stringify(settings));
+
+    data.hero = await resolvePageHero('home', data.hero);
+
+    res.json({ success: true, data });
   } catch (err) {
     next(err);
   }

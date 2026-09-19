@@ -42,7 +42,7 @@ export const BlogHero: React.FC<BlogHeroProps> = ({ settings, postCount = 8 }) =
           onError={() => {
             if (imgSrc !== defaultBlogHeroBg) setImgSrc(defaultBlogHeroBg);
           }}
-          alt="Veenero water intelligence insights, research and telemetry analytics"
+          alt={hero?.imageAlt || "Veenero water intelligence insights, research and telemetry analytics"}
           className="w-full h-full object-cover object-[center_35%] select-none pointer-events-none"
           loading="eager"
         />

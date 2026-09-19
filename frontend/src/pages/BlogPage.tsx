@@ -10,6 +10,7 @@ import { InsightStats } from '@/components/blog/InsightStats';
 import { BlogCTA } from '@/components/blog/BlogCTA';
 import { Article, BlogSettings } from '@/components/blog/types';
 import * as BlogService from '@/services/blog.service';
+import { getAssetBySlot } from '@/services/media.service';
 
 // Skeleton Card loader
 const SkeletonCard = () => (
@@ -45,12 +46,50 @@ export const BlogPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const [fetchedPosts, fetchedSettings] = await Promise.all([
+        const [postsResult, settingsResult, heroAssetResult] = await Promise.allSettled([
           BlogService.getPublicPosts(),
           BlogService.getPublicSettings(),
+          getAssetBySlot('blog', 'Hero', 'Hero Image'),
         ]);
-        setPosts(fetchedPosts);
-        setSettings(fetchedSettings);
+
+        if (postsResult.status === 'fulfilled') {
+          setPosts(postsResult.value);
+        }
+
+        let combinedSettings: BlogSettings | null = null;
+        if (settingsResult.status === 'fulfilled' && settingsResult.value) {
+          combinedSettings = { ...settingsResult.value };
+        }
+
+        if (heroAssetResult.status === 'fulfilled' && heroAssetResult.value?.secureUrl) {
+          if (!combinedSettings) {
+            combinedSettings = {
+              hero: {
+                eyebrow: 'VEENERO INSIGHTS',
+                title: 'Water Intelligence & Innovation',
+                description: '',
+                image: heroAssetResult.value.secureUrl,
+                imageAlt: heroAssetResult.value.altText || '',
+                mediaPublicId: heroAssetResult.value.publicId,
+              },
+              featuredSection: { eyebrow: 'COVER STORY', title: 'Featured Insight', description: '' },
+              insightStats: [],
+              editorialQuote: { eyebrow: 'OUR MISSION', title: '', description: '' },
+              cta: { eyebrow: 'CONTRIBUTE', title: '', description: '', buttonText: 'Explore Veenero', buttonLink: '/#contact' },
+              seo: {},
+              isPublished: true,
+            };
+          } else {
+            combinedSettings.hero = {
+              ...combinedSettings.hero,
+              image: heroAssetResult.value.secureUrl,
+              mediaPublicId: heroAssetResult.value.publicId,
+              imageAlt: heroAssetResult.value.altText || combinedSettings.hero?.imageAlt || '',
+            };
+          }
+        }
+
+        setSettings(combinedSettings);
       } catch (err) {
         setError('Failed to load blog content. Please try again later.');
         console.error('[Blog] Fetch error:', err);

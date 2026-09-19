@@ -152,10 +152,14 @@ export const ImpactCms: React.FC = () => {
     const next = JSON.parse(JSON.stringify(settings));
     if (subIndex !== undefined) {
       next[sectionKey][field][subIndex].image = asset.secureUrl;
+      if (asset.publicId) {
+        next[sectionKey][field][subIndex].mediaPublicId = asset.publicId;
+      }
     } else {
       next[sectionKey][field] = asset.secureUrl;
       if (asset.publicId) {
         next[sectionKey][`${field}PublicId`] = asset.publicId;
+        next[sectionKey].mediaPublicId = asset.publicId;
       }
     }
     setSettings(next);

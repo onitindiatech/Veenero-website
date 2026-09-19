@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { SolutionsPageSettings, ISolutionsPageSettings } from '../models/SolutionsPageSettings';
 import { SolutionDetailModel } from '../models/SolutionDetail';
-import { MediaModel } from '../models/Media';
+import { resolveSolutionsMedia, resolveSolutionDetailMedia } from '../services/mediaSync.service';
 
 /**
  * Helper: retrieves existing Solutions settings or creates one with defaults.
@@ -26,86 +26,7 @@ export const getPublicSolutions = async (_req: Request, res: Response, next: Nex
     const settings = await getOrCreateSolutionsSettings();
     const publicData: any = settings.toJSON();
 
-    // ── Media Library Dynamic Resolution ─────────────────────────────────────
-    const solutionsMedia = await MediaModel.find({
-      page: new RegExp('^solutions$', 'i'),
-    })
-      .sort({ createdAt: -1 })
-      .lean();
-
-    const findActiveMedia = (sectionPattern: RegExp, slotPattern: RegExp) => {
-      return solutionsMedia.find(
-        (m) =>
-          !m.deletedAt &&
-          sectionPattern.test(m.section || '') &&
-          slotPattern.test(m.slot || '')
-      );
-    };
-
-    // 1. Hero Section Image
-    const heroAsset = findActiveMedia(/hero/i, /hero\s*visual/i);
-    if (heroAsset && publicData.hero) {
-      publicData.hero.image = heroAsset.secureUrl;
-      if (heroAsset.altText) publicData.hero.imageAlt = heroAsset.altText;
-      publicData.hero.mediaPublicId = heroAsset.publicId;
-    }
-
-    // 2. Ecosystem Intro Image
-    const introAsset = findActiveMedia(/intro|ecosystem/i, /illustration|visual/i);
-    if (introAsset && publicData.intro) {
-      publicData.intro.image = introAsset.secureUrl;
-      publicData.intro.mediaPublicId = introAsset.publicId;
-    }
-
-    // 3. Featured Solution Image
-    const featuredAsset = findActiveMedia(/featured/i, /visual|image/i);
-    if (featuredAsset && publicData.featuredSolution) {
-      publicData.featuredSolution.image = featuredAsset.secureUrl;
-      publicData.featuredSolution.mediaPublicId = featuredAsset.publicId;
-    }
-
-    // 4. Analytics Platform Callout Card Image
-    const analyticsAsset = findActiveMedia(/grid|analytics/i, /analytics|callout/i);
-    if (analyticsAsset && publicData.gridHeader?.calloutCard) {
-      publicData.gridHeader.calloutCard.image = analyticsAsset.secureUrl;
-      publicData.gridHeader.calloutCard.mediaPublicId = analyticsAsset.publicId;
-    }
-
-    // 5. Category Images resolution from Media Library
-    if (publicData.categories && Array.isArray(publicData.categories)) {
-      publicData.categories = publicData.categories.map((cat: any) => {
-        const catAsset = solutionsMedia.find(
-          (m) =>
-            !m.deletedAt &&
-            /category|categories/i.test(m.section || '') &&
-            (new RegExp(cat.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(m.slot || '') ||
-              new RegExp(cat.slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(m.slot || ''))
-        );
-        if (catAsset) {
-          cat.image = catAsset.secureUrl;
-          cat.mediaPublicId = catAsset.publicId;
-        }
-        return cat;
-      });
-    }
-
-    // 6. Solution Cards Image resolution from Media Library
-    if (publicData.solutions && Array.isArray(publicData.solutions)) {
-      publicData.solutions = publicData.solutions.map((sol: any) => {
-        const solAsset = solutionsMedia.find(
-          (m) =>
-            !m.deletedAt &&
-            /solution|card/i.test(m.section || '') &&
-            (new RegExp(sol.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(m.slot || '') ||
-              new RegExp(sol.slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(m.slot || ''))
-        );
-        if (solAsset) {
-          sol.image = solAsset.secureUrl;
-          sol.mediaPublicId = solAsset.publicId;
-        }
-        return sol;
-      });
-    }
+    await resolveSolutionsMedia(publicData);
 
     // ── Derive Public Solution Cards from Published SolutionDetail records (Single Source of Truth) ──
     const publishedDetails = await SolutionDetailModel.find({
@@ -191,9 +112,11 @@ export const getPublicSolutions = async (_req: Request, res: Response, next: Nex
 export const getAdminSolutions = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const settings = await getOrCreateSolutionsSettings();
+    const adminData: any = settings.toJSON ? settings.toJSON() : settings;
+    await resolveSolutionsMedia(adminData);
     res.json({
       success: true,
-      data: settings,
+      data: adminData,
     });
   } catch (error) {
     next(error);
@@ -541,43 +464,7 @@ export const getPublicSolutionBySlug = async (req: Request, res: Response, next:
     }).lean();
 
     if (solutionDetail) {
-      // Dynamic media resolution
-      if (solutionDetail.heroMediaPublicId) {
-        const heroAsset = await MediaModel.findOne({ publicId: solutionDetail.heroMediaPublicId, deletedAt: null }).lean();
-        if (heroAsset?.secureUrl) {
-          solutionDetail.heroImage = heroAsset.secureUrl;
-          if (heroAsset.altText) solutionDetail.heroImageAlt = heroAsset.altText;
-        }
-      }
-
-      if (solutionDetail.useCases?.items && Array.isArray(solutionDetail.useCases.items)) {
-        for (const item of solutionDetail.useCases.items) {
-          if (item.mediaPublicId) {
-            const asset = await MediaModel.findOne({ publicId: item.mediaPublicId, deletedAt: null }).lean();
-            if (asset?.secureUrl) {
-              item.image = asset.secureUrl;
-            }
-          }
-        }
-      }
-
-      if (solutionDetail.industries && Array.isArray(solutionDetail.industries)) {
-        for (const ind of solutionDetail.industries) {
-          if (ind.mediaPublicId) {
-            const asset = await MediaModel.findOne({ publicId: ind.mediaPublicId, deletedAt: null }).lean();
-            if (asset?.secureUrl) {
-              ind.image = asset.secureUrl;
-            }
-          }
-        }
-      }
-
-      if (solutionDetail.seo?.ogImagePublicId) {
-        const ogAsset = await MediaModel.findOne({ publicId: solutionDetail.seo.ogImagePublicId, deletedAt: null }).lean();
-        if (ogAsset?.secureUrl) {
-          solutionDetail.seo.ogImage = ogAsset.secureUrl;
-        }
-      }
+      await resolveSolutionDetailMedia(solutionDetail);
 
       res.json({
         success: true,

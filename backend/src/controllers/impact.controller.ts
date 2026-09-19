@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ImpactPageSettingsModel, IImpactPageSettings } from '../models/ImpactPageSettings';
-import { MediaModel } from '../models/Media';
+import { resolveImpactMedia } from '../services/mediaSync.service';
 
 export const defaultImpactData = {
   hero: {
@@ -248,23 +248,7 @@ export const getPublicImpact = async (_req: Request, res: Response, next: NextFu
     const settings = await getOrCreateImpactSettings();
     const publicData = settings.toJSON() as any;
 
-    // Resolve active media from Media Library if tagged for impact page
-    const impactMedia = await MediaModel.find({
-      page: new RegExp('^impact$', 'i'),
-      deletedAt: null,
-    }).sort({ createdAt: -1 }).lean();
-
-    if (impactMedia.length > 0) {
-      const heroBg = impactMedia.find((m: any) => /hero/i.test(m.section || '') || /hero/i.test(m.slot || ''));
-      if (heroBg?.secureUrl && !publicData.hero?.image) {
-        publicData.hero.image = heroBg.secureUrl;
-      }
-
-      const videoAsset = impactMedia.find((m: any) => m.resourceType === 'video' || /sustainability/i.test(m.section || ''));
-      if (videoAsset?.secureUrl && !publicData.sustainability?.videoUrl) {
-        publicData.sustainability.videoUrl = videoAsset.secureUrl;
-      }
-    }
+    await resolveImpactMedia(publicData);
 
     res.status(200).json({
       success: true,
@@ -284,9 +268,13 @@ export const getPublicImpact = async (_req: Request, res: Response, next: NextFu
 export const getAdminImpactSettings = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const settings = await getOrCreateImpactSettings();
+    const adminData = settings.toJSON() as any;
+
+    await resolveImpactMedia(adminData);
+
     res.status(200).json({
       success: true,
-      data: settings,
+      data: adminData,
     });
   } catch (err) {
     next(err);

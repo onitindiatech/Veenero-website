@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AboutPageSettingsModel, IAboutPageSettings } from '../models/AboutPageSettings';
-import { MediaModel } from '../models/Media';
+import { resolveAboutMedia } from '../services/mediaSync.service';
 
 /**
  * Helper to ensure a singleton AboutPageSettings document exists.
@@ -48,126 +48,7 @@ export const getPublicAbout = async (_req: Request, res: Response, next: NextFun
     // their secureUrls into the appropriate fields. This ensures that when an
     // admin replaces, uploads, or deletes an asset via the Media Library, the
     // public page immediately reflects the change without requiring a full restart.
-
-    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    // Fetch all media documents for the About page in a single query
-    const aboutMedia = await MediaModel.find({
-      page: new RegExp('^about$', 'i'),
-    })
-      .sort({ createdAt: -1 })
-      .lean();
-
-    // Helper: find the newest non-deleted asset matching section and slot patterns
-    const findActiveMedia = (sectionPattern: RegExp, slotPattern: RegExp) => {
-      return aboutMedia.find(
-        (m) =>
-          !m.deletedAt &&
-          sectionPattern.test(m.section || '') &&
-          slotPattern.test(m.slot || '')
-      );
-    };
-
-    // Helper: check if a slot has media records but ALL of them are deleted (soft-deleted)
-    const isSlotDeleted = (sectionPattern: RegExp, slotPattern: RegExp) => {
-      const hasActive = aboutMedia.some(
-        (m) =>
-          !m.deletedAt &&
-          sectionPattern.test(m.section || '') &&
-          slotPattern.test(m.slot || '')
-      );
-      if (hasActive) return false;
-      return aboutMedia.some(
-        (m) =>
-          m.deletedAt &&
-          sectionPattern.test(m.section || '') &&
-          slotPattern.test(m.slot || '')
-      );
-    };
-
-    // 1. Hero Section
-    const heroAsset = findActiveMedia(/hero/i, /hero\s*visual/i);
-    if (heroAsset && publicData.hero) {
-      publicData.hero.image = heroAsset.secureUrl;
-      if (heroAsset.altText) publicData.hero.imageAlt = heroAsset.altText;
-      publicData.hero.mediaPublicId = heroAsset.publicId;
-    } else if (isSlotDeleted(/hero/i, /hero\s*visual/i) && publicData.hero) {
-      publicData.hero.image = '';
-      publicData.hero.mediaPublicId = '';
-    }
-
-    // 2. Our Story & Origin
-    const storyVideoAsset = findActiveMedia(/story/i, /story\s*overview\s*video|story\s*video/i);
-    if (storyVideoAsset && publicData.ourStory) {
-      publicData.ourStory.video = storyVideoAsset.secureUrl;
-      publicData.ourStory.mediaPublicId = storyVideoAsset.publicId;
-    } else if (isSlotDeleted(/story/i, /story\s*overview\s*video|story\s*video/i) && publicData.ourStory) {
-      publicData.ourStory.video = '';
-      publicData.ourStory.mediaPublicId = '';
-    }
-    // Story video poster: use dedicated poster slot or hero asset
-    const storyPosterAsset = findActiveMedia(/story/i, /poster/i) || heroAsset;
-    if (storyPosterAsset && publicData.ourStory) {
-      publicData.ourStory.videoPoster = storyPosterAsset.secureUrl;
-    }
-
-    // 3. The Pillars of Veenero
-    if (publicData.pillars && Array.isArray(publicData.pillars.list)) {
-      for (const pillar of publicData.pillars.list) {
-        if (!pillar.title) continue;
-        const slotRegex = new RegExp(`^${escapeRegex(pillar.title.trim())}$`, 'i');
-        const activePillarAsset = findActiveMedia(/pillar/i, slotRegex);
-        if (activePillarAsset) {
-          pillar.image = activePillarAsset.secureUrl;
-          pillar.mediaPublicId = activePillarAsset.publicId;
-        } else if (isSlotDeleted(/pillar/i, slotRegex)) {
-          pillar.image = '';
-          pillar.mediaPublicId = '';
-        }
-      }
-    }
-
-    // 4. Why Choose Veenero
-    if (publicData.whyChoose && Array.isArray(publicData.whyChoose.list)) {
-      for (const card of publicData.whyChoose.list) {
-        if (!card.title) continue;
-        const slotRegex = new RegExp(`^${escapeRegex(card.title.trim())}$`, 'i');
-        const activeWhyAsset = findActiveMedia(/why\s*choose/i, slotRegex);
-        if (activeWhyAsset) {
-          card.image = activeWhyAsset.secureUrl;
-          card.mediaPublicId = activeWhyAsset.publicId;
-        } else if (isSlotDeleted(/why\s*choose/i, slotRegex)) {
-          card.image = '';
-          card.mediaPublicId = '';
-        }
-      }
-    }
-
-    // 5. Leadership & Team
-    if (publicData.leadership && Array.isArray(publicData.leadership.team)) {
-      for (const member of publicData.leadership.team) {
-        if (!member.name) continue;
-        const slotRegex = new RegExp(`^${escapeRegex(member.name.trim())}$`, 'i');
-        const activeTeamAsset = findActiveMedia(/leadership/i, slotRegex);
-        if (activeTeamAsset) {
-          member.image = activeTeamAsset.secureUrl;
-          member.mediaPublicId = activeTeamAsset.publicId;
-        } else if (isSlotDeleted(/leadership/i, slotRegex)) {
-          member.image = '';
-          member.mediaPublicId = '';
-        }
-      }
-    }
-
-    // 6. Our Journey (Milestones timeline visual)
-    const journeyAsset = findActiveMedia(/journey/i, /journey\s*visual|journey\s*infrastructure/i);
-    if (journeyAsset && publicData.ourJourney) {
-      publicData.ourJourney.journeyImage = journeyAsset.secureUrl;
-      publicData.ourJourney.mediaPublicId = journeyAsset.publicId;
-    } else if (isSlotDeleted(/journey/i, /journey\s*visual|journey\s*infrastructure/i) && publicData.ourJourney) {
-      publicData.ourJourney.journeyImage = '';
-      publicData.ourJourney.mediaPublicId = '';
-    }
+    await resolveAboutMedia(publicData);
 
 
     // ── Filter inactive repeatable items ─────────────────────────────────────
@@ -262,6 +143,8 @@ export const getAdminAbout = async (_req: Request, res: Response, next: NextFunc
   try {
     const settings = await getOrCreateAboutSettings();
     const adminData = settings.toJSON() as any;
+
+    await resolveAboutMedia(adminData);
 
     if (adminData.hero) {
       if (!adminData.hero.badges || adminData.hero.badges.length === 0) {

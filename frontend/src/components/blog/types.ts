@@ -46,6 +46,7 @@ export interface BlogSettings {
     description: string;
     image: string;
     imageAlt: string;
+    mediaPublicId?: string;
   };
   featuredSection: {
     eyebrow: string;

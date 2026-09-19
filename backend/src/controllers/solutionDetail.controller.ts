@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { SolutionDetailModel, SolutionStatus } from '../models/SolutionDetail';
-import { MediaModel } from '../models/Media';
+import { resolveSolutionDetailMedia } from '../services/mediaSync.service';
 import { ApiError } from '../middleware/errorHandler';
 
 // Helper to generate a URL-safe slug
@@ -55,43 +55,7 @@ export const getPublicSolutionDetailBySlug = async (
       throw new ApiError(404, `Solution detail not found for '${rawSlug}'`);
     }
 
-    // Dynamic resolution from Media Library if mediaPublicId is defined
-    if (solution.heroMediaPublicId) {
-      const heroAsset = await MediaModel.findOne({ publicId: solution.heroMediaPublicId, deletedAt: null }).lean();
-      if (heroAsset?.secureUrl) {
-        solution.heroImage = heroAsset.secureUrl;
-        if (heroAsset.altText) solution.heroImageAlt = heroAsset.altText;
-      }
-    }
-
-    if (solution.useCases?.items && Array.isArray(solution.useCases.items)) {
-      for (const item of solution.useCases.items) {
-        if (item.mediaPublicId) {
-          const asset = await MediaModel.findOne({ publicId: item.mediaPublicId, deletedAt: null }).lean();
-          if (asset?.secureUrl) {
-            item.image = asset.secureUrl;
-          }
-        }
-      }
-    }
-
-    if (solution.industries && Array.isArray(solution.industries)) {
-      for (const ind of solution.industries) {
-        if (ind.mediaPublicId) {
-          const asset = await MediaModel.findOne({ publicId: ind.mediaPublicId, deletedAt: null }).lean();
-          if (asset?.secureUrl) {
-            ind.image = asset.secureUrl;
-          }
-        }
-      }
-    }
-
-    if (solution.seo?.ogImagePublicId) {
-      const ogAsset = await MediaModel.findOne({ publicId: solution.seo.ogImagePublicId, deletedAt: null }).lean();
-      if (ogAsset?.secureUrl) {
-        solution.seo.ogImage = ogAsset.secureUrl;
-      }
-    }
+    await resolveSolutionDetailMedia(solution);
 
     res.status(200).json({
       success: true,

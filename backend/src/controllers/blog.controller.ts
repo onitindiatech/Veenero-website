@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
 import { BlogPostModel, BlogPostStatus } from '../models/BlogPost';
 import { BlogLandingSettingsModel } from '../models/BlogLandingSettings';
+import { resolvePageHero } from '../services/mediaSync.service';
 import { ApiError } from '../middleware/errorHandler';
 
 // ─── Helper: generate slug from title ─────────────────────────────────────────
@@ -102,15 +103,23 @@ export const getPublicPostBySlug = async (req: Request, res: Response, next: Nex
   }
 };
 
+// ─── Helper: resolve canonical Blog Landing media from Media Library ─────────
+async function resolveBlogLandingMedia(settings: any): Promise<any> {
+  if (!settings) return settings;
+  settings.hero = await resolvePageHero('blog', settings.hero, /^hero\s*image$/i);
+  return settings;
+}
+
 /** GET /api/blog/settings — public landing settings */
 export const getPublicSettings = async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    let settings = await BlogLandingSettingsModel.findOne({}).lean();
+    const settings = await BlogLandingSettingsModel.findOne({}).lean();
     if (!settings) {
-      // Return sensible defaults if no settings document exists yet
-      settings = null;
+      res.json({ success: true, data: null });
+      return;
     }
-    res.json({ success: true, data: settings });
+    const resolved = await resolveBlogLandingMedia({ ...settings });
+    res.json({ success: true, data: resolved });
   } catch (err) {
     next(err);
   }
@@ -397,8 +406,13 @@ export const permanentlyDeletePost = async (req: Request, res: Response, next: N
 /** GET /api/admin/blog/settings */
 export const getAdminSettings = async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const settings = await BlogLandingSettingsModel.findOne({});
-    res.json({ success: true, data: settings });
+    const settings = await BlogLandingSettingsModel.findOne({}).lean();
+    if (!settings) {
+      res.json({ success: true, data: null });
+      return;
+    }
+    const resolved = await resolveBlogLandingMedia({ ...settings });
+    res.json({ success: true, data: resolved });
   } catch (err) {
     next(err);
   }
@@ -412,9 +426,10 @@ export const updateAdminSettings = async (req: Request, res: Response, next: Nex
       {},
       { ...req.body, updatedBy: userId },
       { upsert: true, new: true, runValidators: true }
-    );
+    ).lean();
 
-    res.json({ success: true, data: settings, message: 'Blog landing settings updated' });
+    const resolved = await resolveBlogLandingMedia({ ...settings });
+    res.json({ success: true, data: resolved, message: 'Blog landing settings updated' });
   } catch (err) {
     next(err);
   }

@@ -32,7 +32,7 @@ const labelCls = 'block text-[11px] font-bold text-muted-foreground uppercase tr
 const inputCls = 'w-full px-3 py-2.5 text-xs bg-background border border-border/60 rounded-xl focus:outline-none focus:border-teal-500/60 font-medium text-foreground';
 
 const EMPTY_SETTINGS: BlogSettings = {
-  hero: { eyebrow: 'VEENERO INSIGHTS', title: '', description: '', image: '', imageAlt: '' },
+  hero: { eyebrow: 'VEENERO INSIGHTS', title: '', description: '', image: '', imageAlt: '', mediaPublicId: '' },
   featuredSection: { eyebrow: 'COVER STORY', title: 'Featured Insight', description: '' },
   insightStats: [],
   editorialQuote: { eyebrow: 'OUR MISSION', title: '', description: '' },
@@ -174,7 +174,12 @@ const BlogSettingsPage: React.FC = () => {
             <input value={settings.hero.title} onChange={(e) => setHero('title', e.target.value)} className={inputCls} placeholder="Water Intelligence & Innovation" />
           </div>
           <div className="col-span-2">
-            <label className={labelCls}>Hero Image URL</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className={labelCls}>Hero Image URL</label>
+              <Link to="/admin/media" className="text-[11px] text-teal-600 hover:text-teal-700 font-semibold inline-flex items-center gap-1">
+                <span>Manage in Media Library (Slot: Hero Image)</span>
+              </Link>
+            </div>
             <input value={settings.hero.image} onChange={(e) => setHero('image', e.target.value)} className={inputCls} placeholder="https://..." />
             {settings.hero.image && (
               <div className="mt-2 h-36 rounded-xl overflow-hidden border border-border/40">

@@ -6,6 +6,7 @@ import { BlogLandingSettingsModel } from '../models/BlogLandingSettings';
 import { HomePageSettingsModel } from '../models/HomePageSettings';
 import { AboutPageSettingsModel } from '../models/AboutPageSettings';
 import { SolutionsPageSettings } from '../models/SolutionsPageSettings';
+import { ApproachPageSettingsModel } from '../models/ApproachPageSettings';
 import { ImpactPageSettingsModel } from '../models/ImpactPageSettings';
 import { ContactPageSettingsModel } from '../models/ContactPageSettings';
 import { FooterSettingsModel } from '../models/FooterSettings';
@@ -153,47 +154,82 @@ export async function seedDatabase(): Promise<void> {
       console.log(`[Seed] Cleaned up ${deleteResult.deletedCount} fabricated blog posts. Blog is ready for authentic CMS articles.`);
     }
 
-    // 4. Seed Blog Landing Settings (Empty state ready)
+    // 4. Seed Blog Landing Settings (Idempotent - preserves existing CMS edits & active Media)
     await BlogLandingSettingsModel.findOneAndUpdate(
       {},
       {
-        hero: {
-          eyebrow: 'VEENERO RESEARCH & UPDATES',
-          title: 'Insights on Water Conservation',
-          description: 'Perspectives, field research, and technology updates on water management and conservation from the Veenero team.',
-          image: '/src/assets/hero-water.jpg',
-          imageAlt: 'Veenero water conservation insights',
+        $setOnInsert: {
+          hero: {
+            eyebrow: 'VEENERO RESEARCH & UPDATES',
+            title: 'Insights on Water Conservation',
+            description: 'Perspectives, field research, and technology updates on water management and conservation from the Veenero team.',
+            image: '',
+            imageAlt: 'Veenero water conservation insights',
+            mediaPublicId: '',
+          },
+          featuredSection: {
+            eyebrow: 'LATEST DEVELOPMENTS',
+            title: 'Field Research & Technology',
+            description: 'Follow our ongoing developments in water conservative devices and software.',
+          },
+          insightStats: [
+            { value: '49B L', label: 'India Daily Waste', description: 'Daily water waste addressed by conservation' },
+            { value: '30%', label: 'Global Loss', description: 'Average water supply lost to leaks' },
+            { value: 'Zero', label: 'Compromise', description: 'Focus on leak detection and water security' },
+          ],
+          editorialQuote: {
+            eyebrow: 'OUR CONVICTION',
+            title: 'Every litre of water saved strengthens future water security.',
+            description: 'At Veenero, we believe that practical devices and appropriate management rules can eliminate avoidable water waste.',
+          },
+          cta: {
+            eyebrow: 'GET INVOLVED',
+            title: 'Interested in our field research?',
+            description: 'Connect with our team to learn more about our upcoming deployments and application testing.',
+            buttonText: 'Contact Us',
+            buttonLink: '/contact',
+          },
+          seo: {
+            metaTitle: 'Blog & Insights | Veenero Sustainable Solutions',
+            metaDescription: 'Research, technology updates, and perspectives on water conservation from Veenero Sustainable Solutions Pvt Ltd.',
+          },
+          isPublished: true,
         },
-        featuredSection: {
-          eyebrow: 'LATEST DEVELOPMENTS',
-          title: 'Field Research & Technology',
-          description: 'Follow our ongoing developments in water conservative devices and software.',
-        },
-        insightStats: [
-          { value: '49B L', label: 'India Daily Waste', description: 'Daily water waste addressed by conservation' },
-          { value: '30%', label: 'Global Loss', description: 'Average water supply lost to leaks' },
-          { value: 'Zero', label: 'Compromise', description: 'Focus on leak detection and water security' },
-        ],
-        editorialQuote: {
-          eyebrow: 'OUR CONVICTION',
-          title: 'Every litre of water saved strengthens future water security.',
-          description: 'At Veenero, we believe that practical devices and appropriate management rules can eliminate avoidable water waste.',
-        },
-        cta: {
-          eyebrow: 'GET INVOLVED',
-          title: 'Interested in our field research?',
-          description: 'Connect with our team to learn more about our upcoming deployments and application testing.',
-          buttonText: 'Contact Us',
-          buttonLink: '/contact',
-        },
-        seo: {
-          metaTitle: 'Blog & Insights | Veenero Sustainable Solutions',
-          metaDescription: 'Research, technology updates, and perspectives on water conservation from Veenero Sustainable Solutions Pvt Ltd.',
-        },
-        isPublished: true,
       },
       { upsert: true, new: true }
     );
+
+    // Synchronize Blog Hero with active Media Library asset if available
+    try {
+      const activeBlogMedia = await MediaModel.findOne({
+        page: new RegExp('^blog$', 'i'),
+        section: new RegExp('^hero$', 'i'),
+        slot: new RegExp('^hero\\s*image$', 'i'),
+        deletedAt: null,
+      })
+        .sort({ createdAt: -1 })
+        .lean();
+
+      if (activeBlogMedia) {
+        await BlogLandingSettingsModel.updateOne(
+          {
+            $or: [
+              { 'hero.image': { $in: ['', null, '/src/assets/hero-water.jpg'] } },
+              { 'hero.mediaPublicId': { $in: ['', null] } },
+            ],
+          },
+          {
+            $set: {
+              'hero.image': activeBlogMedia.secureUrl,
+              'hero.mediaPublicId': activeBlogMedia.publicId,
+              ...(activeBlogMedia.altText ? { 'hero.imageAlt': activeBlogMedia.altText } : {}),
+            },
+          }
+        );
+      }
+    } catch (blogMediaErr) {
+      console.warn('[Seed] Warning syncing blog hero media:', blogMediaErr);
+    }
 
     // 5. Seed Media Assets
     await seedAboutMedia();
@@ -499,6 +535,12 @@ export async function syncVeeneroSourceContent(): Promise<void> {
   );
 
   // ── 2. ABOUT PAGE SETTINGS ─────────────────────────────────────────────────
+  const existingAbout = await AboutPageSettingsModel.findOne();
+  const aboutHeroImage = (existingAbout?.hero?.image && existingAbout.hero.image.startsWith('http'))
+    ? existingAbout.hero.image
+    : (existingAbout?.hero?.image || '/src/assets/about/about-hero-water-infrastructure.png');
+  const aboutHeroPublicId = existingAbout?.hero?.mediaPublicId || '';
+
   await AboutPageSettingsModel.findOneAndUpdate(
     {},
     {
@@ -513,8 +555,9 @@ export async function syncVeeneroSourceContent(): Promise<void> {
           primaryCtaLink: '#our-story',
           secondaryCtaText: 'Our Goals',
           secondaryCtaLink: '#our-goals',
-          image: '/src/assets/about/about-hero-water-infrastructure.png',
+          image: aboutHeroImage,
           imageAlt: 'Veenero Sustainable Solutions water infrastructure',
+          mediaPublicId: aboutHeroPublicId,
         },
         ourStory: {
           visible: true,
@@ -1259,6 +1302,12 @@ export async function syncVeeneroSourceContent(): Promise<void> {
     });
   }
 
+  const existingSolutions = await SolutionsPageSettings.findOne();
+  const solutionsHeroImage = (existingSolutions?.hero?.image && existingSolutions.hero.image.startsWith('http'))
+    ? existingSolutions.hero.image
+    : (existingSolutions?.hero?.image || '/src/assets/solutions/solutions-hero-background.png');
+  const solutionsHeroPublicId = existingSolutions?.hero?.mediaPublicId || '';
+
   await SolutionsPageSettings.findOneAndUpdate(
     {},
     {
@@ -1273,8 +1322,9 @@ export async function syncVeeneroSourceContent(): Promise<void> {
           primaryCtaLink: '#solutions-grid',
           secondaryCtaText: 'Talk to an Expert',
           secondaryCtaLink: '/contact',
-          image: '/src/assets/solutions/solutions-hero-background.png',
+          image: solutionsHeroImage,
           imageAlt: 'Aqua Saver water conservation infrastructure',
+          mediaPublicId: solutionsHeroPublicId,
           badges: [
             { icon: 'Cpu', label1: 'Aqua Saver', label2: '3D-Module' },
             { icon: 'ShieldCheck', label1: 'Hardware & Software', label2: 'Conservation' },
@@ -1386,6 +1436,12 @@ export async function syncVeeneroSourceContent(): Promise<void> {
   );
 
   // ── 4. IMPACT PAGE SETTINGS ────────────────────────────────────────────────
+  const existingImpact = await ImpactPageSettingsModel.findOne();
+  const impactHeroImage = (existingImpact?.hero?.image && existingImpact.hero.image.startsWith('http'))
+    ? existingImpact.hero.image
+    : (existingImpact?.hero?.image || '/src/assets/about/about-journey-water-infrastructure.webp');
+  const impactHeroPublicId = existingImpact?.hero?.mediaPublicId || '';
+
   await ImpactPageSettingsModel.findOneAndUpdate(
     {},
     {
@@ -1397,7 +1453,8 @@ export async function syncVeeneroSourceContent(): Promise<void> {
           description: 'India wastes 49 billion liters of water daily while 600 million people face severe water crisis. Veenero provides practical devices and software to eliminate leaks and build water security.',
           primaryCtaText: 'Our Impact',
           secondaryCtaText: 'View Statistics',
-          image: '/src/assets/about/about-journey-water-infrastructure.webp',
+          image: impactHeroImage,
+          mediaPublicId: impactHeroPublicId,
         },
         outcomes: {
           visible: true,
@@ -1663,7 +1720,119 @@ export async function syncVeeneroSourceContent(): Promise<void> {
     { upsert: true, new: true }
   );
 
+  await reconcileCmsMediaAssets();
+
   console.log('[Seed] Veenero authentic source content synchronized successfully.');
+}
+
+/**
+ * Reconciles active Cloudinary Media Library assets to CMS page settings documents on server startup.
+ * Ensures the database contains real, active Cloudinary URLs and publicIds.
+ */
+export async function reconcileCmsMediaAssets(): Promise<void> {
+  try {
+    // 1. Impact Hero
+    const impactHero = await MediaModel.findOne({
+      page: new RegExp('^impact$', 'i'),
+      section: /hero/i,
+      slot: /hero/i,
+      deletedAt: null,
+    }).sort({ createdAt: -1 });
+
+    if (impactHero?.secureUrl && !impactHero.publicId.startsWith('local:')) {
+      await ImpactPageSettingsModel.updateOne(
+        {},
+        {
+          $set: {
+            'hero.image': impactHero.secureUrl,
+            'hero.mediaPublicId': impactHero.publicId,
+          },
+        }
+      );
+    }
+
+    // 2. Blog Hero
+    const blogHero = await MediaModel.findOne({
+      page: new RegExp('^blog$', 'i'),
+      section: /hero/i,
+      slot: /hero/i,
+      deletedAt: null,
+    }).sort({ createdAt: -1 });
+
+    if (blogHero?.secureUrl && !blogHero.publicId.startsWith('local:')) {
+      await BlogLandingSettingsModel.updateOne(
+        {},
+        {
+          $set: {
+            'hero.image': blogHero.secureUrl,
+            'hero.mediaPublicId': blogHero.publicId,
+          },
+        }
+      );
+    }
+
+    // 3. About Hero
+    const aboutHero = await MediaModel.findOne({
+      page: new RegExp('^about$', 'i'),
+      section: /hero/i,
+      slot: /hero/i,
+      deletedAt: null,
+    }).sort({ createdAt: -1 });
+
+    if (aboutHero?.secureUrl && !aboutHero.publicId.startsWith('local:')) {
+      await AboutPageSettingsModel.updateOne(
+        {},
+        {
+          $set: {
+            'hero.image': aboutHero.secureUrl,
+            'hero.mediaPublicId': aboutHero.publicId,
+          },
+        }
+      );
+    }
+
+    // 4. Solutions Hero
+    const solutionsHero = await MediaModel.findOne({
+      page: new RegExp('^solutions$', 'i'),
+      section: /hero/i,
+      slot: /hero/i,
+      deletedAt: null,
+    }).sort({ createdAt: -1 });
+
+    if (solutionsHero?.secureUrl && !solutionsHero.publicId.startsWith('local:')) {
+      await SolutionsPageSettings.updateOne(
+        {},
+        {
+          $set: {
+            'hero.image': solutionsHero.secureUrl,
+            'hero.mediaPublicId': solutionsHero.publicId,
+          },
+        }
+      );
+    }
+
+    // 5. Approach Hero
+    const approachHero = await MediaModel.findOne({
+      page: new RegExp('^approach$', 'i'),
+      section: /hero/i,
+      slot: /hero/i,
+      deletedAt: null,
+    }).sort({ createdAt: -1 });
+
+    if (approachHero?.secureUrl && !approachHero.publicId.startsWith('local:')) {
+      await ApproachPageSettingsModel.updateOne(
+        {},
+        {
+          $set: {
+            'hero.image': approachHero.secureUrl,
+            'hero.mediaPublicId': approachHero.publicId,
+          },
+        }
+      );
+    }
+  } catch (err) {
+    console.error('[MediaReconcile] Error reconciling media assets on startup:', err);
+  }
 }
 
 const ABOUT_MEDIA_SEED: Array<{

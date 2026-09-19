@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApproachPageSettingsModel, IApproachPageSettings } from '../models/ApproachPageSettings';
-import { MediaModel } from '../models/Media';
+import { resolveApproachMedia } from '../services/mediaSync.service';
 
 /**
  * Helper to ensure a singleton ApproachPageSettings document exists.
@@ -39,73 +39,7 @@ export const getPublicApproach = async (_req: Request, res: Response, next: Next
     }
 
     // ── Media Library dynamic resolution ──────────────────────────────────────
-    const approachMedia = await MediaModel.find({
-      page: new RegExp('^approach$', 'i'),
-    })
-      .sort({ createdAt: -1 })
-      .lean();
-
-    if (approachMedia.length > 0) {
-      const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-      const findMedia = (sectionPattern: RegExp, slotPattern: RegExp) => {
-        return approachMedia.find(
-          (m: any) =>
-            m.isActive !== false &&
-            sectionPattern.test(m.section || '') &&
-            slotPattern.test(m.slot || '')
-        );
-      };
-
-      // 1. Hero background
-      const heroMedia = findMedia(/hero/i, /hero|background|visual|infra/i);
-      if (heroMedia) {
-        publicData.hero.image = heroMedia.secureUrl;
-        publicData.hero.mediaPublicId = heroMedia.publicId;
-      }
-
-      // 2. Philosophy ecosystem
-      const philosophyMedia = findMedia(/philosophy/i, /illustration|ecosystem|visual/i);
-      if (philosophyMedia) {
-        publicData.philosophy.image = philosophyMedia.secureUrl;
-        publicData.philosophy.mediaPublicId = philosophyMedia.publicId;
-      }
-
-      // 3. Technology dashboard
-      const techMedia = findMedia(/technology|capabilities/i, /dashboard|sensor|architecture/i);
-      if (techMedia) {
-        publicData.technology.image = techMedia.secureUrl;
-        publicData.technology.mediaPublicId = techMedia.publicId;
-      }
-
-      // 4. Execution stages (01 - 04)
-      if (publicData.execution?.stages?.length > 0) {
-        publicData.execution.stages = publicData.execution.stages.map((stage: any, idx: number) => {
-          const stageMedia = approachMedia.find(
-            (m: any) =>
-              m.isActive !== false &&
-              /execution|flow/i.test(m.section || '') &&
-              (new RegExp(escapeRegex(stage.title), 'i').test(m.slot || '') ||
-                new RegExp(`stage\\s*0?${idx + 1}`, 'i').test(m.slot || ''))
-          );
-          if (stageMedia) {
-            return {
-              ...stage,
-              image: stageMedia.secureUrl,
-              mediaPublicId: stageMedia.publicId,
-            };
-          }
-          return stage;
-        });
-      }
-
-      // 5. Governance infrastructure / trust image
-      const govMedia = findMedia(/governance|security|compliance/i, /architecture|sensor|trust|audit/i);
-      if (govMedia) {
-        publicData.governance.image = govMedia.secureUrl;
-        publicData.governance.mediaPublicId = govMedia.publicId;
-      }
-    }
+    await resolveApproachMedia(publicData);
 
     res.status(200).json({
       success: true,
@@ -125,9 +59,11 @@ export const getPublicApproach = async (_req: Request, res: Response, next: Next
 export const getAdminApproach = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const settings = await getOrCreateApproachSettings();
+    const adminData = settings.toJSON ? settings.toJSON() : (settings as any);
+    await resolveApproachMedia(adminData);
     res.status(200).json({
       success: true,
-      data: settings,
+      data: adminData,
     });
   } catch (error) {
     next(error);

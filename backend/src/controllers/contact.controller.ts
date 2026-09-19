@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ContactPageSettingsModel, IContactPageSettings } from '../models/ContactPageSettings';
 import { LeadModel } from '../models/Lead';
+import { resolvePageHero } from '../services/mediaSync.service';
 
 /**
  * Helper to ensure a singleton ContactPageSettings document exists.
@@ -22,9 +23,13 @@ export async function getOrCreateContactSettings(): Promise<IContactPageSettings
 export const getPublicContact = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const settings = await getOrCreateContactSettings();
+    const publicData = (settings as any).toObject ? (settings as any).toObject() : JSON.parse(JSON.stringify(settings));
+
+    publicData.hero = await resolvePageHero('contact', publicData.hero);
+
     res.status(200).json({
       success: true,
-      data: settings,
+      data: publicData,
     });
   } catch (err) {
     next(err);
@@ -148,9 +153,13 @@ export const submitDemoRequest = async (req: Request, res: Response, next: NextF
 export const getAdminContactSettings = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const settings = await getOrCreateContactSettings();
+    const adminData = (settings as any).toObject ? (settings as any).toObject() : JSON.parse(JSON.stringify(settings));
+
+    adminData.hero = await resolvePageHero('contact', adminData.hero);
+
     res.status(200).json({
       success: true,
-      data: settings,
+      data: adminData,
     });
   } catch (err) {
     next(err);

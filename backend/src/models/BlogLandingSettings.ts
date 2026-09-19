@@ -14,6 +14,7 @@ export interface IBlogLandingSettings extends Document {
     description: string;
     image: string;
     imageAlt: string;
+    mediaPublicId?: string;
   };
   featuredSection: {
     eyebrow: string;
@@ -54,6 +55,7 @@ const BlogLandingSettingsSchema = new Schema<IBlogLandingSettings>(
       description: { type: String, default: 'Insights, research and perspectives on smart water management, sustainability and real-time telemetry.' },
       image: { type: String, default: '' },
       imageAlt: { type: String, default: 'Water intelligence editorial' },
+      mediaPublicId: { type: String, default: '', trim: true },
     },
     featuredSection: {
       eyebrow: { type: String, default: 'COVER STORY' },
