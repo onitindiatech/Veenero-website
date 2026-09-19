@@ -75,6 +75,24 @@ export const getPublicSolutionDetailBySlug = async (
       }
     }
 
+    if (solution.industries && Array.isArray(solution.industries)) {
+      for (const ind of solution.industries) {
+        if (ind.mediaPublicId) {
+          const asset = await MediaModel.findOne({ publicId: ind.mediaPublicId, deletedAt: null }).lean();
+          if (asset?.secureUrl) {
+            ind.image = asset.secureUrl;
+          }
+        }
+      }
+    }
+
+    if (solution.seo?.ogImagePublicId) {
+      const ogAsset = await MediaModel.findOne({ publicId: solution.seo.ogImagePublicId, deletedAt: null }).lean();
+      if (ogAsset?.secureUrl) {
+        solution.seo.ogImage = ogAsset.secureUrl;
+      }
+    }
+
     res.status(200).json({
       success: true,
       data: solution,

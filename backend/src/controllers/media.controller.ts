@@ -10,6 +10,13 @@ import {
   MAX_IMAGE_BYTES,
   MAX_VIDEO_BYTES,
 } from '../middleware/upload.middleware';
+import { SolutionDetailModel } from '../models/SolutionDetail';
+import { SolutionsPageSettings } from '../models/SolutionsPageSettings';
+import { AboutPageSettingsModel } from '../models/AboutPageSettings';
+import { ApproachPageSettingsModel } from '../models/ApproachPageSettings';
+import { ImpactPageSettingsModel } from '../models/ImpactPageSettings';
+import { ContactPageSettingsModel } from '../models/ContactPageSettings';
+import { BlogPostModel } from '../models/BlogPost';
 
 // =========================================================================
 // POST /api/admin/media/upload
@@ -143,55 +150,75 @@ export const listMediaHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { folder, type, search, deleted } = req.query as Record<string, string>;
+    const { folder, type, search, deleted, sort, usage } = req.query as Record<string, string>;
 
-    const filter: Record<string, unknown> = {
-      deletedAt: deleted === 'true' ? { $ne: null } : null,
-    };
+    const andConditions: Record<string, unknown>[] = [];
+    andConditions.push({ deletedAt: deleted === 'true' ? { $ne: null } : null });
 
     if (folder && folder !== 'all') {
       const escapedFolder = folder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      filter['$or'] = [
-        { folder: folder },
-        { folder: `veenero/${folder}` },
-        { folder: new RegExp(`(^|/)${escapedFolder}($|/)`, 'i') },
-        { page: new RegExp(`^${escapedFolder}$`, 'i') },
-      ];
+      andConditions.push({
+        $or: [
+          { folder: folder },
+          { folder: `veenero/${folder}` },
+          { folder: new RegExp(`(^|/)${escapedFolder}($|/)`, 'i') },
+          { page: new RegExp(`^${escapedFolder}$`, 'i') },
+        ],
+      });
     }
+
     if (type === 'image' || type === 'video') {
-      filter['resourceType'] = type;
+      andConditions.push({ resourceType: type });
     }
+
+    if (usage === 'used') {
+      andConditions.push({ page: { $exists: true, $nin: ['', null] } });
+    } else if (usage === 'unused') {
+      andConditions.push({
+        $or: [
+          { page: { $exists: false } },
+          { page: '' },
+          { page: null },
+        ],
+      });
+    }
+
     if (search && search.trim()) {
       const searchRegex = { $regex: search.trim(), $options: 'i' };
-      const searchConditions = [
-        { displayName: searchRegex },
-        { originalFilename: searchRegex },
-        { altText: searchRegex },
-        { tags: searchRegex },
-        { section: searchRegex },
-        { slot: searchRegex },
-        { page: searchRegex },
-      ];
-
-      if (filter['$or']) {
-        filter['$and'] = [
-          { $or: filter['$or'] },
-          { $or: searchConditions },
-        ];
-        delete filter['$or'];
-      } else {
-        filter['$or'] = searchConditions;
-      }
+      andConditions.push({
+        $or: [
+          { displayName: searchRegex },
+          { originalFilename: searchRegex },
+          { altText: searchRegex },
+          { tags: searchRegex },
+          { section: searchRegex },
+          { slot: searchRegex },
+          { page: searchRegex },
+        ],
+      });
     }
 
-    const docs = await MediaModel.find(filter).sort({ createdAt: -1 }).lean();
+    const filter: Record<string, unknown> =
+      andConditions.length > 1 ? { $and: andConditions } : andConditions[0] || {};
+
+    let sortOptions: Record<string, 1 | -1> = { createdAt: -1 };
+    if (sort === 'oldest') {
+      sortOptions = { createdAt: 1 };
+    } else if (sort === 'name') {
+      sortOptions = { displayName: 1 };
+    }
+
+    const docs = await MediaModel.find(filter).sort(sortOptions).lean();
 
     // Stats (only over non-deleted)
     const all = await MediaModel.find({ deletedAt: null }).lean();
+    const usedCount = all.filter((d) => Boolean(d.page && d.page.trim())).length;
     const stats = {
-      total:        all.length,
-      images:       all.filter((d) => d.resourceType === 'image').length,
-      videos:       all.filter((d) => d.resourceType === 'video').length,
+      total:         all.length,
+      images:        all.filter((d) => d.resourceType === 'image').length,
+      videos:        all.filter((d) => d.resourceType === 'video').length,
+      used:          usedCount,
+      unused:        all.length - usedCount,
       recentlyAdded: all.filter((d) => {
         const ms = Date.now() - new Date(d.createdAt as Date).getTime();
         return ms < 7 * 24 * 60 * 60 * 1000; // last 7 days
@@ -221,6 +248,7 @@ export const listMediaHandler = async (
         description:      d.description,
         seedKey:          d.seedKey,
         originalFilename: d.originalFilename,
+        isUsed:           Boolean(d.page && d.page.trim()),
         deletedAt:        d.deletedAt,
         createdAt:        d.createdAt,
       })),
@@ -313,6 +341,60 @@ export const replaceMediaHandler = async (
     }
 
     await mediaDoc.save();
+
+    // Synchronize any CMS references that stored the old publicId to the new one
+    if (previousPublicId && previousPublicId !== cloudinaryResult.publicId) {
+      try {
+        await Promise.all([
+          SolutionDetailModel.updateMany(
+            { 'useCases.items.mediaPublicId': previousPublicId },
+            { $set: { 'useCases.items.$[elem].mediaPublicId': cloudinaryResult.publicId } },
+            { arrayFilters: [{ 'elem.mediaPublicId': previousPublicId }] }
+          ),
+          SolutionDetailModel.updateMany(
+            { 'industries.mediaPublicId': previousPublicId },
+            { $set: { 'industries.$[elem].mediaPublicId': cloudinaryResult.publicId } },
+            { arrayFilters: [{ 'elem.mediaPublicId': previousPublicId }] }
+          ),
+          SolutionsPageSettings.updateMany(
+            { 'categories.mediaPublicId': previousPublicId },
+            { $set: { 'categories.$[elem].mediaPublicId': cloudinaryResult.publicId } },
+            { arrayFilters: [{ 'elem.mediaPublicId': previousPublicId }] }
+          ),
+          SolutionsPageSettings.updateMany(
+            { 'solutions.mediaPublicId': previousPublicId },
+            { $set: { 'solutions.$[elem].mediaPublicId': cloudinaryResult.publicId } },
+            { arrayFilters: [{ 'elem.mediaPublicId': previousPublicId }] }
+          ),
+          SolutionsPageSettings.updateMany(
+            { 'hero.mediaPublicId': previousPublicId },
+            { $set: { 'hero.mediaPublicId': cloudinaryResult.publicId } }
+          ),
+          SolutionsPageSettings.updateMany(
+            { 'intro.mediaPublicId': previousPublicId },
+            { $set: { 'intro.mediaPublicId': cloudinaryResult.publicId } }
+          ),
+          SolutionsPageSettings.updateMany(
+            { 'featuredSolution.mediaPublicId': previousPublicId },
+            { $set: { 'featuredSolution.mediaPublicId': cloudinaryResult.publicId } }
+          ),
+          SolutionsPageSettings.updateMany(
+            { 'gridHeader.calloutCard.mediaPublicId': previousPublicId },
+            { $set: { 'gridHeader.calloutCard.mediaPublicId': cloudinaryResult.publicId } }
+          ),
+          AboutPageSettingsModel.updateMany(
+            { 'hero.mediaPublicId': previousPublicId },
+            { $set: { 'hero.mediaPublicId': cloudinaryResult.publicId } }
+          ),
+          AboutPageSettingsModel.updateMany(
+            { 'story.mediaPublicId': previousPublicId },
+            { $set: { 'story.mediaPublicId': cloudinaryResult.publicId } }
+          ),
+        ]);
+      } catch (syncErr) {
+        console.warn('[ReplaceSync] Warning syncing CMS references to new publicId:', syncErr);
+      }
+    }
 
     // Delete the OLD Cloudinary asset (best-effort — log but don't fail the request)
     if (previousPublicId && !previousPublicId.startsWith('local:')) {
@@ -586,4 +668,282 @@ export const hardDeleteMediaHandler = async (
     next(error);
   }
 };
+
+// =========================================================================
+// GET /api/admin/media/:publicId/usage
+// Scans CMS models to locate where an asset is referenced by publicId.
+// =========================================================================
+export const getMediaUsageHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const rawPublicId = req.params.publicId;
+    const publicId = decodeURIComponent(
+      Array.isArray(rawPublicId) ? rawPublicId[0] ?? '' : rawPublicId ?? ''
+    ).trim();
+
+    if (!publicId) {
+      throw new ApiError(400, 'publicId parameter is required.');
+    }
+
+    const mediaDoc = await MediaModel.findOne({ publicId }).lean();
+    if (!mediaDoc) {
+      throw new ApiError(404, 'Media asset not found.');
+    }
+
+    const usages: Array<{
+      page: string;
+      entity: string;
+      section: string;
+      field: string;
+      cmsId?: string;
+      route?: string;
+    }> = [];
+
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // 1. Scan SolutionDetailModel
+    try {
+      const solutionDetails = await SolutionDetailModel.find({
+        $or: [
+          { 'useCases.items.mediaPublicId': publicId },
+          { 'industries.mediaPublicId': publicId },
+        ],
+      }).lean();
+
+      for (const sd of solutionDetails) {
+        sd.useCases?.items?.forEach((item: any, idx: number) => {
+          if (item.mediaPublicId === publicId) {
+            usages.push({
+              page: 'solutions',
+              entity: `Solution: ${sd.title || sd.slug || 'Detail Page'}`,
+              section: sd.useCases?.eyebrow || 'Deployment Scenarios / Use Cases',
+              field: `useCases[${idx}] (${item.title || 'Scenario'})`,
+              cmsId: String(sd._id),
+              route: '/admin/solutions',
+            });
+          }
+        });
+
+        sd.industries?.forEach((item: any, idx: number) => {
+          if (item.mediaPublicId === publicId) {
+            usages.push({
+              page: 'solutions',
+              entity: `Solution: ${sd.title || sd.slug || 'Detail Page'}`,
+              section: 'Industries Served',
+              field: `industries[${idx}] (${item.name || 'Industry'})`,
+              cmsId: String(sd._id),
+              route: '/admin/solutions',
+            });
+          }
+        });
+      }
+    } catch (e) {
+      console.error('[UsageScan] Error scanning SolutionDetail:', e);
+    }
+
+    // 2. Scan SolutionsPageSettings
+    try {
+      const solutionsSettings = await SolutionsPageSettings.find({}).lean();
+      for (const s of solutionsSettings) {
+        if (s.hero?.mediaPublicId === publicId) {
+          usages.push({ page: 'solutions', entity: 'Solutions Landing Page', section: 'Hero Section', field: 'hero.mediaPublicId', route: '/admin/solutions' });
+        }
+        if (s.intro?.mediaPublicId === publicId) {
+          usages.push({ page: 'solutions', entity: 'Solutions Landing Page', section: 'Intro Section', field: 'intro.mediaPublicId', route: '/admin/solutions' });
+        }
+        if (s.featuredSolution?.mediaPublicId === publicId) {
+          usages.push({ page: 'solutions', entity: 'Solutions Landing Page', section: 'Featured Solution', field: 'featuredSolution.mediaPublicId', route: '/admin/solutions' });
+        }
+        if (s.gridHeader?.calloutCard?.mediaPublicId === publicId) {
+          usages.push({ page: 'solutions', entity: 'Solutions Landing Page', section: 'Grid Callout Card', field: 'gridHeader.calloutCard.mediaPublicId', route: '/admin/solutions' });
+        }
+        s.categories?.forEach((cat: any, idx: number) => {
+          if (cat.mediaPublicId === publicId) {
+            usages.push({ page: 'solutions', entity: 'Solutions Landing Page', section: 'Solution Categories', field: `category[${idx}]: ${cat.displayLabel || cat.key || 'Category'}`, route: '/admin/solutions' });
+          }
+        });
+        s.solutions?.forEach((sol: any, idx: number) => {
+          if (sol.mediaPublicId === publicId) {
+            usages.push({ page: 'solutions', entity: 'Solutions Landing Page', section: 'Solution Cards', field: `solution[${idx}]: ${sol.title || 'Card'}`, route: '/admin/solutions' });
+          }
+        });
+      }
+    } catch (e) {
+      console.error('[UsageScan] Error scanning SolutionsPageSettings:', e);
+    }
+
+    // 3. Scan AboutPageSettingsModel
+    try {
+      const aboutSettings = await AboutPageSettingsModel.find({}).lean();
+      for (const a of aboutSettings) {
+        if ((a as any).hero?.mediaPublicId === publicId) {
+          usages.push({ page: 'about', entity: 'About Page', section: 'Hero Section', field: 'hero.mediaPublicId', route: '/admin/about' });
+        }
+        if ((a as any).story?.mediaPublicId === publicId) {
+          usages.push({ page: 'about', entity: 'About Page', section: 'Our Story & Origin', field: 'story.mediaPublicId', route: '/admin/about' });
+        }
+        if ((a as any).visionMission?.mediaPublicId === publicId) {
+          usages.push({ page: 'about', entity: 'About Page', section: 'Vision & Mission', field: 'visionMission.mediaPublicId', route: '/admin/about' });
+        }
+        if ((a as any).foundersNote?.mediaPublicId === publicId) {
+          usages.push({ page: 'about', entity: 'About Page', section: "Founder's Note", field: 'foundersNote.mediaPublicId', route: '/admin/about' });
+        }
+        (a as any).leadership?.members?.forEach((m: any, idx: number) => {
+          if (m.mediaPublicId === publicId) {
+            usages.push({ page: 'about', entity: 'About Page', section: 'Leadership', field: `member[${idx}]: ${m.name || 'Member'}`, route: '/admin/about' });
+          }
+        });
+        (a as any).timeline?.milestones?.forEach((m: any, idx: number) => {
+          if (m.mediaPublicId === publicId) {
+            usages.push({ page: 'about', entity: 'About Page', section: 'Timeline', field: `milestone[${idx}]: ${m.year || 'Milestone'}`, route: '/admin/about' });
+          }
+        });
+      }
+    } catch (e) {
+      console.error('[UsageScan] Error scanning AboutPageSettings:', e);
+    }
+
+    // 4. Scan ApproachPageSettingsModel
+    try {
+      const approachSettings = await ApproachPageSettingsModel.find({}).lean();
+      for (const ap of approachSettings) {
+        if ((ap as any).hero?.mediaPublicId === publicId) {
+          usages.push({ page: 'approach', entity: 'Approach Page', section: 'Hero Section', field: 'hero.mediaPublicId', route: '/admin/approach' });
+        }
+        if ((ap as any).methodology?.mediaPublicId === publicId) {
+          usages.push({ page: 'approach', entity: 'Approach Page', section: 'Methodology', field: 'methodology.mediaPublicId', route: '/admin/approach' });
+        }
+        if ((ap as any).technology?.mediaPublicId === publicId) {
+          usages.push({ page: 'approach', entity: 'Approach Page', section: 'Technology', field: 'technology.mediaPublicId', route: '/admin/approach' });
+        }
+        (ap as any).pillars?.forEach((p: any, idx: number) => {
+          if (p.mediaPublicId === publicId) {
+            usages.push({ page: 'approach', entity: 'Approach Page', section: 'Core Pillars', field: `pillar[${idx}]: ${p.title || 'Pillar'}`, route: '/admin/approach' });
+          }
+        });
+        if ((ap as any).stats?.mediaPublicId === publicId) {
+          usages.push({ page: 'approach', entity: 'Approach Page', section: 'Impact Stats', field: 'stats.mediaPublicId', route: '/admin/approach' });
+        }
+      }
+    } catch (e) {
+      console.error('[UsageScan] Error scanning ApproachPageSettings:', e);
+    }
+
+    // 5. Scan ImpactPageSettingsModel
+    try {
+      const impactSettings = await ImpactPageSettingsModel.find({}).lean();
+      for (const imp of impactSettings) {
+        if ((imp as any).hero?.mediaPublicId === publicId) {
+          usages.push({ page: 'impact', entity: 'Impact Page', section: 'Hero Section', field: 'hero.mediaPublicId', route: '/admin/impact' });
+        }
+        if ((imp as any).esgFramework?.mediaPublicId === publicId) {
+          usages.push({ page: 'impact', entity: 'Impact Page', section: 'ESG Framework', field: 'esgFramework.mediaPublicId', route: '/admin/impact' });
+        }
+      }
+    } catch (e) {
+      console.error('[UsageScan] Error scanning ImpactPageSettings:', e);
+    }
+
+    // 6. Scan ContactPageSettingsModel
+    try {
+      const contactSettings = await ContactPageSettingsModel.find({}).lean();
+      for (const c of contactSettings) {
+        if ((c as any).hero?.mediaPublicId === publicId) {
+          usages.push({ page: 'contact', entity: 'Contact Page', section: 'Hero Section', field: 'hero.mediaPublicId', route: '/admin/contact' });
+        }
+      }
+    } catch (e) {
+      console.error('[UsageScan] Error scanning ContactPageSettings:', e);
+    }
+
+    // 7. Scan BlogPostModel
+    try {
+      const blogPosts = await BlogPostModel.find({
+        $or: [
+          { featuredImage: publicId },
+          { featuredImage: mediaDoc.secureUrl },
+          { featuredImage: { $regex: escapeRegex(publicId), $options: 'i' } },
+        ],
+      }).lean();
+
+      for (const bp of blogPosts) {
+        usages.push({
+          page: 'blog',
+          entity: `Blog Post: ${bp.title}`,
+          section: 'Featured Image',
+          field: 'featuredImage',
+          cmsId: String(bp._id),
+          route: '/admin/blog',
+        });
+      }
+    } catch (e) {
+      console.error('[UsageScan] Error scanning BlogPost:', e);
+    }
+
+    // 8. Registered Slot Placement
+    const slotPlacement = mediaDoc.page ? {
+      page: mediaDoc.page,
+      section: mediaDoc.section || '',
+      slot: mediaDoc.slot || '',
+      description: mediaDoc.description || '',
+    } : undefined;
+
+    // If registered on a page, ensure that slot assignment is acknowledged in usages
+    if (mediaDoc.page) {
+      const alreadyIn = usages.some(
+        (u) =>
+          u.page.toLowerCase() === mediaDoc.page?.toLowerCase() &&
+          u.section.toLowerCase() === (mediaDoc.section || '').toLowerCase()
+      );
+      if (!alreadyIn) {
+        usages.unshift({
+          page: mediaDoc.page,
+          entity: `${mediaDoc.page.charAt(0).toUpperCase() + mediaDoc.page.slice(1)} Page (Slot Assignment)`,
+          section: mediaDoc.section || 'General Section',
+          field: mediaDoc.slot || 'Primary Visual',
+          route: `/admin/${mediaDoc.page}`,
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        asset: {
+          id:               String(mediaDoc._id),
+          assetId:          mediaDoc.assetId,
+          publicId:         mediaDoc.publicId,
+          resourceType:     mediaDoc.resourceType,
+          format:           mediaDoc.format,
+          secureUrl:        mediaDoc.secureUrl,
+          width:            mediaDoc.width,
+          height:           mediaDoc.height,
+          duration:         mediaDoc.duration,
+          bytes:            mediaDoc.bytes,
+          folder:           mediaDoc.folder,
+          displayName:      mediaDoc.displayName,
+          altText:          mediaDoc.altText,
+          tags:             mediaDoc.tags,
+          page:             mediaDoc.page,
+          section:          mediaDoc.section,
+          slot:             mediaDoc.slot,
+          description:      mediaDoc.description,
+          seedKey:          mediaDoc.seedKey,
+          originalFilename: mediaDoc.originalFilename,
+          deletedAt:        mediaDoc.deletedAt,
+          createdAt:        mediaDoc.createdAt,
+        },
+        usageCount: usages.length,
+        usages,
+        slotPlacement,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 

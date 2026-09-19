@@ -15,10 +15,21 @@ import { submitDemoRequest } from "@/services/contact.service";
 
 interface SolutionInquiryFormProps {
   solutionName: string;
+  data?: {
+    eyebrow?: string;
+    badge?: string;
+    title?: string;
+    description?: string;
+    subtitle?: string;
+    responseTime?: string;
+    confidentiality?: string;
+    pocText?: string;
+  };
 }
 
 export const SolutionInquiryForm: React.FC<SolutionInquiryFormProps> = ({
   solutionName,
+  data,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -70,6 +81,22 @@ export const SolutionInquiryForm: React.FC<SolutionInquiryFormProps> = ({
     setFormData({ name: "", email: "", organization: "", requirement: "" });
   };
 
+  const eyebrow = data?.eyebrow || data?.badge || "DIRECT INQUIRY";
+  const title = data?.title || "Have Questions? Let's Talk.";
+  const description =
+    data?.description ||
+    data?.subtitle ||
+    `Contact our engineering team to discuss operational requirements, evaluate telemetry feasibility across your network, and explore live platform capabilities for ${solutionName}.`;
+  const responseTime =
+    data?.responseTime ||
+    "Direct callback from a senior water systems specialist within 24 hours.";
+  const confidentiality =
+    data?.confidentiality ||
+    "Full NDA protection for your infrastructure layouts and volumetric data.";
+  const pocText =
+    data?.pocText ||
+    "Live pilot telemetry setups available for industrial and utility networks.";
+
   return (
     <section
       id="inquiry-section"
@@ -81,14 +108,14 @@ export const SolutionInquiryForm: React.FC<SolutionInquiryFormProps> = ({
           <div className="lg:col-span-5 text-left space-y-6">
             <div>
               <span className="text-teal-700 dark:text-teal-400 font-bold uppercase tracking-widest text-xs font-mono block mb-2">
-                DIRECT INQUIRY
+                {eyebrow}
               </span>
               <div className="w-10 h-0.5 bg-teal-600 rounded-full mb-3" />
               <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
-                Have Questions? Let's Talk.
+                {title}
               </h2>
               <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed mt-3">
-                Contact our engineering team to discuss operational requirements, evaluate telemetry feasibility across your network, and explore live platform capabilities for {solutionName}.
+                {description}
               </p>
             </div>
 
@@ -103,7 +130,7 @@ export const SolutionInquiryForm: React.FC<SolutionInquiryFormProps> = ({
                     Rapid Engineering Response
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Direct callback from a senior water systems specialist within 24 hours.
+                    {responseTime}
                   </p>
                 </div>
               </div>
@@ -117,7 +144,7 @@ export const SolutionInquiryForm: React.FC<SolutionInquiryFormProps> = ({
                     Enterprise Confidentiality
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Full NDA protection for your infrastructure layouts and volumetric data.
+                    {confidentiality}
                   </p>
                 </div>
               </div>
@@ -131,7 +158,7 @@ export const SolutionInquiryForm: React.FC<SolutionInquiryFormProps> = ({
                     Custom Proof-of-Concept
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Live pilot telemetry setups available for industrial and utility networks.
+                    {pocText}
                   </p>
                 </div>
               </div>

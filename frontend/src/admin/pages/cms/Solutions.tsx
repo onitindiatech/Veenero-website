@@ -10,7 +10,6 @@ import {
   XCircle,
   ExternalLink,
   Image as ImageIcon,
-  Cpu,
   Layers,
   Sparkles,
   HelpCircle,
@@ -20,24 +19,26 @@ import {
   TrendingUp,
   Droplets,
   Edit2,
-  Filter,
+  Copy,
+  Check,
+  Search,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   SolutionsPageSettings,
   AdminSolutionCategory,
   AdminSolutionItem,
+  AdminSolutionDetail,
   getAdminSolutionsSettings,
   updateAdminSolutionsSection,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  createSolutionItem,
-  updateSolutionItem,
-  deleteSolutionItem,
+  getAdminSolutionDetails,
+  duplicateSolutionDetail,
+  softDeleteSolutionDetail,
+  updateSolutionStatus,
 } from '../../services/solutions.service';
 import { MediaPickerModal } from '../../components/cms/MediaPickerModal';
 import { MediaAsset } from '../../services/media.service';
+import { SolutionDetailEditor } from '../../components/cms/SolutionDetailEditor';
 
 // ─── Toast Component ──────────────────────────────────────────────────────────
 const Toast = ({
@@ -50,10 +51,10 @@ const Toast = ({
   onClose: () => void;
 }) => (
   <div
-    className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border backdrop-blur-md text-sm transition-all duration-300 ${
+    className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-xl text-xs font-medium border transition-all animate-in fade-in slide-in-from-bottom-2 ${
       type === 'success'
-        ? 'bg-emerald-950/90 text-emerald-100 border-emerald-500/40'
-        : 'bg-red-950/90 text-red-100 border-red-500/40'
+        ? 'bg-emerald-950/90 text-emerald-200 border-emerald-700/50 shadow-emerald-950/30'
+        : 'bg-red-950/90 text-red-200 border-red-700/50 shadow-red-950/30'
     }`}
   >
     {type === 'success' ? (
@@ -61,9 +62,12 @@ const Toast = ({
     ) : (
       <XCircle className="w-4 h-4 text-red-400 shrink-0" />
     )}
-    <span className="font-medium">{message}</span>
-    <button onClick={onClose} className="ml-2 text-muted-foreground hover:text-foreground">
-      &times;
+    <span>{message}</span>
+    <button
+      onClick={onClose}
+      className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
+    >
+      ×
     </button>
   </div>
 );
@@ -74,20 +78,19 @@ export const SolutionsCms: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Main Dashboard Tab: 'landing' | 'categories' | 'solutions'
-  const [mainTab, setMainTab] = useState<'landing' | 'categories' | 'solutions'>('landing');
+  // Main Dashboard Tab: 'landing' | 'details'
+  const [mainTab, setMainTab] = useState<'landing' | 'details'>('landing');
+
+  // Solution Detail Pages CMS State
+  const [detailPages, setDetailPages] = useState<AdminSolutionDetail[]>([]);
+  const [activeDetailSolution, setActiveDetailSolution] = useState<AdminSolutionDetail | null>(null);
+  const [isDetailEditorOpen, setIsDetailEditorOpen] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [detailSearch, setDetailSearch] = useState('');
+  const [detailCategoryFilter, setDetailCategoryFilter] = useState('all');
 
   // Landing Page Sub-sections
   const [activeSection, setActiveSection] = useState<string>('hero');
-
-  // Category CRUD Modal/Drawer State
-  const [editingCategory, setEditingCategory] = useState<Partial<AdminSolutionCategory> | null>(null);
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-
-  // Solution Card CRUD Modal/Drawer State
-  const [editingSolution, setEditingSolution] = useState<Partial<AdminSolutionItem> | null>(null);
-  const [isSolutionModalOpen, setIsSolutionModalOpen] = useState(false);
-  const [solutionCategoryFilter, setSolutionCategoryFilter] = useState<string>('all');
 
   // Media Picker State
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -117,10 +120,24 @@ export const SolutionsCms: React.FC = () => {
       setLoading(true);
       const data = await getAdminSolutionsSettings();
       setSettings(data);
+      await loadDetailPages();
     } catch (err: any) {
       showToast(err.message || 'Failed to load Solutions settings', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadDetailPages = async () => {
+    try {
+      setLoadingDetails(true);
+      const res: any = await getAdminSolutionDetails();
+      const list = Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : [];
+      setDetailPages(list);
+    } catch (err: any) {
+      console.error('Failed to load solution detail pages:', err);
+    } finally {
+      setLoadingDetails(false);
     }
   };
 
@@ -214,140 +231,105 @@ export const SolutionsCms: React.FC = () => {
     });
   };
 
-  // ── Category Handlers ──
-  const handleSaveCategory = async () => {
-    if (!editingCategory || !editingCategory.displayLabel || !editingCategory.slug) {
-      showToast('Category name and slug are required.', 'error');
-      return;
-    }
+  // ── Solution Detail Handlers ──
+  const handleOpenDetailEditor = (detail: AdminSolutionDetail | null) => {
+    setActiveDetailSolution(detail);
+    setIsDetailEditorOpen(true);
+  };
 
+  const handleDuplicateDetail = async (id: string, title: string) => {
     try {
-      setSaving(true);
-      const catKey = editingCategory.key || editingCategory.displayLabel;
-      const catData = {
-        ...editingCategory,
-        key: catKey,
-        pillarKeys: editingCategory.pillarKeys || [catKey],
-      };
-
-      if (editingCategory._id || editingCategory.id) {
-        const catId = editingCategory._id || editingCategory.id!;
-        const updated = await updateCategory(catId, catData);
-        setSettings((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            categories: prev.categories.map((c) => (c._id === catId || c.id === catId ? updated : c)),
-          };
-        });
-        showToast('Category updated successfully!');
-      } else {
-        const created = await createCategory(catData);
-        setSettings((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            categories: [...prev.categories, created],
-          };
-        });
-        showToast('Category created successfully!');
-      }
-      setIsCategoryModalOpen(false);
-      setEditingCategory(null);
+      setLoadingDetails(true);
+      const dup = await duplicateSolutionDetail(id);
+      setDetailPages((prev) => [dup, ...prev]);
+      showToast(`Duplicated '${title}' as draft.`);
     } catch (err: any) {
-      showToast(err.message || 'Failed to save category', 'error');
+      showToast(err.message || 'Failed to duplicate solution detail', 'error');
     } finally {
-      setSaving(false);
+      setLoadingDetails(false);
     }
   };
 
-  const handleDeleteCategory = (catId: string, label: string) => {
+  const handleToggleDetailStatus = async (id: string, currentStatus: string) => {
+    try {
+      const nextStatus = currentStatus === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
+      const updated = await updateSolutionStatus(id, nextStatus as any);
+      setDetailPages((prev) => prev.map((p) => ((p._id || p.id) === id ? updated : p)));
+      showToast(`Status changed to ${nextStatus}.`);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to update status', 'error');
+    }
+  };
+
+  const handleDeleteDetail = (id: string, title: string) => {
     setDeleteConfirm({
-      title: 'Delete Category?',
-      message: `Are you sure you want to delete category '${label}'? Any solution cards assigned to it will remain, but the category tab will be removed.`,
+      title: 'Delete Solution Detail Page?',
+      message: `Are you sure you want to move '${title}' to the recycle bin? It can be restored later or permanently deleted.`,
       onConfirm: async () => {
         try {
-          await deleteCategory(catId);
-          setSettings((prev) => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              categories: prev.categories.filter((c) => c._id !== catId && c.id !== catId),
-            };
-          });
-          showToast(`Category '${label}' deleted successfully.`);
+          await softDeleteSolutionDetail(id);
+          setDetailPages((prev) => prev.filter((p) => (p._id || p.id) !== id));
+          showToast(`Solution '${title}' moved to recycle bin.`);
         } catch (err: any) {
-          showToast(err.message || 'Failed to delete category', 'error');
+          showToast(err.message || 'Failed to delete solution detail', 'error');
         }
       },
     });
   };
 
-  // ── Solution Items Handlers ──
-  const handleSaveSolution = async () => {
-    if (!editingSolution || !editingSolution.title || !editingSolution.categoryKey) {
-      showToast('Solution title and category are required.', 'error');
-      return;
-    }
-
-    try {
-      setSaving(true);
-      const solData = {
-        ...editingSolution,
-        pillar: editingSolution.pillar || editingSolution.categoryKey,
-      };
-
-      if (editingSolution._id || editingSolution.id) {
-        const solId = editingSolution._id || editingSolution.id!;
-        const updated = await updateSolutionItem(solId, solData);
-        setSettings((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            solutions: prev.solutions.map((s) => (s._id === solId || s.id === solId ? updated : s)),
-          };
-        });
-        showToast('Solution card updated successfully!');
-      } else {
-        const created = await createSolutionItem(solData);
-        setSettings((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            solutions: [...prev.solutions, created],
-          };
-        });
-        showToast('Solution card created successfully!');
-      }
-      setIsSolutionModalOpen(false);
-      setEditingSolution(null);
-    } catch (err: any) {
-      showToast(err.message || 'Failed to save solution card', 'error');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDeleteSolution = (solId: string, title: string) => {
-    setDeleteConfirm({
-      title: 'Delete Solution?',
-      message: `Are you sure you want to delete '${title}'? It will no longer appear on the public Solutions page.`,
-      onConfirm: async () => {
-        try {
-          await deleteSolutionItem(solId);
-          setSettings((prev) => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              solutions: prev.solutions.filter((s) => s._id !== solId && s.id !== solId),
-            };
-          });
-          showToast(`Solution '${title}' deleted.`);
-        } catch (err: any) {
-          showToast(err.message || 'Failed to delete solution', 'error');
-        }
-      },
+  // Resolve linked public solution card and category identity dynamically
+  const resolveSolutionIdentity = (p: AdminSolutionDetail) => {
+    // 1. Match from settings.solutions by slug, id, or title
+    const linkedCard = settings?.solutions?.find((s) => {
+      if (s.slug && p.slug && s.slug.toLowerCase() === p.slug.toLowerCase()) return true;
+      if (s.id && p.slug && (s.id.toLowerCase() === p.slug.toLowerCase() || s.id.toLowerCase() === `sol-${p.slug.toLowerCase()}`)) return true;
+      if (s.title && p.title && s.title.toLowerCase() === p.title.toLowerCase()) return true;
+      return false;
     });
+
+    // 2. Match from settings.categories by key, slug, or displayLabel
+    const linkedCategory = settings?.categories?.find((c) => {
+      if (linkedCard?.categoryKey && c.key.toLowerCase() === linkedCard.categoryKey.toLowerCase()) return true;
+      if (p.categoryKey && c.key.toLowerCase() === p.categoryKey.toLowerCase()) return true;
+      if ((p as any).category && (c.key.toLowerCase() === (p as any).category.toLowerCase() || c.displayLabel.toLowerCase() === (p as any).category.toLowerCase())) return true;
+      if (c.slug && p.slug && c.slug.toLowerCase() === p.slug.toLowerCase()) return true;
+      return false;
+    });
+
+    // 3. Authoritative Public Solution Name (from SolutionDetail's shortTitle, or linked category/card, or title)
+    const publicSolutionName =
+      p.shortTitle ||
+      linkedCategory?.displayLabel ||
+      linkedCard?.title ||
+      p.title;
+
+    // 4. Detail Page Content Title
+    const detailPageTitle =
+      (p.tagline?.line1
+        ? [p.tagline.line1, p.tagline.line2, p.tagline.line3].filter(Boolean).join(' ')
+        : null) ||
+      p.title;
+
+    // 5. Category Name (prefer explicit categoryKey on SolutionDetail)
+    const categoryLabel =
+      p.categoryKey ||
+      linkedCategory?.displayLabel ||
+      linkedCard?.pillar ||
+      linkedCard?.categoryKey ||
+      (p as any).category ||
+      'General';
+
+    // 6. Thumbnail Image
+    const thumbnail = p.heroImage || linkedCard?.image || linkedCategory?.image;
+
+    return {
+      linkedCard,
+      linkedCategory,
+      publicSolutionName,
+      detailPageTitle,
+      categoryLabel,
+      thumbnail,
+    };
   };
 
   if (loading || !settings) {
@@ -460,7 +442,7 @@ export const SolutionsCms: React.FC = () => {
           </div>
         </div>
 
-        {/* 3 Main Management Tabs */}
+        {/* 2 Main Management Tabs */}
         <div className="flex items-center gap-2 mt-6 border-b border-border/60 pb-px">
           <button
             onClick={() => setMainTab('landing')}
@@ -475,27 +457,15 @@ export const SolutionsCms: React.FC = () => {
           </button>
 
           <button
-            onClick={() => setMainTab('categories')}
+            onClick={() => setMainTab('details')}
             className={`px-4 py-2 text-xs font-bold rounded-t-xl border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
-              mainTab === 'categories'
+              mainTab === 'details'
                 ? 'border-teal-500 text-teal-700 dark:text-teal-400 bg-teal-500/5'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Filter className="w-4 h-4" />
-            <span>02. Solution Categories ({settings.categories.length})</span>
-          </button>
-
-          <button
-            onClick={() => setMainTab('solutions')}
-            className={`px-4 py-2 text-xs font-bold rounded-t-xl border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
-              mainTab === 'solutions'
-                ? 'border-teal-500 text-teal-700 dark:text-teal-400 bg-teal-500/5'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Cpu className="w-4 h-4" />
-            <span>03. Solution Cards ({settings.solutions.length})</span>
+            <Sparkles className="w-4 h-4" />
+            <span>02. Solution Detail Pages ({detailPages.length})</span>
           </button>
         </div>
       </div>
@@ -1354,527 +1324,298 @@ export const SolutionsCms: React.FC = () => {
         )}
 
         {/* ═════════════════════════════════════════════════════════════════════ */}
-        {/* TAB 2: CATEGORIES MANAGEMENT (CRUD)                                  */}
+        {/* TAB 2: SOLUTION DETAIL PAGES CMS (12-TAB CRUD)                      */}
         {/* ═════════════════════════════════════════════════════════════════════ */}
-        {mainTab === 'categories' && (
+        {mainTab === 'details' && (
           <div className="space-y-6">
+            {/* Header & Control Bar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card p-5 rounded-2xl border border-border/80">
               <div>
-                <h2 className="text-base font-bold text-foreground">Solution Categories</h2>
+                <h2 className="text-base font-bold text-foreground">Complete Solution Detail Pages CMS</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Manage the filter tabs and category cards on the public Solutions page. Each category links to its slug route.
-                </p>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => {
-                  setEditingCategory({
-                    key: '',
-                    displayLabel: '',
-                    slug: '',
-                    description: '',
-                    icon: 'Eye',
-                    image: '',
-                    order: settings.categories.length + 1,
-                    isActive: true,
-                  });
-                  setIsCategoryModalOpen(true);
-                }}
-                className="bg-teal-700 hover:bg-teal-800 text-white text-xs px-4 shadow-xs font-semibold flex items-center gap-1.5"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Create New Category</span>
-              </Button>
-            </div>
-
-            {/* Categories List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {settings.categories.map((cat, idx) => (
-                <div
-                  key={cat._id || cat.id || idx}
-                  className="bg-card rounded-2xl border border-border/80 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
-                >
-                  {/* Category Thumbnail */}
-                  <div className="relative aspect-[16/10] bg-slate-900 overflow-hidden">
-                    {cat.image ? (
-                      <img src={cat.image} alt={cat.displayLabel} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/50">
-                        <ImageIcon className="w-8 h-8 mb-1" />
-                        <span className="text-[10px]">Default Photography</span>
-                      </div>
-                    )}
-                    <span className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-slate-950/80 backdrop-blur-md text-[10px] font-mono font-bold text-teal-300 border border-teal-500/30">
-                      Order: {cat.order || idx + 1}
-                    </span>
-                    <span
-                      className={`absolute top-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                        cat.isActive !== false ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                      }`}
-                    >
-                      {cat.isActive !== false ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
-
-                  {/* Body */}
-                  <div className="p-4 space-y-2 flex-1">
-                    <h3 className="text-sm font-bold text-foreground">{cat.displayLabel}</h3>
-                    <p className="text-[11px] text-teal-600 dark:text-teal-400 font-mono">/solutions/{cat.slug}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{cat.description}</p>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="p-3 bg-muted/20 border-t border-border/40 flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">Key: {cat.key}</span>
-                    <div className="flex items-center gap-1.5">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          setEditingCategory(cat);
-                          setIsCategoryModalOpen(true);
-                        }}
-                        className="h-8 px-2.5 text-xs text-teal-700 dark:text-teal-300 hover:bg-teal-500/10"
-                      >
-                        <Edit2 className="w-3.5 h-3.5 mr-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDeleteCategory(cat._id || cat.id!, cat.displayLabel)}
-                        className="h-8 px-2 text-xs text-red-600 hover:bg-red-500/10"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Category Edit/Create Modal */}
-            {isCategoryModalOpen && editingCategory && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-                <div className="bg-card rounded-2xl border border-border p-6 max-w-lg w-full space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-                  <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                    <h3 className="text-base font-bold text-foreground">
-                      {editingCategory._id || editingCategory.id ? 'Edit Category' : 'Create New Category'}
-                    </h3>
-                    <button
-                      onClick={() => setIsCategoryModalOpen(false)}
-                      className="text-muted-foreground hover:text-foreground text-lg"
-                    >
-                      &times;
-                    </button>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div>
-                      <label className={labelCls}>Category Name / Display Label</label>
-                      <input
-                        type="text"
-                        value={editingCategory.displayLabel || ''}
-                        onChange={(e) =>
-                          setEditingCategory({
-                            ...editingCategory,
-                            displayLabel: e.target.value,
-                            key: editingCategory.key || e.target.value,
-                            slug:
-                              editingCategory.slug ||
-                              e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                          })
-                        }
-                        className={inputCls}
-                        placeholder="e.g. Water Visibility"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className={labelCls}>URL Route Slug</label>
-                        <input
-                          type="text"
-                          value={editingCategory.slug || ''}
-                          onChange={(e) => setEditingCategory({ ...editingCategory, slug: e.target.value })}
-                          className={inputCls}
-                          placeholder="e.g. water-visibility"
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Display Order</label>
-                        <input
-                          type="number"
-                          value={editingCategory.order || 1}
-                          onChange={(e) => setEditingCategory({ ...editingCategory, order: parseInt(e.target.value) || 1 })}
-                          className={inputCls}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className={labelCls}>Short Description</label>
-                      <textarea
-                        rows={2}
-                        value={editingCategory.description || ''}
-                        onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
-                        className={textareaCls}
-                        placeholder="Describe the focus of this solution category..."
-                      />
-                    </div>
-
-                    {/* Image Selector */}
-                    <div>
-                      <label className={labelCls}>Category Image (Cloudinary Media Library)</label>
-                      <div className="p-3 rounded-xl border border-border/80 bg-muted/20 flex items-center gap-3">
-                        <div className="w-20 aspect-video rounded-lg bg-slate-950 overflow-hidden shrink-0 border border-border flex items-center justify-center">
-                          {editingCategory.image ? (
-                            <img src={editingCategory.image} alt="Cat" className="w-full h-full object-cover" />
-                          ) : (
-                            <ImageIcon className="w-5 h-5 text-muted-foreground opacity-40" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] text-foreground truncate mb-1">
-                            {editingCategory.image || 'Default image'}
-                          </p>
-                          <Button
-                            type="button"
-                            size="sm"
-                            onClick={() =>
-                              openMediaPicker('categoryModal', 'image', undefined, undefined, 'image', (url, pubId) => {
-                                setEditingCategory((prev) => (prev ? { ...prev, image: url, mediaPublicId: pubId } : prev));
-                              })
-                            }
-                            className="bg-teal-700 hover:bg-teal-800 text-white text-[11px] px-2.5 h-7"
-                          >
-                            <ImageIcon className="w-3 h-3 mr-1" /> Pick Media
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 pt-1">
-                      <input
-                        type="checkbox"
-                        id="catActive"
-                        checked={editingCategory.isActive !== false}
-                        onChange={(e) => setEditingCategory({ ...editingCategory, isActive: e.target.checked })}
-                        className="rounded border-border text-teal-600 focus:ring-teal-500"
-                      />
-                      <label htmlFor="catActive" className="text-xs font-semibold text-foreground cursor-pointer">
-                        Active on public Solutions landing page
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-3 border-t border-border/60">
-                    <Button size="sm" variant="outline" onClick={() => setIsCategoryModalOpen(false)} className="text-xs">
-                      Cancel
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={handleSaveCategory}
-                      disabled={saving}
-                      className="bg-teal-700 hover:bg-teal-800 text-white text-xs px-4"
-                    >
-                      {saving ? 'Saving...' : 'Save Category'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ═════════════════════════════════════════════════════════════════════ */}
-        {/* TAB 3: SOLUTIONS / SOLUTION CARDS CRUD                               */}
-        {/* ═════════════════════════════════════════════════════════════════════ */}
-        {mainTab === 'solutions' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card p-5 rounded-2xl border border-border/80">
-              <div>
-                <h2 className="text-base font-bold text-foreground">Individual Solution Items</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Manage individual solution products (e.g. Veenero Sense, Intelligence, Insights, Verification).
+                  Manage all 12 sections of public Solution Detail Pages (/solutions/:slug) — Hero, Content, Benefits, Features, Process, Tech & Metrics, FAQs, Industries, and SEO.
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                <select
-                  value={solutionCategoryFilter}
-                  onChange={(e) => setSolutionCategoryFilter(e.target.value)}
-                  className="px-3 py-1.5 text-xs rounded-xl border border-border bg-background text-foreground"
-                >
-                  <option value="all">All Categories</option>
-                  {settings.categories.map((c) => (
-                    <option key={c.key} value={c.key}>
-                      {c.displayLabel}
-                    </option>
-                  ))}
-                </select>
-
+              <div className="flex items-center gap-3 w-full sm:w-auto">
                 <Button
                   size="sm"
-                  onClick={() => {
-                    setEditingSolution({
-                      title: '',
-                      tagline: '',
-                      description: '',
-                      categoryKey: settings.categories[0]?.key || 'Water Visibility',
-                      pillar: settings.categories[0]?.key || 'Water Visibility',
-                      slug: '',
-                      icon: 'Radio',
-                      features: ['Real-time continuous flow & pressure capture', 'Multi-asset telemetry aggregation'],
-                      metrics: { value: 'Sub-second', label: 'Ingestion Rate' },
-                      order: settings.solutions.length + 1,
-                      isActive: true,
-                    });
-                    setIsSolutionModalOpen(true);
-                  }}
-                  className="bg-teal-700 hover:bg-teal-800 text-white text-xs px-4 shadow-xs font-semibold flex items-center gap-1.5"
+                  onClick={() => handleOpenDetailEditor(null)}
+                  className="bg-teal-700 hover:bg-teal-800 text-white text-xs px-4 shadow-xs font-semibold flex items-center gap-2"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Create Solution Card</span>
+                  <Plus className="w-4 h-4" />
+                  <span>Create New Solution Page</span>
                 </Button>
               </div>
             </div>
 
-            {/* Solutions List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {settings.solutions
-                .filter((s) => solutionCategoryFilter === 'all' || s.categoryKey === solutionCategoryFilter || s.pillar === solutionCategoryFilter)
-                .map((sol, idx) => (
-                  <div
-                    key={sol._id || sol.id || idx}
-                    className="bg-card rounded-2xl border border-border/80 p-5 space-y-3 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-300 text-[10px] font-bold border border-teal-500/20">
-                          {sol.categoryKey || sol.pillar}
-                        </span>
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                            sol.isActive !== false
-                              ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'bg-red-500/20 text-red-400'
-                          }`}
-                        >
-                          {sol.isActive !== false ? 'Active' : 'Inactive'}
-                        </span>
-                      </div>
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-muted/20 p-3 rounded-xl border border-border/60">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search solutions by title or slug..."
+                  value={detailSearch}
+                  onChange={(e) => setDetailSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-border/70 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-teal-500"
+                />
+              </div>
 
-                      <h3 className="text-base font-bold text-foreground">{sol.title}</h3>
-                      <p className="text-[11px] font-semibold text-teal-600 dark:text-teal-400">{sol.tagline}</p>
-                      <p className="text-xs text-muted-foreground mt-2 line-clamp-3 leading-relaxed">
-                        {sol.description}
-                      </p>
-
-                      {sol.metrics?.value && (
-                        <div className="mt-3 p-2.5 rounded-xl bg-muted/20 border border-border/40 flex items-baseline justify-between">
-                          <span className="text-[10px] text-muted-foreground">{sol.metrics.label}</span>
-                          <span className="text-xs font-bold text-teal-700 dark:text-teal-300 font-mono">
-                            {sol.metrics.value}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="pt-3 border-t border-border/60 flex items-center justify-between">
-                      <span className="text-[10px] text-muted-foreground font-mono">Order: {sol.order || idx + 1}</span>
-                      <div className="flex items-center gap-1.5">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            setEditingSolution(sol);
-                            setIsSolutionModalOpen(true);
-                          }}
-                          className="h-8 px-2.5 text-xs text-teal-700 dark:text-teal-300 hover:bg-teal-500/10"
-                        >
-                          <Edit2 className="w-3.5 h-3.5 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDeleteSolution(sol._id || sol.id!, sol.title)}
-                          className="h-8 px-2 text-xs text-red-600 hover:bg-red-500/10"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-muted-foreground font-semibold">Category:</span>
+                <select
+                  value={detailCategoryFilter}
+                  onChange={(e) => setDetailCategoryFilter(e.target.value)}
+                  className="text-xs px-2.5 py-1.5 rounded-lg border border-border/70 bg-background text-foreground focus:outline-none"
+                >
+                  <option value="all">All Categories ({detailPages.length})</option>
+                  {settings.categories.map((c) => (
+                    <option key={c.key} value={c.displayLabel}>
+                      {c.displayLabel}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            {/* Solution Edit/Create Modal */}
-            {isSolutionModalOpen && editingSolution && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-                <div className="bg-card rounded-2xl border border-border p-6 max-w-xl w-full space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-                  <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                    <h3 className="text-base font-bold text-foreground">
-                      {editingSolution._id || editingSolution.id ? 'Edit Solution Card' : 'Create Solution Card'}
-                    </h3>
-                    <button
-                      onClick={() => setIsSolutionModalOpen(false)}
-                      className="text-muted-foreground hover:text-foreground text-lg"
-                    >
-                      &times;
-                    </button>
-                  </div>
+            {/* Grid of Solution Detail Pages */}
+            {loadingDetails ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="w-8 h-8 rounded-full border-2 border-teal-500 border-t-transparent animate-spin" />
+              </div>
+            ) : detailPages.length === 0 ? (
+              <div className="text-center py-16 bg-card rounded-2xl border border-dashed border-border p-8 space-y-3">
+                <Sparkles className="w-10 h-10 text-muted-foreground mx-auto opacity-40" />
+                <h3 className="text-sm font-bold text-foreground">No Solution Detail Pages Found</h3>
+                <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                  Click "Create New Solution Page" to configure a full CMS solution detail page with all 12 dynamic sections.
+                </p>
+                <Button
+                  size="sm"
+                  onClick={() => handleOpenDetailEditor(null)}
+                  className="bg-teal-700 hover:bg-teal-800 text-white text-xs mt-2"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" /> Create Solution Page
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {detailPages
+                  .filter((p) => {
+                    const identity = resolveSolutionIdentity(p);
+                    const q = detailSearch.toLowerCase().trim();
+                    const matchesSearch =
+                      !q ||
+                      p.title?.toLowerCase().includes(q) ||
+                      p.slug?.toLowerCase().includes(q) ||
+                      identity.publicSolutionName.toLowerCase().includes(q) ||
+                      identity.detailPageTitle.toLowerCase().includes(q) ||
+                      identity.categoryLabel.toLowerCase().includes(q);
+                    const matchesCat =
+                      detailCategoryFilter === 'all' ||
+                      identity.categoryLabel.toLowerCase().includes(detailCategoryFilter.toLowerCase()) ||
+                      (p as any).category?.toLowerCase() === detailCategoryFilter.toLowerCase() ||
+                      p.categoryKey?.toLowerCase() === detailCategoryFilter.toLowerCase();
+                    return matchesSearch && matchesCat;
+                  })
+                  .map((p, idx) => {
+                    const id = (p._id || p.id) as string;
+                    const identity = resolveSolutionIdentity(p);
+                    return (
+                      <div
+                        key={id || idx}
+                        className="bg-card rounded-2xl border border-border/80 hover:border-teal-500/50 transition-all p-5 flex flex-col justify-between space-y-4 shadow-xs group"
+                      >
+                        <div className="space-y-3.5">
+                          {/* Top Row: Category Pill & Status Badge */}
+                          <div className="flex items-center justify-between gap-2">
+                            <span
+                              className="text-[10px] font-mono font-bold text-teal-700 dark:text-teal-300 uppercase tracking-wider bg-teal-500/10 px-2.5 py-0.5 rounded-md border border-teal-500/20 truncate max-w-[200px]"
+                              title={identity.categoryLabel}
+                            >
+                              {identity.categoryLabel}
+                            </span>
 
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className={labelCls}>Solution Title</label>
-                        <input
-                          type="text"
-                          value={editingSolution.title || ''}
-                          onChange={(e) =>
-                            setEditingSolution({
-                              ...editingSolution,
-                              title: e.target.value,
-                              slug:
-                                editingSolution.slug ||
-                                e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                            })
-                          }
-                          className={inputCls}
-                          placeholder="e.g. Veenero Sense"
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Assigned Category</label>
-                        <select
-                          value={editingSolution.categoryKey || settings.categories[0]?.key}
-                          onChange={(e) =>
-                            setEditingSolution({
-                              ...editingSolution,
-                              categoryKey: e.target.value,
-                              pillar: e.target.value,
-                            })
-                          }
-                          className={inputCls}
-                        >
-                          {settings.categories.map((c) => (
-                            <option key={c.key} value={c.key}>
-                              {c.displayLabel}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleDetailStatus(id, p.status || 'DRAFT')}
+                              className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase border cursor-pointer transition-colors shrink-0 ${
+                                p.status === 'PUBLISHED'
+                                  ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/25 hover:bg-emerald-500/20'
+                                  : 'bg-amber-500/10 text-amber-600 border-amber-500/25 hover:bg-amber-500/20'
+                              }`}
+                              title="Click to toggle status"
+                            >
+                              {p.status || 'DRAFT'}
+                            </button>
+                          </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className={labelCls}>Tagline / Subtitle</label>
-                        <input
-                          type="text"
-                          value={editingSolution.tagline || ''}
-                          onChange={(e) => setEditingSolution({ ...editingSolution, tagline: e.target.value })}
-                          className={inputCls}
-                          placeholder="e.g. Water Visibility & Telemetry"
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Display Order</label>
-                        <input
-                          type="number"
-                          value={editingSolution.order || 1}
-                          onChange={(e) => setEditingSolution({ ...editingSolution, order: parseInt(e.target.value) || 1 })}
-                          className={inputCls}
-                        />
-                      </div>
-                    </div>
+                          {/* Optional Thumbnail Image */}
+                          {identity.thumbnail && (
+                            <div className="relative aspect-[16/8] w-full rounded-xl overflow-hidden bg-slate-900 border border-border/50">
+                              <img
+                                src={identity.thumbnail}
+                                alt={identity.publicSolutionName}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                              <span className="absolute bottom-2 left-2.5 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[10px] font-mono text-teal-300 font-semibold border border-white/10">
+                                /solutions/{p.slug}
+                              </span>
+                            </div>
+                          )}
 
-                    <div>
-                      <label className={labelCls}>Description</label>
-                      <textarea
-                        rows={3}
-                        value={editingSolution.description || ''}
-                        onChange={(e) => setEditingSolution({ ...editingSolution, description: e.target.value })}
-                        className={textareaCls}
-                        placeholder="Detailed description of the solution..."
-                      />
-                    </div>
+                          {/* 1. PUBLIC SOLUTION NAME */}
+                          <div>
+                            <span className="text-[9px] font-extrabold text-teal-600 dark:text-teal-400 uppercase tracking-widest block mb-1 font-mono">
+                              PUBLIC SOLUTION
+                            </span>
+                            <h3 className="text-base font-bold text-foreground group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-tight">
+                              {identity.publicSolutionName}
+                            </h3>
+                          </div>
 
-                    {/* Metrics */}
-                    <div className="grid grid-cols-2 gap-3 p-3 rounded-xl border border-border/70 bg-muted/15">
-                      <div>
-                        <label className="text-[10px] font-bold text-muted-foreground block mb-1">Metric Value</label>
-                        <input
-                          type="text"
-                          value={editingSolution.metrics?.value || ''}
-                          onChange={(e) =>
-                            setEditingSolution({
-                              ...editingSolution,
-                              metrics: {
-                                value: e.target.value,
-                                label: editingSolution.metrics?.label || '',
-                              },
-                            })
-                          }
-                          className={inputCls}
-                          placeholder="e.g. Sub-second"
-                        />
+                          {/* 2. DETAIL PAGE TITLE */}
+                          <div className="bg-muted/30 rounded-xl p-2.5 border border-border/40">
+                            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block mb-0.5 font-mono">
+                              DETAIL PAGE TITLE
+                            </span>
+                            <p className="text-xs font-semibold text-foreground/90 leading-snug">
+                              "{identity.detailPageTitle}"
+                            </p>
+                          </div>
+
+                          {/* 3. PUBLIC URL & CATEGORY META ROW */}
+                          <div className="grid grid-cols-2 gap-2 text-xs pt-0.5">
+                            <div>
+                              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block font-mono">
+                                PUBLIC URL
+                              </span>
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <span className="font-mono text-[11px] text-teal-600 dark:text-teal-400 truncate">
+                                  /solutions/{p.slug}
+                                </span>
+                                <a
+                                  href={`/solutions/${p.slug}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-muted-foreground hover:text-teal-500 transition-colors shrink-0"
+                                  title="Open Live Page"
+                                >
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block font-mono">
+                                CATEGORY
+                              </span>
+                              <span className="text-[11px] font-medium text-foreground truncate block mt-0.5">
+                                {identity.categoryLabel}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Section Counts Summary Badges */}
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            <span className="text-[10px] bg-muted/40 text-muted-foreground px-2 py-0.5 rounded border border-border/50">
+                              {p.benefits?.metrics?.length || 0} Benefits
+                            </span>
+                            <span className="text-[10px] bg-muted/40 text-muted-foreground px-2 py-0.5 rounded border border-border/50">
+                              {p.features?.items?.length || 0} Features
+                            </span>
+                            <span className="text-[10px] bg-muted/40 text-muted-foreground px-2 py-0.5 rounded border border-border/50">
+                              {p.howItWorks?.steps?.length || 0} Steps
+                            </span>
+                            <span className="text-[10px] bg-muted/40 text-muted-foreground px-2 py-0.5 rounded border border-border/50">
+                              {p.faqs?.length || 0} FAQs
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Card Actions Footer */}
+                        <div className="pt-3 border-t border-border/60 flex items-center justify-between gap-2 flex-wrap">
+                          <span className="text-[10px] text-muted-foreground font-mono">
+                            Order: {p.displayOrder ?? idx + 1}
+                          </span>
+
+                          <div className="flex items-center gap-1.5">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleOpenDetailEditor(p)}
+                              className="h-8 px-3 text-xs bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-500/30 font-semibold"
+                            >
+                              <Edit2 className="w-3.5 h-3.5 mr-1.5" />
+                              Edit Full CMS
+                            </Button>
+
+                            <a
+                              href={`/solutions/${p.slug}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="h-8 px-2.5 text-xs inline-flex items-center gap-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted border border-border/40 transition-colors"
+                              title="View Live Public Page"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="hidden xl:inline">Live</span>
+                            </a>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDuplicateDetail(id, identity.publicSolutionName)}
+                              className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
+                              title="Duplicate as Draft"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDeleteDetail(id, identity.publicSolutionName)}
+                              className="h-8 px-2 text-xs text-red-600 hover:bg-red-500/10"
+                              title="Delete Solution"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-muted-foreground block mb-1">Metric Label</label>
-                        <input
-                          type="text"
-                          value={editingSolution.metrics?.label || ''}
-                          onChange={(e) =>
-                            setEditingSolution({
-                              ...editingSolution,
-                              metrics: {
-                                value: editingSolution.metrics?.value || '',
-                                label: e.target.value,
-                              },
-                            })
-                          }
-                          className={inputCls}
-                          placeholder="e.g. Telemetry Ingestion Rate"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 pt-1">
-                      <input
-                        type="checkbox"
-                        id="solActive"
-                        checked={editingSolution.isActive !== false}
-                        onChange={(e) => setEditingSolution({ ...editingSolution, isActive: e.target.checked })}
-                        className="rounded border-border text-teal-600 focus:ring-teal-500"
-                      />
-                      <label htmlFor="solActive" className="text-xs font-semibold text-foreground cursor-pointer">
-                        Active on public Solutions landing page
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-2 pt-3 border-t border-border/60">
-                    <Button size="sm" variant="outline" onClick={() => setIsSolutionModalOpen(false)} className="text-xs">
-                      Cancel
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={handleSaveSolution}
-                      disabled={saving}
-                      className="bg-teal-700 hover:bg-teal-800 text-white text-xs px-4"
-                    >
-                      {saving ? 'Saving...' : 'Save Solution Card'}
-                    </Button>
-                  </div>
-                </div>
+                    );
+                  })}
               </div>
             )}
           </div>
         )}
 
       </div>
+
+      {/* 12-Tab Solution Detail CMS Editor Modal */}
+      <SolutionDetailEditor
+        isOpen={isDetailEditorOpen}
+        solution={activeDetailSolution}
+        onClose={() => setIsDetailEditorOpen(false)}
+        onSaveSuccess={(updated) => {
+          setDetailPages((prev) => {
+            const id = updated._id || updated.id;
+            const exists = prev.some((p) => (p._id || p.id) === id);
+            if (exists) {
+              return prev.map((p) => ((p._id || p.id) === id ? updated : p));
+            }
+            return [updated, ...prev];
+          });
+          setIsDetailEditorOpen(false);
+          showToast(`'${updated.title}' saved successfully!`);
+        }}
+        categoriesList={settings?.categories?.map((c) => ({ key: c.key, displayLabel: c.displayLabel })) || []}
+        publicCardsList={settings?.solutions || []}
+        publicSolutionName={
+          activeDetailSolution ? resolveSolutionIdentity(activeDetailSolution).publicSolutionName : undefined
+        }
+      />
     </div>
   );
 };

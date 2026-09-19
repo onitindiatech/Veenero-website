@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ArrowRight } from "lucide-react";
-import { navLinks } from "@/content/site/navbar";
+import { navLinks as defaultNavLinks } from "@/content/site/navbar";
 import { VeeneroLogo } from "@/components/VeeneroLogo";
+import { getPublicNavigation, NavItem } from "@/services/navigation.service";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [navItems, setNavItems] = useState<Array<{ label: string; href: string; isExternal?: boolean; badge?: string }>>(defaultNavLinks);
   const location = useLocation();
 
   useEffect(() => {
@@ -17,6 +19,24 @@ export const Navbar = () => {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Fetch navigation links from backend CMS
+  useEffect(() => {
+    getPublicNavigation()
+      .then((items) => {
+        if (items && items.length > 0) {
+          setNavItems(items.map((i: NavItem) => ({
+            label: i.label,
+            href: i.href,
+            isExternal: i.isExternal,
+            badge: i.badge,
+          })));
+        }
+      })
+      .catch(() => {
+        // Graceful fallback to defaultNavLinks
+      });
   }, []);
 
   // Close mobile menu on route change
@@ -38,8 +58,42 @@ export const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-7">
-          {navLinks.map((link) => {
+          {navItems.map((link) => {
             const isActive = location.pathname === link.href;
+            const content = (
+              <>
+                <span className="transition-transform duration-200 group-hover:-translate-y-[1px] flex items-center gap-1.5">
+                  {link.label}
+                  {link.badge && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-700 dark:text-teal-300">
+                      {link.badge}
+                    </span>
+                  )}
+                </span>
+                <span
+                  className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full transition-all duration-300 ease-out ${
+                    isActive
+                      ? "w-full bg-teal-600 dark:bg-teal-400"
+                      : "w-0 bg-teal-600 dark:bg-teal-400 group-hover:w-full"
+                  }`}
+                />
+              </>
+            );
+
+            if (link.isExternal) {
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm transition-all duration-200 relative py-1 px-0.5 group inline-flex flex-col items-center text-foreground/80 hover:text-foreground hover:text-teal-700 dark:hover:text-teal-300 font-medium"
+                >
+                  {content}
+                </a>
+              );
+            }
+
             return (
               <Link
                 key={link.href}
@@ -50,16 +104,7 @@ export const Navbar = () => {
                     : "text-foreground/80 hover:text-foreground hover:text-teal-700 dark:hover:text-teal-300 font-medium"
                 }`}
               >
-                <span className="transition-transform duration-200 group-hover:-translate-y-[1px]">
-                  {link.label}
-                </span>
-                <span
-                  className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full transition-all duration-300 ease-out ${
-                    isActive
-                      ? "w-full bg-teal-600 dark:bg-teal-400"
-                      : "w-0 bg-teal-600 dark:bg-teal-400 group-hover:w-full"
-                  }`}
-                />
+                {content}
               </Link>
             );
           })}
@@ -95,8 +140,29 @@ export const Navbar = () => {
         }`}
       >
         <div className="container mx-auto px-6 flex flex-col gap-2 font-sans">
-          {navLinks.map((link) => {
+          {navItems.map((link) => {
             const isActive = location.pathname === link.href;
+            if (link.isExternal) {
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-sm font-medium px-4 py-2.5 rounded-xl transition-colors flex items-center justify-between text-foreground/85 hover:text-foreground hover:bg-muted/40"
+                >
+                  <span className="flex items-center gap-2">
+                    {link.label}
+                    {link.badge && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-700 dark:text-teal-300">
+                        {link.badge}
+                      </span>
+                    )}
+                  </span>
+                </a>
+              );
+            }
             return (
               <Link
                 key={link.href}
@@ -108,7 +174,14 @@ export const Navbar = () => {
                     : "text-foreground/85 hover:text-foreground hover:bg-muted/40"
                 }`}
               >
-                <span>{link.label}</span>
+                <span className="flex items-center gap-2">
+                  {link.label}
+                  {link.badge && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-700 dark:text-teal-300">
+                      {link.badge}
+                    </span>
+                  )}
+                </span>
                 {isActive && (
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-400" />
                 )}

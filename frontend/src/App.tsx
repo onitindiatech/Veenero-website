@@ -41,6 +41,12 @@ import LeadsAdmin from "./admin/pages/cms/Leads";
 import JobApplications from "./admin/pages/cms/JobApplications";
 import FooterCms from "./admin/pages/cms/Footer";
 import MediaLibrary from "./admin/pages/cms/MediaLibrary";
+import NavigationCms from "./admin/pages/cms/Navigation";
+import SeoCms from "./admin/pages/cms/Seo";
+import GlobalSettingsCms from "./admin/pages/cms/GlobalSettings";
+import UsersAndRoles from "./admin/pages/cms/UsersAndRoles";
+import ActivityLogsCms from "./admin/pages/cms/ActivityLogs";
+import AdminSettingsCms from "./admin/pages/cms/AdminSettings";
 
 // Auth Provider & Guard
 import { AuthProvider } from "./admin/context/AuthContext";
@@ -102,28 +108,27 @@ const AnimatedRoutes = () => {
           <Route path="approach" element={<ApproachCms />} />
           <Route path="careers" element={<Careers />} />
           <Route path="impact" element={<ImpactCms />} />
-          <Route path="navigation" element={<Placeholder />} />
+          <Route path="navigation" element={<NavigationCms />} />
           <Route path="footer" element={<FooterCms />} />
-          <Route path="seo" element={<Placeholder />} />
-          <Route path="global-settings" element={<Placeholder />} />
+          <Route path="seo" element={<SeoCms />} />
+          <Route path="global-settings" element={<GlobalSettingsCms />} />
           <Route path="job-applications" element={<JobApplications />} />
           <Route path="applications" element={<JobApplications />} />
-          <Route path="activity-logs" element={<Placeholder />} />
+          <Route path="activity-logs" element={<ActivityLogsCms />} />
           <Route path="blog" element={<Blog />} />
           <Route path="blog/settings" element={<BlogSettingsPage />} />
           <Route path="media" element={<MediaLibrary />} />
-          <Route path="casestudies" element={<Placeholder />} />
-          <Route path="faqs" element={<Placeholder />} />
-          <Route path="testimonials" element={<Placeholder />} />
-          <Route path="partners" element={<Placeholder />} />
+          <Route path="casestudies" element={<Navigate to="/admin/solutions" replace />} />
+          <Route path="faqs" element={<Navigate to="/admin/contact" replace />} />
+          <Route path="testimonials" element={<Navigate to="/admin/home" replace />} />
+          <Route path="partners" element={<Navigate to="/admin/home" replace />} />
           <Route path="leads" element={<LeadsAdmin />} />
+          <Route path="contact-leads" element={<LeadsAdmin />} />
           <Route path="contact" element={<ContactCms />} />
-          <Route path="newsletters" element={<Placeholder />} />
-          <Route path="users" element={<Placeholder />} />
-          <Route path="roles" element={<Placeholder />} />
-          <Route path="settings" element={<Placeholder />} />
-          <Route path="audit" element={<Placeholder />} />
-          <Route path="health" element={<Placeholder />} />
+          <Route path="users" element={<UsersAndRoles />} />
+          <Route path="roles" element={<UsersAndRoles />} />
+          <Route path="settings" element={<AdminSettingsCms />} />
+          <Route path="audit" element={<ActivityLogsCms />} />
 
           {/* CMS Sub-routes & Aliases */}
           <Route path="cms" element={<Navigate to="/admin/pages" replace />} />
@@ -140,7 +145,14 @@ const AnimatedRoutes = () => {
           <Route path="cms/blog/settings" element={<BlogSettingsPage />} />
           <Route path="cms/media" element={<MediaLibrary />} />
           <Route path="cms/leads" element={<LeadsAdmin />} />
+          <Route path="cms/contact-leads" element={<LeadsAdmin />} />
           <Route path="cms/job-applications" element={<JobApplications />} />
+          <Route path="cms/navigation" element={<NavigationCms />} />
+          <Route path="cms/seo" element={<SeoCms />} />
+          <Route path="cms/global-settings" element={<GlobalSettingsCms />} />
+          <Route path="cms/users" element={<UsersAndRoles />} />
+          <Route path="cms/activity-logs" element={<ActivityLogsCms />} />
+          <Route path="cms/settings" element={<AdminSettingsCms />} />
 
           <Route path="*" element={<Placeholder />} />
         </Route>

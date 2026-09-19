@@ -384,11 +384,11 @@ export const Footer: React.FC = () => {
 
             {/* Google Reviews Trust Card */}
             <a
-              href="https://www.google.com/search?q=Veenero+Sustainable+Solutions"
+              href={data?.googleRating?.href || "https://www.google.com/search?q=Veenero+Sustainable+Solutions"}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-6 block p-4 rounded-2xl bg-gradient-to-b from-white/[0.045] to-white/[0.015] border border-white/[0.09] hover:border-teal-500/40 hover:bg-white/[0.06] hover:shadow-[0_8px_24px_rgba(0,182,254,0.08)] transition-all duration-300 group shadow-xs max-w-[260px]"
-              aria-label="Google Reviews - 5.0 rating for Veenero Sustainable Solutions"
+              aria-label={`Google Reviews - ${data?.googleRating?.rating || '5.0'} rating for Veenero Sustainable Solutions`}
             >
               <div className="flex items-center justify-between gap-2 mb-2.5">
                 <div className="flex items-center gap-2">
@@ -401,14 +401,14 @@ export const Footer: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-sm font-bold text-white font-mono tracking-tight">5.0</span>
-                <div className="flex items-center text-[#FBBC05] text-xs tracking-wider" aria-label="5.0 out of 5 stars">
+                <span className="text-sm font-bold text-white font-mono tracking-tight">{data?.googleRating?.rating || "5.0"}</span>
+                <div className="flex items-center text-[#FBBC05] text-xs tracking-wider" aria-label="Google rating stars">
                   ★★★★★
                 </div>
               </div>
 
               <p className="text-[11px] text-slate-400 font-normal">
-                Trusted by our customers
+                {data?.googleRating?.reviewsCount || "Trusted by our customers"}
               </p>
             </a>
           </div>
@@ -417,7 +417,7 @@ export const Footer: React.FC = () => {
         {/* 5. BOTTOM BAR */}
         <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-normal">
           <p>
-            © {currentYear} Veenero Sustainable Solutions. All rights reserved.
+            {data?.copyrightText || `© ${currentYear} Veenero Sustainable Solutions. All rights reserved.`}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Link to="/about" className="hover:text-teal-300 transition-colors duration-200">

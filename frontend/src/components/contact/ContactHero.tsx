@@ -70,12 +70,18 @@ export const ContactHero: React.FC<ContactHeroProps> = ({ data }) => {
             </span>
           </div>
 
-          {/* H1 Headline — Playfair Display */}
+          {/* H1 Headline — Playfair Display (CMS-driven) */}
           <h1 className="reveal-on-scroll reveal-delay-100 font-display text-2xl sm:text-3xl lg:text-[2.65rem] font-bold text-slate-950 dark:text-white leading-[1.18] mb-5 sm:mb-6 tracking-tight">
-            <span className="block">Let's Build Better</span>
-            <span className="text-[#136873] dark:text-teal-400 font-bold block mt-1">
-              Water Systems Together.
-            </span>
+            {(data as any)?.title ? (
+              <span className="block">{(data as any).title}</span>
+            ) : (
+              <>
+                <span className="block">Let's Build Better</span>
+                <span className="text-[#136873] dark:text-teal-400 font-bold block mt-1">
+                  Water Systems Together.
+                </span>
+              </>
+            )}
           </h1>
 
           {/* Action CTAs — Rounded Pill Buttons */}

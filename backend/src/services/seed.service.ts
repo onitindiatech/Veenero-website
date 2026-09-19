@@ -12,6 +12,7 @@ import { FooterSettingsModel } from '../models/FooterSettings';
 import { MediaModel } from '../models/Media';
 import { CareerModel } from '../models/Career';
 import { CareerPageSettingsModel } from '../models/CareerPageSettings';
+import { seedSolutionDetails } from './seedSolutionDetails';
 
 const mockPages = [
   {
@@ -201,6 +202,9 @@ export async function seedDatabase(): Promise<void> {
 
     // 7. Seed & Synchronize Careers and Job Openings (Idempotent)
     await seedCareers();
+
+    // 8. Seed & Synchronize Solution Details (Idempotent)
+    await seedSolutionDetails();
 
   } catch (error) {
     console.error('[Seed] Error during seeding:', (error as Error).message);

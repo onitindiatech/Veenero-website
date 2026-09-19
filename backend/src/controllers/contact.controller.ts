@@ -166,7 +166,7 @@ export const updateAdminContactSettings = async (req: Request, res: Response, ne
     const updateData = req.body;
     let doc = await getOrCreateContactSettings();
 
-    const allowedSections = ['hero', 'contactInfo', 'demoCard', 'form', 'faq', 'cta', 'seo'];
+    const allowedSections = ['hero', 'contactInfo', 'demoCard', 'form', 'office', 'officeHours', 'faq', 'cta', 'seo'];
     for (const key of allowedSections) {
       if (updateData[key] !== undefined) {
         (doc as any)[key] = updateData[key];
@@ -193,7 +193,7 @@ export const updateAdminContactSettings = async (req: Request, res: Response, ne
 export const updateAdminContactSection = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const sectionKey = String(req.params.sectionKey || '');
-    const allowedSections = ['hero', 'contactInfo', 'demoCard', 'form', 'faq', 'cta', 'seo'];
+    const allowedSections = ['hero', 'contactInfo', 'demoCard', 'form', 'office', 'officeHours', 'faq', 'cta', 'seo'];
 
     if (!allowedSections.includes(sectionKey)) {
       res.status(400).json({

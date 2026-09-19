@@ -76,16 +76,16 @@ export const SolutionHowItWorks: React.FC<SolutionHowItWorksProps> = ({ data }) 
             <div className="h-full bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-500 w-full animate-stream" />
           </div>
 
-          <div className="grid grid-cols-5 gap-4 relative z-10">
+          <div className={`grid ${data.steps.length === 6 ? "grid-cols-6" : data.steps.length === 4 ? "grid-cols-4" : "grid-cols-5"} gap-3 lg:gap-4 relative z-10`}>
             {data.steps.map((step, idx) => {
               const Icon = stepIcons[step.icon] || Radio;
               return (
                 <div key={idx} className="flex flex-col items-center text-center group">
                   {/* Step Node Circle */}
-                  <div className="relative mb-5">
-                    <div className="w-21 h-21 rounded-full bg-white dark:bg-[#071d22] border-2 border-teal-500/30 group-hover:border-teal-500 shadow-md group-hover:shadow-[0_0_20px_rgba(20,184,166,0.3)] transition-all duration-300 flex items-center justify-center relative">
-                      <div className="w-16 h-16 rounded-full bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Icon className="w-7 h-7 text-teal-600 dark:text-teal-400" />
+                  <div className="relative mb-4">
+                    <div className="w-16 h-16 lg:w-18 lg:h-18 rounded-full bg-white dark:bg-[#071d22] border-2 border-teal-500/30 group-hover:border-teal-500 shadow-md group-hover:shadow-[0_0_20px_rgba(20,184,166,0.3)] transition-all duration-300 flex items-center justify-center relative">
+                      <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Icon className="w-5 h-5 lg:w-6 lg:h-6 text-teal-600 dark:text-teal-400" />
                       </div>
                     </div>
                     {/* Number Badge */}
@@ -95,13 +95,13 @@ export const SolutionHowItWorks: React.FC<SolutionHowItWorksProps> = ({ data }) 
                   </div>
 
                   {/* Title & Description */}
-                  <h3 className="font-display text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                  <h3 className="font-display text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                     {step.title}
                   </h3>
-                  <span className="text-[11px] font-semibold text-teal-700 dark:text-teal-400 block mb-1.5 font-mono">
+                  <span className="text-[10px] lg:text-[11px] font-semibold text-teal-700 dark:text-teal-400 block mb-1.5 font-mono">
                     {step.subtitle}
                   </span>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-[200px]">
+                  <p className="text-[11px] lg:text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-[180px]">
                     {step.description}
                   </p>
                 </div>

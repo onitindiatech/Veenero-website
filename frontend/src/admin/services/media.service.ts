@@ -22,14 +22,43 @@ export interface MediaAsset {
   description?: string;
   seedKey?: string;
   originalFilename: string;
+  isUsed?: boolean;
   deletedAt?: string | null;
   createdAt: string;
+}
+
+export interface MediaUsageEntry {
+  page: string;
+  entity: string;
+  section: string;
+  field: string;
+  cmsId?: string;
+  route?: string;
+}
+
+export interface MediaUsageData {
+  asset: MediaAsset;
+  usageCount: number;
+  usages: MediaUsageEntry[];
+  slotPlacement?: {
+    page?: string;
+    section?: string;
+    slot?: string;
+    description?: string;
+  };
+}
+
+export interface MediaUsageResponse {
+  success: boolean;
+  data: MediaUsageData;
 }
 
 export interface MediaStats {
   total: number;
   images: number;
   videos: number;
+  used: number;
+  unused: number;
   recentlyAdded: number;
 }
 
@@ -44,6 +73,8 @@ export interface MediaListParams {
   type?: "image" | "video" | "all";
   search?: string;
   deleted?: boolean;
+  sort?: "newest" | "oldest" | "name";
+  usage?: "all" | "used" | "unused";
 }
 
 export interface UploadMediaParams {
@@ -82,6 +113,8 @@ export const mediaService = {
     if (params.type && params.type !== "all") qp.set("type", params.type);
     if (params.search) qp.set("search", params.search);
     if (params.deleted) qp.set("deleted", "true");
+    if (params.sort && params.sort !== "newest") qp.set("sort", params.sort);
+    if (params.usage && params.usage !== "all") qp.set("usage", params.usage);
     const url = `${ADMIN_MEDIA_URL}${qp.toString() ? "?" + qp.toString() : ""}`;
     try {
       const res = await fetch(url, { credentials: "include" });
@@ -131,7 +164,18 @@ export const mediaService = {
     });
   },
 
-  async updateMetadata(publicId: string, data: { displayName?: string; altText?: string; tags?: string[]; description?: string }): Promise<void> {
+  async updateMetadata(
+    publicId: string,
+    data: {
+      displayName?: string;
+      altText?: string;
+      tags?: string[];
+      description?: string;
+      page?: string;
+      section?: string;
+      slot?: string;
+    }
+  ): Promise<void> {
     const encoded = encodeURIComponent(publicId);
     try {
       const res = await fetch(`${ADMIN_MEDIA_URL}/${encoded}`, {
@@ -141,6 +185,19 @@ export const mediaService = {
         credentials: "include",
       });
       if (!res.ok) throw await parseError(res, "Failed to update asset metadata.");
+    } catch (err: unknown) {
+      if (err instanceof Error && !err.message.includes("fetch")) throw err;
+      throw new Error("Unable to connect to the media API.");
+    }
+  },
+
+  async getUsage(publicId: string): Promise<MediaUsageData> {
+    const encoded = encodeURIComponent(publicId);
+    try {
+      const res = await fetch(`${ADMIN_MEDIA_URL}/${encoded}/usage`, { credentials: "include" });
+      if (!res.ok) throw await parseError(res, "Failed to fetch asset usage.");
+      const json: MediaUsageResponse = await res.json();
+      return json.data;
     } catch (err: unknown) {
       if (err instanceof Error && !err.message.includes("fetch")) throw err;
       throw new Error("Unable to connect to the media API.");

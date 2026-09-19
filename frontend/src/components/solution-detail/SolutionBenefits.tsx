@@ -34,7 +34,7 @@ export const SolutionBenefits: React.FC<SolutionBenefitsProps> = ({ data }) => {
         </div>
 
         {/* 4 to 6 Concise Benefit Blocks */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${data.metrics.length === 6 ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-6`}>
           {data.metrics.map((metric, idx) => {
             const stagger =
               idx === 0

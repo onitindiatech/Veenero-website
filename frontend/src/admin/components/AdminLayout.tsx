@@ -64,10 +64,6 @@ export const AdminLayout: React.FC = () => {
         { label: 'Contact CMS', path: '/admin/contact', iconName: 'Phone' },
         { label: 'Blog / Insights', path: '/admin/blog', iconName: 'Newspaper' },
         { label: 'Careers', path: '/admin/careers', iconName: 'Briefcase' },
-        { label: 'Case Studies', path: '/admin/casestudies', iconName: 'BookOpen' },
-        { label: 'FAQs', path: '/admin/faqs', iconName: 'HelpCircle' },
-        { label: 'Testimonials', path: '/admin/testimonials', iconName: 'MessageSquare' },
-        { label: 'Partners', path: '/admin/partners', iconName: 'Users2' },
         { label: 'Media Library', path: '/admin/media', iconName: 'Image' },
       ],
     },
@@ -124,8 +120,26 @@ export const AdminLayout: React.FC = () => {
     return () => window.removeEventListener('click', handleOutsideClick);
   }, []);
 
+  // Sync sidebar width CSS variable to document for full-screen modals to respect
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--admin-sidebar-width',
+      isSidebarCollapsed ? '72px' : '260px'
+    );
+    return () => {
+      document.documentElement.style.removeProperty('--admin-sidebar-width');
+    };
+  }, [isSidebarCollapsed]);
+
   return (
-    <div className="min-h-screen flex bg-background text-foreground overflow-hidden font-sans relative">
+    <div
+      className="min-h-screen flex bg-background text-foreground overflow-hidden font-sans relative"
+      style={
+        {
+          '--admin-sidebar-width': isSidebarCollapsed ? '72px' : '260px',
+        } as React.CSSProperties
+      }
+    >
       {/* Premium Water-inspired flowing background blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-teal-500/5 dark:bg-teal-500/3 blur-[120px] pointer-events-none animate-float" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-cyan-500/5 dark:bg-cyan-500/3 blur-[150px] pointer-events-none animate-float animation-delay-600" />

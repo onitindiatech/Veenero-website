@@ -197,6 +197,54 @@ export const FooterCms: React.FC = () => {
           </div>
         </div>
 
+        {/* Copyright & Google Rating */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border/60">
+          <div>
+            <label className={labelCls}>Copyright Text</label>
+            <input
+              type="text"
+              value={settings.copyrightText || ''}
+              placeholder="e.g. © 2026 Veenero. All rights reserved."
+              onChange={(e) => setSettings({ ...settings, copyrightText: e.target.value })}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className={labelCls}>Google Rating Score</label>
+            <input
+              type="text"
+              value={settings.googleRating?.rating || ''}
+              placeholder="e.g. 4.9"
+              onChange={(e) => setSettings({
+                ...settings,
+                googleRating: {
+                  rating: e.target.value,
+                  reviewsCount: settings.googleRating?.reviewsCount || '120+ Reviews',
+                  href: settings.googleRating?.href || 'https://google.com',
+                }
+              })}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className={labelCls}>Google Reviews Count / Label</label>
+            <input
+              type="text"
+              value={settings.googleRating?.reviewsCount || ''}
+              placeholder="e.g. 150+ Enterprise Reviews"
+              onChange={(e) => setSettings({
+                ...settings,
+                googleRating: {
+                  rating: settings.googleRating?.rating || '4.9',
+                  reviewsCount: e.target.value,
+                  href: settings.googleRating?.href || 'https://google.com',
+                }
+              })}
+              className={inputCls}
+            />
+          </div>
+        </div>
+
         {/* Social Links */}
         <div className="space-y-3 pt-4 border-t border-border/60">
           <div className="flex items-center justify-between">

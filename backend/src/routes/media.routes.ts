@@ -11,6 +11,7 @@ import {
   restoreMediaHandler,
   replaceMediaHandler,
   getPublicAssetBySlot,
+  getMediaUsageHandler,
 } from '../controllers/media.controller';
 
 // ─── Public Media Router (no auth) ───────────────────────────────────────────
@@ -27,6 +28,9 @@ adminMediaRouter.use(authenticate);
 
 // GET /api/admin/media?folder=&type=&search=&deleted=true
 adminMediaRouter.get('/', requireRole(['VIEWER', 'EDITOR', 'ADMIN', 'SUPER_ADMIN']), listMediaHandler);
+
+// GET /api/admin/media/:publicId/usage (must come before generic PATCH and DELETE)
+adminMediaRouter.get('/:publicId(*)/usage', requireRole(['VIEWER', 'EDITOR', 'ADMIN', 'SUPER_ADMIN']), getMediaUsageHandler);
 
 // POST /api/admin/media/upload
 adminMediaRouter.post('/upload', requireRole(['ADMIN', 'SUPER_ADMIN']), uploadMiddleware.single('file'), uploadMediaHandler);

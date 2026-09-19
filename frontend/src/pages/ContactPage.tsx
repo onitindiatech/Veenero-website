@@ -37,6 +37,8 @@ export const ContactPage: React.FC = () => {
   const contactInfoData = cmsData?.contactInfo || contactPageContent.contactInfo;
   const demoCardData = cmsData?.demoCard || contactPageContent.demoCard;
   const formData = cmsData?.form || contactPageContent.form;
+  const officeData = (cmsData as any)?.office;
+  const officeHoursData = (cmsData as any)?.officeHours;
   const faqData = cmsData?.faq || contactPageContent.faq;
   const ctaData = cmsData?.cta;
 
@@ -62,6 +64,8 @@ export const ContactPage: React.FC = () => {
           contactInfo={contactInfoData}
           demoCard={demoCardData}
           form={formData}
+          office={officeData}
+          officeHours={officeHoursData}
         />
 
         {/* 3. FAQ SECTION */}

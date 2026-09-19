@@ -31,6 +31,12 @@ import { apiLimiter, resetAuthLimiter } from './middleware/rateLimit.middleware'
 import { publicSolutionDetailRouter, adminSolutionDetailRouter } from './routes/solutionDetail.routes';
 import aiRouter from './routes/ai.routes';
 import adminDashboardRouter from './routes/dashboard.routes';
+import { publicNavigationRouter, adminNavigationRouter } from './routes/navigation.routes';
+import { publicGlobalSettingsRouter, adminGlobalSettingsRouter } from './routes/globalSettings.routes';
+import adminSeoRouter from './routes/seo.routes';
+import adminUserRouter from './routes/user.routes';
+import adminActivityLogRouter from './routes/activityLog.routes';
+import adminSettingsRouter from './routes/settings.routes';
 
 // ─── Express Application ──────────────────────────────────────────────────────
 
@@ -108,6 +114,15 @@ app.use(`${API_PREFIX}/solutions-detail`, publicSolutionDetailRouter);
 app.use(`${API_PREFIX}/admin/solutions-detail`, adminSolutionDetailRouter);
 app.use(`${API_PREFIX}/admin/dashboard`, adminDashboardRouter);
 app.use(`${API_PREFIX}/ai`, aiRouter);
+app.use(`${API_PREFIX}/navigation`, publicNavigationRouter);
+app.use(`${API_PREFIX}/admin/navigation`, adminNavigationRouter);
+app.use(`${API_PREFIX}/global-settings`, publicGlobalSettingsRouter);
+app.use(`${API_PREFIX}/admin/global-settings`, adminGlobalSettingsRouter);
+app.use(`${API_PREFIX}/admin/seo`, adminSeoRouter);
+app.use(`${API_PREFIX}/admin/users`, adminUserRouter);
+app.use(`${API_PREFIX}/admin/activity-logs`, adminActivityLogRouter);
+app.use(`${API_PREFIX}/admin/settings`, adminSettingsRouter);
+app.use(`${API_PREFIX}/admin/contact-leads`, adminLeadsRouter);
 
 
 // ── 404 Catch-All ─────────────────────────────────────────────────────────────

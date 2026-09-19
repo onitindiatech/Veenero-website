@@ -65,8 +65,15 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-card w-full max-w-5xl h-[85vh] rounded-2xl border border-border shadow-2xl flex flex-col overflow-hidden font-sans">
+    <div
+      className="fixed top-16 bottom-0 right-0 left-0 md:left-[var(--admin-sidebar-width,260px)] z-[60] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div className="bg-card w-full max-w-4xl xl:max-w-5xl h-full max-h-[calc(100vh-6rem)] rounded-2xl border border-border shadow-2xl flex flex-col overflow-hidden font-sans">
         
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-muted/20">

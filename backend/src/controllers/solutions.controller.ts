@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { SolutionsPageSettings, ISolutionsPageSettings } from '../models/SolutionsPageSettings';
+import { SolutionDetailModel } from '../models/SolutionDetail';
 import { MediaModel } from '../models/Media';
 
 /**
@@ -106,17 +107,70 @@ export const getPublicSolutions = async (_req: Request, res: Response, next: Nex
       });
     }
 
-    // ── Filter inactive repeatable items and sort by order ───────────────────
-    if (publicData.categories && Array.isArray(publicData.categories)) {
-      publicData.categories = publicData.categories
-        .filter((c: any) => c.isActive !== false)
-        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-    }
+    // ── Derive Public Solution Cards from Published SolutionDetail records (Single Source of Truth) ──
+    const publishedDetails = await SolutionDetailModel.find({
+      status: { $in: ['PUBLISHED', 'ACTIVE'] },
+      deletedAt: null,
+    })
+      .sort({ displayOrder: 1, sortOrder: 1, createdAt: 1 })
+      .lean();
 
-    if (publicData.solutions && Array.isArray(publicData.solutions)) {
-      publicData.solutions = publicData.solutions
-        .filter((s: any) => s.isActive !== false)
-        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    if (publishedDetails && publishedDetails.length > 0) {
+      publicData.solutionDetails = publishedDetails;
+
+      publicData.categories = publishedDetails.map((d: any, idx: number) => {
+        const legacyCat = (publicData.categories || []).find(
+          (c: any) => c.slug === d.slug || (d.categoryKey && c.key?.toLowerCase() === d.categoryKey?.toLowerCase())
+        );
+        return {
+          _id: d._id,
+          id: d.slug,
+          key: d.categoryKey || d.category || d.title,
+          displayLabel: d.shortTitle || d.title || legacyCat?.displayLabel || 'Solution',
+          slug: d.slug,
+          description: d.shortDescription || d.heroDescription || legacyCat?.description || '',
+          icon: d.icon || legacyCat?.icon || 'Cpu',
+          image: d.heroImage || legacyCat?.image || '',
+          pillarKeys: [d.categoryKey || d.category || 'General'],
+          order: d.displayOrder ?? d.sortOrder ?? idx + 1,
+          isActive: true,
+        };
+      });
+
+      publicData.solutions = publishedDetails.map((d: any, idx: number) => {
+        const legacySol = (publicData.solutions || []).find(
+          (s: any) => s.slug === d.slug || (d.title && s.title?.toLowerCase() === d.title?.toLowerCase())
+        );
+        return {
+          _id: d._id,
+          id: d.slug,
+          slug: d.slug,
+          title: d.shortTitle || d.title || legacySol?.title || 'Solution',
+          tagline: d.tagline?.line1 || legacySol?.tagline || '',
+          description: d.shortDescription || d.heroDescription || legacySol?.description || '',
+          categoryKey: d.categoryKey || d.category || legacySol?.categoryKey || 'General',
+          pillar: d.categoryKey || d.category || legacySol?.pillar || 'General',
+          icon: d.icon || legacySol?.icon || 'Cpu',
+          image: d.heroImage || legacySol?.image || '',
+          features: d.features?.items?.map((f: any) => f.title) || legacySol?.features || [],
+          metrics: legacySol?.metrics,
+          order: d.displayOrder ?? d.sortOrder ?? idx + 1,
+          isActive: true,
+        };
+      });
+    } else {
+      // Fallback to legacy categories/solutions if no published details exist
+      if (publicData.categories && Array.isArray(publicData.categories)) {
+        publicData.categories = publicData.categories
+          .filter((c: any) => c.isActive !== false)
+          .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+      }
+
+      if (publicData.solutions && Array.isArray(publicData.solutions)) {
+        publicData.solutions = publicData.solutions
+          .filter((s: any) => s.isActive !== false)
+          .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+      }
     }
 
     res.json({
@@ -478,6 +532,61 @@ export const deleteSolutionItem = async (req: Request, res: Response, next: Next
 export const getPublicSolutionBySlug = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const slug = String(req.params.slug || '').trim().toLowerCase();
+
+    // 1. Check dedicated SolutionDetailModel first
+    const solutionDetail = await SolutionDetailModel.findOne({
+      slug,
+      status: { $in: ['PUBLISHED', 'ACTIVE'] },
+      deletedAt: null,
+    }).lean();
+
+    if (solutionDetail) {
+      // Dynamic media resolution
+      if (solutionDetail.heroMediaPublicId) {
+        const heroAsset = await MediaModel.findOne({ publicId: solutionDetail.heroMediaPublicId, deletedAt: null }).lean();
+        if (heroAsset?.secureUrl) {
+          solutionDetail.heroImage = heroAsset.secureUrl;
+          if (heroAsset.altText) solutionDetail.heroImageAlt = heroAsset.altText;
+        }
+      }
+
+      if (solutionDetail.useCases?.items && Array.isArray(solutionDetail.useCases.items)) {
+        for (const item of solutionDetail.useCases.items) {
+          if (item.mediaPublicId) {
+            const asset = await MediaModel.findOne({ publicId: item.mediaPublicId, deletedAt: null }).lean();
+            if (asset?.secureUrl) {
+              item.image = asset.secureUrl;
+            }
+          }
+        }
+      }
+
+      if (solutionDetail.industries && Array.isArray(solutionDetail.industries)) {
+        for (const ind of solutionDetail.industries) {
+          if (ind.mediaPublicId) {
+            const asset = await MediaModel.findOne({ publicId: ind.mediaPublicId, deletedAt: null }).lean();
+            if (asset?.secureUrl) {
+              ind.image = asset.secureUrl;
+            }
+          }
+        }
+      }
+
+      if (solutionDetail.seo?.ogImagePublicId) {
+        const ogAsset = await MediaModel.findOne({ publicId: solutionDetail.seo.ogImagePublicId, deletedAt: null }).lean();
+        if (ogAsset?.secureUrl) {
+          solutionDetail.seo.ogImage = ogAsset.secureUrl;
+        }
+      }
+
+      res.json({
+        success: true,
+        data: solutionDetail,
+      });
+      return;
+    }
+
+    // 2. Fall back to SolutionsPageSettings.solutions
     const settings = await getOrCreateSolutionsSettings();
     const solution = settings.solutions.find((s: any) => s.slug?.toLowerCase() === slug && s.isActive !== false);
 

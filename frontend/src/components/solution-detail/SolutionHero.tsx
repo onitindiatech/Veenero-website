@@ -8,6 +8,8 @@ import {
   BarChart3,
   FileText,
   Droplets,
+  Cpu,
+  Zap,
 } from "lucide-react";
 import { SolutionDetailData } from "@/content/solutionDetailsData";
 import { resolveAsset } from "@/utils/resolveAsset";
@@ -46,9 +48,14 @@ export const SolutionHero: React.FC<SolutionHeroProps> = ({
   };
 
   // Determine line 1 and line 2 for the display headline
-  const headlineLine1 = data.tagline?.line1 || data.title;
+  const headlineLine1 = (data as any).hero?.title || data.tagline?.line1 || data.title;
   const headlineLine2 =
-    data.tagline?.line2 || data.tagline?.line3 || "Absolute Balance.";
+    (data as any).hero?.subtitle || data.tagline?.line2 || data.tagline?.line3 || "Absolute Balance.";
+  const heroDescription = (data as any).hero?.description || data.heroDescription;
+  const heroBadge = (data as any).hero?.eyebrow || data.badge || data.title.toUpperCase();
+  const primaryCtaText = (data as any).hero?.primaryCta?.text || "Request a Demo";
+  const secondaryCtaText = (data as any).hero?.secondaryCta?.text || "Talk to an Expert";
+  const heroImageSrc = (data as any).hero?.image || data.heroImage;
 
   return (
     <section className="relative w-full overflow-hidden bg-[#031518] text-white pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24 select-none font-sans">
@@ -102,7 +109,7 @@ export const SolutionHero: React.FC<SolutionHeroProps> = ({
             {/* Category / Label with Underline matching reference */}
             <div>
               <span className="text-xs font-mono font-bold tracking-wider text-[#5eead4] uppercase block">
-                {data.badge || data.title.toUpperCase()}
+                {heroBadge}
               </span>
               <div className="w-16 h-0.5 bg-teal-400 mt-2 mb-6 rounded-full" />
             </div>
@@ -117,7 +124,7 @@ export const SolutionHero: React.FC<SolutionHeroProps> = ({
 
             {/* Short Concise Description */}
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-              {data.heroDescription}
+              {heroDescription}
             </p>
 
             {/* Action Buttons */}
@@ -126,14 +133,14 @@ export const SolutionHero: React.FC<SolutionHeroProps> = ({
                 onClick={scrollToInquiry}
                 className="px-7 py-3.5 bg-[#5eead4] hover:bg-[#48d5b5] text-slate-950 font-bold rounded-xl shadow-[0_4px_20px_rgba(94,234,212,0.25)] hover:shadow-[0_4px_24px_rgba(94,234,212,0.4)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-sm flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>Request a Demo</span>
+                <span>{primaryCtaText}</span>
                 <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
               </button>
               <button
                 onClick={scrollToExpert}
                 className="px-7 py-3.5 bg-[#071f24]/80 hover:bg-[#0c2a32] text-white border border-teal-500/30 hover:border-teal-400/60 rounded-xl font-bold hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-sm flex items-center justify-center shadow-xs backdrop-blur-md cursor-pointer"
               >
-                <span>Talk to an Expert</span>
+                <span>{secondaryCtaText}</span>
               </button>
             </div>
 
@@ -149,50 +156,46 @@ export const SolutionHero: React.FC<SolutionHeroProps> = ({
               </a>
             </div>
 
-            {/* 3 Highlights / Trust Badges matching reference */}
+            {/* Highlights / Trust Badges */}
             <div className="pt-6 border-t border-teal-900/30">
               <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-                {/* 1. Verified Measurement */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#072429] border border-teal-500/30 flex items-center justify-center text-[#5eead4] shrink-0">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <div className="text-xs font-semibold text-slate-200 leading-tight">
-                    <span>Verified</span>
-                    <br />
-                    <span>Measurement</span>
-                  </div>
-                </div>
+                {((data as any).heroHighlights && (data as any).heroHighlights.length > 0
+                  ? (data as any).heroHighlights
+                  : [
+                      { icon: "ShieldCheck", title: "Verified", subtitle: "Measurement" },
+                      { icon: "BarChart3", title: "Real-Time", subtitle: "Reconciliation" },
+                      { icon: "FileText", title: "Audit-Ready", subtitle: "Data" },
+                    ]
+                ).map((hl: any, idx: number) => {
+                  const IconComponent =
+                    hl.icon === "Cpu"
+                      ? Cpu
+                      : hl.icon === "Zap"
+                      ? Zap
+                      : hl.icon === "Droplets"
+                      ? Droplets
+                      : hl.icon === "BarChart3"
+                      ? BarChart3
+                      : hl.icon === "FileText"
+                      ? FileText
+                      : ShieldCheck;
 
-                {/* Separator */}
-                <div className="hidden sm:block h-7 w-px bg-teal-500/20" />
-
-                {/* 2. Real-Time Reconciliation */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#072429] border border-teal-500/30 flex items-center justify-center text-[#5eead4] shrink-0">
-                    <BarChart3 className="w-5 h-5" />
-                  </div>
-                  <div className="text-xs font-semibold text-slate-200 leading-tight">
-                    <span>Real-Time</span>
-                    <br />
-                    <span>Reconciliation</span>
-                  </div>
-                </div>
-
-                {/* Separator */}
-                <div className="hidden sm:block h-7 w-px bg-teal-500/20" />
-
-                {/* 3. Audit-Ready Data */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#072429] border border-teal-500/30 flex items-center justify-center text-[#5eead4] shrink-0">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div className="text-xs font-semibold text-slate-200 leading-tight">
-                    <span>Audit-Ready</span>
-                    <br />
-                    <span>Data</span>
-                  </div>
-                </div>
+                  return (
+                    <React.Fragment key={idx}>
+                      {idx > 0 && <div className="hidden sm:block h-7 w-px bg-teal-500/20" />}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#072429] border border-teal-500/30 flex items-center justify-center text-[#5eead4] shrink-0">
+                          <IconComponent className="w-5 h-5" />
+                        </div>
+                        <div className="text-xs font-semibold text-slate-200 leading-tight">
+                          <span>{hl.title}</span>
+                          <br />
+                          <span>{hl.subtitle}</span>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -202,7 +205,7 @@ export const SolutionHero: React.FC<SolutionHeroProps> = ({
             <div className="relative w-full rounded-[26px] overflow-hidden border border-teal-500/25 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-slate-950">
               <div className="aspect-[4/3] w-full overflow-hidden relative">
                 <img
-                  src={resolveAsset(data.heroImage)}
+                  src={resolveAsset(heroImageSrc)}
                   alt={`${data.title} Infrastructure`}
                   className="w-full h-full object-cover"
                   loading="eager"

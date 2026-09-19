@@ -48,12 +48,57 @@ export interface PublicContactDemoCard {
 
 export interface PublicContactFormConfig {
   visible: boolean;
+  // Section header
+  sectionEyebrow: string;
+  sectionHeading: string;
+  sectionDescription: string;
+  // Legacy card header
   title: string;
   subtitle: string;
+  // Field labels
+  nameLabel: string;
+  emailLabel: string;
+  organizationLabel: string;
+  focusAreaLabel: string;
+  messageLabel: string;
+  // Placeholders
+  namePlaceholder: string;
+  emailPlaceholder: string;
+  organizationPlaceholder: string;
+  messagePlaceholder: string;
+  // Dropdown options
   inquiryTypes: PublicContactInquiryType[];
+  // Submission
   submitButtonText: string;
   successTitle: string;
   successMessage: string;
+  errorMessage: string;
+}
+
+export interface PublicContactOffice {
+  visible: boolean;
+  sectionEyebrow: string;
+  sectionHeading: string;
+  companyName: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+  phoneHref: string;
+  email: string;
+  emailHref: string;
+  mapEmbedUrl: string;
+  mapLinkUrl: string;
+  mapLinkText: string;
+}
+
+export interface PublicContactOfficeHours {
+  visible: boolean;
+  eyebrow: string;
+  text: string;
 }
 
 export interface PublicContactFAQSection {
@@ -84,6 +129,8 @@ export interface PublicContactData {
   contactInfo: PublicContactInfoSection;
   demoCard: PublicContactDemoCard;
   form: PublicContactFormConfig;
+  office: PublicContactOffice;
+  officeHours: PublicContactOfficeHours;
   faq: PublicContactFAQSection;
   cta: PublicContactCTA;
   seo: PublicContactSEO;
