@@ -92,8 +92,8 @@ export const apiLimiter = rateLimit({
     },
   },
   skip: (req) => {
-    // Skip rate limiting for health checks
-    return req.path.startsWith('/api/health');
+    // Skip rate limiting for preflight OPTIONS and health checks
+    return req.method === 'OPTIONS' || req.path.startsWith('/api/health');
   },
 });
 

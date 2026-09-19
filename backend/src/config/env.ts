@@ -38,10 +38,11 @@ export const config = {
   // ── CORS ───────────────────────────────────────────────────────────────────
   corsOrigins: optionalEnv(
     'CORS_ORIGINS',
-    'http://localhost:5173,http://localhost:3000'
+    'https://veenerosolutions.com,https://www.veenerosolutions.com,http://localhost:5173,http://localhost:3000,http://localhost:8080,http://localhost:8081'
   )
     .split(',')
-    .map((o) => o.trim()),
+    .map((o) => o.trim().replace(/\/+$/, ''))
+    .filter(Boolean),
 
   // ── Security ───────────────────────────────────────────────────────────────
   jwtSecret: optionalEnv('JWT_SECRET', 'INSECURE_DEFAULT_CHANGE_IN_PRODUCTION'),

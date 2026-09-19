@@ -46,28 +46,95 @@ const app: Application = express();
 app.set('trust proxy', 1);
 
 // ── Security Middleware ───────────────────────────────────────────────────────
-app.use(helmet());
-
-// ── CORS ──────────────────────────────────────────────────────────────────────
-// Use FRONTEND_URL as the primary allowed origin, fallback to corsOrigins list
-const allowedOrigins = [
-  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.trim()] : []),
-  ...config.corsOrigins,
-].filter((v, i, a) => a.indexOf(v) === i); // deduplicate
-
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (server-to-server, curl, etc.)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      callback(new Error(`CORS: origin '${origin}' not allowed`));
-    },
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+// Canonical production origins that are ALWAYS permitted
+const PRODUCTION_ORIGINS = [
+  'https://veenerosolutions.com',
+  'https://www.veenerosolutions.com',
+];
+
+// Local development origins
+const LOCAL_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:8080',
+  'http://localhost:8081',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:8080',
+];
+
+// Combine all sources: PRODUCTION_ORIGINS, FRONTEND_URL, CORS_ORIGINS, LOCAL_ORIGINS
+const rawConfiguredOrigins = [
+  ...PRODUCTION_ORIGINS,
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL.trim()] : []),
+  ...config.corsOrigins,
+  ...LOCAL_ORIGINS,
+];
+
+// Normalize and deduplicate origins, automatically ensuring both apex and www are allowed
+const allowedOriginsSet = new Set<string>();
+for (const raw of rawConfiguredOrigins) {
+  if (!raw) continue;
+  const clean = raw.trim().replace(/\/+$/, '');
+  if (!clean) continue;
+  allowedOriginsSet.add(clean);
+  if (clean === 'https://veenerosolutions.com') {
+    allowedOriginsSet.add('https://www.veenerosolutions.com');
+  } else if (clean === 'https://www.veenerosolutions.com') {
+    allowedOriginsSet.add('https://veenerosolutions.com');
+  }
+}
+
+const allowedOrigins = Array.from(allowedOriginsSet);
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (server-to-server, curl, mobile apps, health checks)
+    if (!origin) return callback(null, true);
+
+    const cleanOrigin = origin.trim().replace(/\/+$/, '');
+
+    // Allow if exact match in allowedOrigins
+    if (allowedOrigins.includes(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // Explicit check for veenerosolutions.com and www.veenerosolutions.com
+    if (
+      cleanOrigin === 'https://veenerosolutions.com' ||
+      cleanOrigin === 'https://www.veenerosolutions.com'
+    ) {
+      return callback(null, true);
+    }
+
+    // Do NOT pass new Error() which crashes Express with a 500 error handler
+    return callback(null, false);
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Cache-Control',
+    'X-CSRF-Token',
+  ],
+  exposedHeaders: ['Set-Cookie', 'RateLimit-Limit', 'RateLimit-Remaining', 'RateLimit-Reset'],
+  credentials: true,
+  maxAge: 86400, // 24 hours preflight cache
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // ── Body Parsing ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));

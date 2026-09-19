@@ -43,10 +43,14 @@ export const login = async (
     );
 
     // ── Cookie configuration ──────────────────────────────────────────────────
-    // sameSite:'strict' prevents the cookie from being sent on any cross-site
-    // request, closing the CSRF window that 'lax' leaves open for POST requests.
-    // maxAge is derived from JWT_EXPIRES_IN so the cookie and token expire together.
-    const isProduction = config.nodeEnv === 'production';
+    // In production / HTTPS, we must use secure: true and sameSite: 'none' so the cookie
+    // can be accepted across origins (https://veenerosolutions.com -> https://veenero-website.onrender.com).
+    const isProduction =
+      config.nodeEnv === 'production' ||
+      process.env.NODE_ENV === 'production' ||
+      req.secure ||
+      req.headers['x-forwarded-proto'] === 'https' ||
+      (typeof req.headers.origin === 'string' && req.headers.origin.startsWith('https://'));
 
     // Parse "8h" / "7d" / "3600" → milliseconds for cookie maxAge
     const parseExpiresMs = (val: string): number => {
@@ -62,9 +66,10 @@ export const login = async (
 
     const cookieOptions = {
       httpOnly: true,              // Not accessible to JS — mitigates XSS token theft
-      secure: isProduction,        // HTTPS-only in production
-      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // 'none' allows cross-site requests (Vercel -> Render)
+      secure: isProduction,        // HTTPS-only in production / HTTPS
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax', // 'none' allows cross-site requests
       maxAge: cookieMaxAge,
+      path: '/',
     };
 
     res.cookie('token', token, cookieOptions);
@@ -92,12 +97,19 @@ export const login = async (
 };
 
 // ─── POST /api/auth/logout ───────────────────────────────────────────────────
-export const logout = (_req: Request, res: Response): void => {
-  const isProduction = config.nodeEnv === 'production';
+export const logout = (req: Request, res: Response): void => {
+  const isProduction =
+    config.nodeEnv === 'production' ||
+    process.env.NODE_ENV === 'production' ||
+    req.secure ||
+    req.headers['x-forwarded-proto'] === 'https' ||
+    (typeof req.headers.origin === 'string' && req.headers.origin.startsWith('https://'));
+
   res.clearCookie('token', {
     httpOnly: true,
     secure: isProduction,
     sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+    path: '/',
   });
   res.status(200).json({
     success: true,
